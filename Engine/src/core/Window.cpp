@@ -1,0 +1,70 @@
+#include "Window.h"
+
+LRESULT CALLBACK Window::StaticWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+    switch (msg) {
+    case WM_KEYDOWN:
+        if (wParam == VK_ESCAPE) {
+            if (MessageBox(0, L"Êtes-vous sûr de vouloir quitter ?", L"Vraiment ?", MB_YESNO | MB_ICONQUESTION) == IDYES)
+                DestroyWindow(hwnd);
+        }
+        return 0;
+
+    case WM_DESTROY:
+        PostQuitMessage(0);
+        return 0;
+    }
+
+    return DefWindowProc(hwnd, msg, wParam, lParam);
+}
+
+bool Window::Init(HINSTANCE hInstance, int nShowCmd) {
+    m_wndProps.hwnd = nullptr;
+    m_wndProps.windowName = L"GameEngineDX12App";
+    m_wndProps.windowTitle = L"GameEngineDX12";
+    m_wndProps.width = 1200;
+    m_wndProps.height = 900;
+    m_wndProps.fullScreen = false;
+
+    if (m_wndProps.fullScreen) {
+        HMONITOR hmon = MonitorFromWindow(m_wndProps.hwnd, MONITOR_DEFAULTTONEAREST);
+        MONITORINFO mi = { sizeof(mi) };
+        GetMonitorInfo(hmon, &mi);
+        m_wndProps.width = mi.rcMonitor.right - mi.rcMonitor.left;
+        m_wndProps.height = mi.rcMonitor.bottom - mi.rcMonitor.top;
+    }
+
+    WNDCLASSEX wc;
+    wc.cbSize = sizeof(WNDCLASSEX);
+    wc.style = CS_HREDRAW | CS_VREDRAW;
+    wc.lpfnWndProc = &Window::StaticWndProc;
+    wc.cbClsExtra = NULL;
+    wc.cbWndExtra = NULL;
+    wc.hInstance = hInstance;
+    wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+    wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+    wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 2);
+    wc.lpszMenuName = NULL;
+    wc.lpszClassName = m_wndProps.windowName;
+    wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
+
+    if (!RegisterClassEx(&wc)) {
+        MessageBox(NULL, L"Erreur d'enregistrement de la classe", L"Erreur", MB_OK | MB_ICONERROR);
+        return false;
+    }
+
+    m_wndProps.hwnd = CreateWindowEx(NULL, m_wndProps.windowName, m_wndProps.windowTitle,WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 1200, 900, NULL, NULL, hInstance, NULL);
+
+    if (!m_wndProps.hwnd) {
+        MessageBox(NULL, L"Erreur de création de la fenêtre", L"Erreur", MB_OK | MB_ICONERROR);
+        return false;
+    }
+
+    if (m_wndProps.fullScreen) {
+        SetWindowLong(m_wndProps.hwnd, GWL_STYLE, 0);
+    }
+
+    ShowWindow(m_wndProps.hwnd, SW_SHOWNORMAL);
+    UpdateWindow(m_wndProps.hwnd);
+
+    return true;
+}

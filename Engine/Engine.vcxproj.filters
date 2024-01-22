@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="src\core\Defines.h" />
+    <ClInclude Include="src\core\Engine.h" />
+    <ClInclude Include="src\core\Window.h" />
+    <ClInclude Include="src\include.h" />
+    <ClInclude Include="extern\d3dx12.h" />
+    <ClInclude Include="extern\DDSTextureLoader.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\core\Engine.cpp" />
+    <ClCompile Include="src\core\Window.cpp" />
+    <ClCompile Include="src\Start.cpp" />
+    <ClCompile Include="extern\DDSTextureLoader.cpp" />
+    <ClCompile Include="src\renderer\Resources.cpp" />
+  </ItemGroup>
+</Project>
