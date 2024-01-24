@@ -1,52 +1,11 @@
 #include "Engine.h"
 #include <wrl/client.h>
 #include "../include.h"   
+#include "../renderer/Renderer.h"   
 
-using Microsoft::WRL::ComPtr;
 using namespace DirectX;
 
-bool InitializeDirectX12Resources(ComPtr<ID3D12Device>& pDevice, ComPtr<ID3D12CommandQueue>& pCommandQueue, ComPtr<ID3D12CommandAllocator>& pCommandAllocator) {
-    // Créer le périphérique DirectX 12
-    HRESULT hr = D3D12CreateDevice(nullptr, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&pDevice));
-    if (FAILED(hr)) {
-        std::cerr << "Failed to create DirectX 12 device." << std::endl;
-        return false;
-    }
 
-    std::cout << "Init" << std::endl;
-
-    // Créer la file de commandes
-    D3D12_COMMAND_QUEUE_DESC queueDesc = {};
-    queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
-    queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
-    hr = pDevice->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&pCommandQueue));
-    if (FAILED(hr)) {
-        std::cerr << "Failed to create command queue." << std::endl;
-        return false;
-    }
-
-
-    // Créer le command allocator
-    hr = pDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&pCommandAllocator));
-    if (FAILED(hr)) {
-        std::cerr << "Failed to create command allocator." << std::endl;
-        return false;
-    }
-
-    // Tentative de réinitialisation du command allocator
-    hr = pCommandAllocator->Reset();
-    if (FAILED(hr)) {
-        std::cerr << "Failed to reset command allocator." << std::endl;
-        return false;
-    }
-    if (SUCCEEDED(hr)) {
-        std::cout << "Success to reset command allocator." << std::endl;
-        return false;
-    }
-
-    // Initialisation réussie
-    return true;
-}
 
 
 XMVECTOR TranslateVector(XMVECTOR vector, float deltaX, float deltaY, float deltaZ) {
@@ -59,12 +18,12 @@ XMVECTOR TranslateVector(XMVECTOR vector, float deltaX, float deltaY, float delt
 
 
 void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
-    _hInstance = hInstance;
+    m_hInstance = hInstance;
 
     // Créer la console
     AllocConsole();
 
-    if (freopen_s(&_pConsole, "CONOUT$", "w", stdout) != 0) {
+    if (freopen_s(&m_pConsole, "CONOUT$", "w", stdout) != 0) {
         MessageBox(0, L"Failed to redirect console output", L"Error", MB_OK);
         Cleanup();
         PostQuitMessage(1);
@@ -73,43 +32,30 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
     // Initialiser la fenêtre
     Window::GetInstance().Init(hInstance, nShowCmd);
 
-    ComPtr<ID3D12Device> pDevice;
-    ComPtr<ID3D12CommandQueue> pCommandQueue;
-    ComPtr<ID3D12CommandAllocator> pCommandAllocator;
 
+    m_renderer = new Renderer();
+    // Initialiser les ressources DirectX 12
+    m_renderer->InitializeDirectX12Instances();
 
-    //// Initialiser les ressources DirectX 12
-    //if (InitializeDirectX12Resources(pDevice, pCommandQueue, pCommandAllocator)) {
-    //    // Utilisez les ressources DirectX 12 comme nécessaire
-    //    // ...
+    //// Création d'un vecteur représentant la position initiale
+    //XMVECTOR initialPosition = XMVectorSet(1.0f, 2.0f, 3.0f, 1.0f);
 
-    //    // Après utilisation, vous pouvez réinitialiser le command allocator si nécessaire
-    //    HRESULT hr = pCommandAllocator->Reset();
-    //    if (FAILED(hr)) {
-    //        std::cerr << "Failed to reset command allocator." << std::endl;
-    //        // Gérez l'erreur selon vos besoins
-    //    }
-    //}
+    //// Affichage de la position initiale
+    //std::cout << "Position initiale : (" << XMVectorGetX(initialPosition) << ", " << XMVectorGetY(initialPosition) << ", " << XMVectorGetZ(initialPosition) << ")\n";
 
-    // Création d'un vecteur représentant la position initiale
-    XMVECTOR initialPosition = XMVectorSet(1.0f, 2.0f, 3.0f, 1.0f);
+    //// Translation du vecteur
+    //XMVECTOR newPosition = TranslateVector(initialPosition, 1.0f, 2.0f, -3.0f);
 
-    // Affichage de la position initiale
-    std::cout << "Position initiale : (" << XMVectorGetX(initialPosition) << ", " << XMVectorGetY(initialPosition) << ", " << XMVectorGetZ(initialPosition) << ")\n";
-
-    // Translation du vecteur
-    XMVECTOR newPosition = TranslateVector(initialPosition, 1.0f, 2.0f, -3.0f);
-
-    // Affichage de la nouvelle position
-    std::cout << "Nouvelle position : (" << XMVectorGetX(newPosition) << ", " << XMVectorGetY(newPosition) << ", " << XMVectorGetZ(newPosition) << ")\n";
+    //// Affichage de la nouvelle position
+    //std::cout << "Nouvelle position : (" << XMVectorGetX(newPosition) << ", " << XMVectorGetY(newPosition) << ", " << XMVectorGetZ(newPosition) << ")\n";
 
     // Lancer la boucle principale
     Run();
 }
 
 void Engine::Cleanup() {
-    if (_pConsole) {
-        fclose(_pConsole);
+    if (m_pConsole) {
+        fclose(m_pConsole);
         FreeConsole();
     }
 }

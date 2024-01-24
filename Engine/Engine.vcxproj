@@ -143,11 +143,14 @@
     <ClInclude Include="src\core\Engine.h" />
     <ClInclude Include="src\core\Window.h" />
     <ClInclude Include="src\include.h" />
+    <ClInclude Include="src\renderer\Renderer.h" />
+    <ClInclude Include="src\renderer\Resources.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="extern\DDSTextureLoader.cpp" />
     <ClCompile Include="src\core\Engine.cpp" />
     <ClCompile Include="src\core\Window.cpp" />
+    <ClCompile Include="src\renderer\Renderer.cpp" />
     <ClCompile Include="src\renderer\Resources.cpp" />
     <ClCompile Include="src\Start.cpp" />
   </ItemGroup>

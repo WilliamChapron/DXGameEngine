@@ -68,3 +68,4 @@ bool Window::Init(HINSTANCE hInstance, int nShowCmd) {
 
     return true;
 }
+

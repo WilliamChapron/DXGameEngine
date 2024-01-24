@@ -26,10 +26,13 @@ public:
     // Fonction de gestion des messages de la fenêtre
     static LRESULT CALLBACK StaticWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
+    inline WindowProperties getWndProps() {
+        return m_wndProps;
+    }                      
+
 private:
     // Constructeur privé pour empêcher la création d'instances supplémentaires
     Window() = default;
 
-    // Membres de la classe...
     WindowProperties m_wndProps;
 };

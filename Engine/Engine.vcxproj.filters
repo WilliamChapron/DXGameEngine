@@ -7,6 +7,8 @@
     <ClInclude Include="src\include.h" />
     <ClInclude Include="extern\d3dx12.h" />
     <ClInclude Include="extern\DDSTextureLoader.h" />
+    <ClInclude Include="src\renderer\Resources.h" />
+    <ClInclude Include="src\renderer\Renderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\Engine.cpp" />
@@ -14,5 +16,6 @@
     <ClCompile Include="src\Start.cpp" />
     <ClCompile Include="extern\DDSTextureLoader.cpp" />
     <ClCompile Include="src\renderer\Resources.cpp" />
+    <ClCompile Include="src\renderer\Renderer.cpp" />
   </ItemGroup>
 </Project>

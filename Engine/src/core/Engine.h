@@ -2,6 +2,8 @@
 
 #pragma once
 
+class Renderer;
+
 #include <Windows.h>
 #include <iostream>
 #include "Window.h"  // Ajout de l'inclusion de l'en-tête de la classe Window
@@ -22,7 +24,8 @@ public:
 private:
     Engine() = default;
 
-    HINSTANCE _hInstance;
-    int _nShowCmd;
-    FILE* _pConsole;
+    Renderer* m_renderer = nullptr;
+    HINSTANCE m_hInstance;
+    int m_nShowCmd;
+    FILE* m_pConsole;
 };
