@@ -17,8 +17,9 @@ public:
     //void Render();  // Ajoutez cette fonction pour rendre votre triangle
 
 private:
+    IDXGIAdapter1* pAdapter;
     ID3D12Device* pDevice = nullptr;
-    IDXGIFactory* pFactory = nullptr;
+    IDXGIFactory4* pFactory = nullptr;
     IDXGISwapChain* pSwapChain = nullptr;
     ID3D12CommandQueue* pCommandQueue = nullptr;
     ID3D12CommandAllocator* pCommandAllocator = nullptr;

@@ -32,11 +32,10 @@ void Renderer::CreateSwapChain() {
     swapChainDesc.SampleDesc = sampleDesc; // our multi-sampling description
     swapChainDesc.Windowed = false; // set to true, then if in fullscreen must call SetFullScreenState with true for full screen to get uncapped fps
 
-    HRESULT hr = pFactory->CreateSwapChain(
-        pCommandQueue, // the queue will be flushed once the swap chain is created
-        &swapChainDesc, // give it the swap chain description we created above
-        &pSwapChain // store the created swap chain in a temp IDXGISwapChain interface
-    );
+    HRESULT hr;
+
+    // Create the swap chain
+    hr = pFactory->CreateSwapChain(pCommandQueue, &swapChainDesc, &pSwapChain);
 
     frameIndex = 0;
 
@@ -54,19 +53,8 @@ void Renderer::CreateSwapChain() {
 void Renderer::InitializeDirectX12Instances() {
     std::cout << "InitializeDirectX12Instances" << std::endl;
 
-    // Create DirectX 12 device
-    HRESULT hr = D3D12CreateDevice(nullptr, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&pDevice));
-    if (CHECK_SUCCESS(hr, pDevice)) {
-        LOG_SUCCESS("DirectX 12 device", "initialize");
-    }
+    HRESULT hr;
 
-    if (CHECK_FAILURE(hr, pDevice)) {
-        LOG_FAILURE("DirectX 12 device", "initialize");
-        // Handle failure if needed
-        return;  // Stop further initialization on failure
-    }
-
-    
     // Create com factory
     hr = CreateDXGIFactory(IID_PPV_ARGS(&pFactory));
     if (CHECK_SUCCESS(hr, pFactory)) {
@@ -78,6 +66,31 @@ void Renderer::InitializeDirectX12Instances() {
         // Handle failure if needed
         return;  // Stop further initialization on failure
     }
+
+    // -- Create the Device -- //
+
+    int adapterIndex = 0;
+    bool adapterFound = false;
+
+    // Find first hardware GPU that supports D3D 12
+    while (pFactory->EnumAdapters1(adapterIndex, &pAdapter) != DXGI_ERROR_NOT_FOUND) {
+        hr = D3D12CreateDevice(pAdapter, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&pDevice));
+        if (SUCCEEDED(hr)) {
+            adapterFound = true;
+            break;
+        }
+
+        adapterIndex++;
+    }
+
+    if (!adapterFound) {
+        LOG_FAILURE("DirectX 12 device", "initialize");
+        // Handle failure if needed
+        return;
+    }
+
+    
+
 
     // Create swap chain
     CreateSwapChain();
