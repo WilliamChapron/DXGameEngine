@@ -18,3 +18,7 @@
 
 // Macro de log pour l'échec
 #define LOG_FAILURE(name, verb) std::cout << "Failed to " << verb << " " << name << "." << std::endl;
+
+
+// Macro pour print
+#define PRINT(x) std::cout << x << std::endl

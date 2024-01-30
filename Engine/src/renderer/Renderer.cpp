@@ -48,6 +48,7 @@ void Renderer::CreateSwapChain() {
         // Handle failure if needed
         return;  // Stop further initialization on failure
     }
+
 }
 
 void Renderer::InitializeDirectX12Instances() {
@@ -73,21 +74,48 @@ void Renderer::InitializeDirectX12Instances() {
     bool adapterFound = false;
 
     // Find first hardware GPU that supports D3D 12
-    while (pFactory->EnumAdapters1(adapterIndex, &pAdapter) != DXGI_ERROR_NOT_FOUND) {
+    while (pFactory->EnumAdapters1(adapterIndex, &pAdapter) != DXGI_ERROR_NOT_FOUND)
+    {
+        DXGI_ADAPTER_DESC1 desc;
+        pAdapter->GetDesc1(&desc);
+        PRINT(adapterIndex);
+
+        if (desc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE)
+        {
+            // we dont want a software device
+            adapterIndex++; // add this line here. Its not currently in the downloadable project
+            continue;
+        }
+
+        // we want a device that is compatible with direct3d 12 (feature level 11 or higher)
         hr = D3D12CreateDevice(pAdapter, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&pDevice));
-        if (SUCCEEDED(hr)) {
+        if (CHECK_SUCCESS(hr, pDevice)) {
+            LOG_SUCCESS("DXGI Device", "create");
+            PRINT("Adapter found");
             adapterFound = true;
             break;
         }
-
         adapterIndex++;
     }
 
-    if (!adapterFound) {
-        LOG_FAILURE("DirectX 12 device", "initialize");
-        // Handle failure if needed
+    if (!adapterFound)
+    {
+        PRINT("No adapter found");
         return;
     }
+
+     // Create command queue
+    D3D12_COMMAND_QUEUE_DESC queueDesc = {};  // Add your command queue description here
+    hr = pDevice->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&pCommandQueue));
+    if (CHECK_SUCCESS(hr, pCommandQueue)) {
+        LOG_SUCCESS("Command queue", "create");
+    }
+
+    if (CHECK_FAILURE(hr, pCommandQueue)) {
+        LOG_FAILURE("Command queue", "create");
+        return; 
+    }
+
 
     
 
@@ -98,18 +126,6 @@ void Renderer::InitializeDirectX12Instances() {
 
     
 
-    // Create command queue
-    D3D12_COMMAND_QUEUE_DESC queueDesc = {};  // Add your command queue description here
-    hr = pDevice->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&pCommandQueue));
-    if (CHECK_SUCCESS(hr, pCommandQueue)) {
-        LOG_SUCCESS("Command queue", "create");
-    }
-
-    if (CHECK_FAILURE(hr, pCommandQueue)) {
-        LOG_FAILURE("Command queue", "create");
-        // Handle failure if needed
-        return;  // Stop further initialization on failure
-    }
 
     // Create command allocator
     hr = pDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&pCommandAllocator));

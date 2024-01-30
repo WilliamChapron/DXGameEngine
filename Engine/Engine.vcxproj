@@ -145,6 +145,7 @@
     <ClInclude Include="src\include.h" />
     <ClInclude Include="src\renderer\Renderer.h" />
     <ClInclude Include="src\renderer\Resources.h" />
+    <ClInclude Include="SwapChain.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="extern\DDSTextureLoader.cpp" />
@@ -153,6 +154,7 @@
     <ClCompile Include="src\renderer\Renderer.cpp" />
     <ClCompile Include="src\renderer\Resources.cpp" />
     <ClCompile Include="src\Start.cpp" />
+    <ClCompile Include="SwapChain.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
