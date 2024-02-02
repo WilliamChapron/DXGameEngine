@@ -9,7 +9,8 @@
     <ClInclude Include="extern\DDSTextureLoader.h" />
     <ClInclude Include="src\renderer\Resources.h" />
     <ClInclude Include="src\renderer\Renderer.h" />
-    <ClInclude Include="SwapChain.h" />
+    <ClInclude Include="src\Triangle.h" />
+    <ClInclude Include="src\SwapChain.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\Engine.cpp" />
@@ -18,6 +19,7 @@
     <ClCompile Include="extern\DDSTextureLoader.cpp" />
     <ClCompile Include="src\renderer\Resources.cpp" />
     <ClCompile Include="src\renderer\Renderer.cpp" />
-    <ClCompile Include="SwapChain.cpp" />
+    <ClCompile Include="src\Triangle.cpp" />
+    <ClCompile Include="src\SwapChain.cpp" />
   </ItemGroup>
 </Project>
