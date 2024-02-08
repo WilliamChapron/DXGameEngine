@@ -6,7 +6,6 @@
     <ClInclude Include="src\core\Window.h" />
     <ClInclude Include="src\include.h" />
     <ClInclude Include="extern\d3dx12.h" />
-    <ClInclude Include="extern\DDSTextureLoader.h" />
     <ClInclude Include="src\renderer\Resources.h" />
     <ClInclude Include="src\renderer\Renderer.h" />
     <ClInclude Include="src\Triangle.h" />
@@ -16,7 +15,6 @@
     <ClCompile Include="src\core\Engine.cpp" />
     <ClCompile Include="src\core\Window.cpp" />
     <ClCompile Include="src\Start.cpp" />
-    <ClCompile Include="extern\DDSTextureLoader.cpp" />
     <ClCompile Include="src\renderer\Resources.cpp" />
     <ClCompile Include="src\renderer\Renderer.cpp" />
     <ClCompile Include="src\Triangle.cpp" />

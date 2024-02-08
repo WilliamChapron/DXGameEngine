@@ -1,5 +1,4 @@
 #include "Engine.h"
-#include <wrl/client.h>
 #include "../include.h"   
 #include "../renderer/Renderer.h"   
 
@@ -20,7 +19,6 @@ XMVECTOR TranslateVector(XMVECTOR vector, float deltaX, float deltaY, float delt
 void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
     m_hInstance = hInstance;
 
-    // Créer la console
     AllocConsole();
 
     if (freopen_s(&m_pConsole, "CONOUT$", "w", stdout) != 0) {
@@ -29,13 +27,16 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
         PostQuitMessage(1);
     }
 
-    // Initialiser la fenêtre
     Window::GetInstance().Init(hInstance, nShowCmd);
 
 
     m_renderer = new Renderer();
-    // Initialiser les ressources DirectX 12
+
+
     m_renderer->InitializeDirectX12Instances();
+    m_renderer->InitializeRessources();
+
+
 
     //// Création d'un vecteur représentant la position initiale
     //XMVECTOR initialPosition = XMVectorSet(1.0f, 2.0f, 3.0f, 1.0f);

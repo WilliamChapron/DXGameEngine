@@ -18,8 +18,12 @@ void Renderer::InitializeDirectX12Instances() {
     CreateCommandList();
 }
 
+void Renderer::InitializeRessources() {
+    CreateShaders();
+}
+
 void Renderer::CreateSwapChain() {
-    // -- Create the Swap Chain (double/tripple buffering) -- //
+    // Create the Swap Chain double buffering  
 
     DXGI_MODE_DESC backBufferDesc = {}; // this is to describe our display mode
     backBufferDesc.Width = Window::GetInstance().getWndProps().width; // buffer width
@@ -53,8 +57,7 @@ void Renderer::CreateSwapChain() {
 
     if (CHECK_FAILURE(hr, pSwapChain)) {
         LOG_FAILURE("Swap chain", "create");
-        // Handle failure if needed
-        return;  // Stop further initialization on failure
+        return;  
     }
 
 }
@@ -66,8 +69,7 @@ void Renderer::CreateFactory() {
     }
     else {
         LOG_FAILURE("DXGI Factory", "create");
-        // Handle failure if needed
-        return;  // Stop further initialization on failure
+        return; 
     }
 }
 
@@ -146,8 +148,7 @@ void Renderer::CreateFence() {
 
     if (CHECK_FAILURE(hr, pFence)) {
         LOG_FAILURE("Fence", "create");
-        // Handle failure if needed
-        return;  // Stop further initialization on failure
+        return;  
     }
 
     fenceValue = 1;
@@ -157,7 +158,7 @@ void Renderer::CreateFence() {
     if (fenceEvent == nullptr) {
         // Handle event creation failure
         LOG_FAILURE("Fence Event", "create");
-        return;  // Stop further initialization on failure
+        return; 
     }
 }
 
@@ -183,12 +184,75 @@ void Renderer::CreateDescriptorHeap() {
 }
 
 
-//
-//void Renderer::CreatePipelineState() {
-//    D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {};
-//    HRESULT hr = pDevice->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&pPipelineState));
-//}
-//void Renderer::CreateRootSignature() {
-//    D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc = {};
-//    HRESULT hr = pDevice->CreateRootSignature(0, rootSignatureDesc.Serialize(), rootSignatureDesc.BytecodeLength, IID_PPV_ARGS(&rootSignature));
-//}
+
+void Renderer::CreatePipelineState() {
+    D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {};
+
+    D3D12_INPUT_ELEMENT_DESC inputElementDescs[] =
+    {
+        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+    };
+
+    psoDesc.InputLayout = { inputElementDescs, _countof(inputElementDescs) };
+
+    HRESULT hr = pDevice->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&pPipelineState));
+}
+
+
+void Renderer::CreateRootSignature() {
+    // Définir les paramètres de la root signature
+    CD3DX12_ROOT_PARAMETER rootParameters[1];
+    rootParameters[0].InitAsConstantBufferView(0);
+    //
+
+    CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDesc;
+    rootSignatureDesc.Init(1, rootParameters, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+
+    // Serialize
+    ID3DBlob* signature = nullptr;
+    ID3DBlob* error = nullptr;
+    HRESULT hr = D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &signature, &error);
+
+
+    hr = pDevice->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(&pRootSignature));
+}
+
+
+HRESULT CompileShaderFromFile(const wchar_t* filePath, const char* entryPoint, const char* shaderModel, ID3DBlob** blob)
+{
+    DWORD shaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
+
+#if defined(DEBUG) || defined(_DEBUG)
+    shaderFlags |= D3DCOMPILE_DEBUG;
+#endif
+
+    ID3DBlob* errorBlob = nullptr;
+    HRESULT hr = D3DCompileFromFile(filePath, nullptr, nullptr, entryPoint, shaderModel, shaderFlags, 0, blob, &errorBlob);
+
+    if (FAILED(hr))
+    {
+        if (errorBlob)
+        {
+            OutputDebugStringA(static_cast<const char*>(errorBlob->GetBufferPointer()));
+            errorBlob->Release();
+        }
+        return hr;
+    }
+
+    if (errorBlob)
+        errorBlob->Release();
+
+
+    PRINT("OK");
+
+    return S_OK;
+}
+
+void Renderer::CreateShaders() {
+    ID3DBlob* vertexShaderBlob = nullptr;
+    ID3DBlob* pixelShaderBlob = nullptr;
+
+    CompileShaderFromFile(L"res/shader/VS.hlsl", "main", "vs_5_0", &vertexShaderBlob);
+    CompileShaderFromFile(L"res/shader/PS.hlsl", "main", "ps_5_0", &pixelShaderBlob);
+}
+

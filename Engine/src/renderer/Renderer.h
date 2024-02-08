@@ -23,10 +23,27 @@ public:
     void CreateDescriptorHeap();
     void CreatePipelineState();
     void CreateRootSignature();
+    void CreateShaders();
+    void InitializeRessources();
 
     //void Render();  // Ajoutez cette fonction pour rendre votre triangle
 
 private:
+
+    struct Vertex
+    {
+        DirectX::XMFLOAT3 position;
+    };
+
+    // Définissez votre tableau de vertices
+    Vertex vertices[3] =
+    {
+        { { 0.0f, 0.5f, 0.0f } },    // Vertex 0
+        { { -0.5f, -0.5f, 0.0f } },  // Vertex 1
+        { { 0.5f, -0.5f, 0.0f } }    // Vertex 2
+    };
+
+
     IDXGIAdapter1* pAdapter;
     ID3D12Device* pDevice = nullptr;
     IDXGIFactory4* pFactory = nullptr;
