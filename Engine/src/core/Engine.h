@@ -3,6 +3,7 @@
 #pragma once
 
 class Renderer;
+class Triangle;
 
 #include <Windows.h>
 #include <iostream>
@@ -24,7 +25,9 @@ public:
 private:
     Engine() = default;
 
-    Renderer* m_renderer = nullptr;
+    Triangle* m_pTriangle;
+
+    Renderer* m_pRenderer = nullptr;
     HINSTANCE m_hInstance;
     int m_nShowCmd;
     FILE* m_pConsole;

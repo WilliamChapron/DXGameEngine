@@ -1,4 +1,5 @@
 #include "Engine.h"
+#include "../Triangle.h"
 #include "../include.h"   
 #include "../renderer/Renderer.h"   
 
@@ -30,11 +31,26 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
     Window::GetInstance().Init(hInstance, nShowCmd);
 
 
-    m_renderer = new Renderer();
+    m_pRenderer = new Renderer();
 
 
-    m_renderer->InitializeDirectX12Instances();
-    m_renderer->InitializeRessources();
+    m_pRenderer->InitializeDirectX12Instances();
+    m_pTriangle = new Triangle;
+    m_pTriangle->Initialize(m_pRenderer);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -75,6 +91,7 @@ void Engine::Run() {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
+        m_pTriangle->Draw(m_pRenderer);
         //else {
         //    Sleep(1000);
         //    std::cout << "sdsd" << std::endl;

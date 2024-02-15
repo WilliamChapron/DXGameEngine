@@ -18,9 +18,7 @@ void Renderer::InitializeDirectX12Instances() {
     CreateCommandList();
 }
 
-void Renderer::InitializeRessources() {
-    CreateShaders();
-}
+
 
 void Renderer::CreateSwapChain() {
     // Create the Swap Chain double buffering  
@@ -167,7 +165,7 @@ void Renderer::CreateDescriptorHeap() {
 
     // Create descriptor heap
     D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
-    heapDesc.NumDescriptors = 1; // Adjust the number of descriptors as needed
+    heapDesc.NumDescriptors = FRAME_COUNT; // Adjust the number of descriptors as needed
     heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV; // Adjust the type based on your requirements
     heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 
@@ -178,8 +176,20 @@ void Renderer::CreateDescriptorHeap() {
 
     if (CHECK_FAILURE(hr, pDescriptorHeap)) {
         LOG_FAILURE("Descriptor Heap", "create");
-        // Handle failure if needed
-        return;  // Stop further initialization on failure
+        return;  
+    }
+
+    for (int i = 0; i < 2; ++i)
+    {
+        HRESULT hr = pSwapChain->GetBuffer(i, IID_PPV_ARGS(&pRenderTargets[i]));
+        if (CHECK_SUCCESS(hr, pRenderTargets[i]))
+        {
+            LOG_SUCCESS("Render Target", "create");
+        }
+        if (CHECK_FAILURE(hr, pDescriptorHeap)) {
+            LOG_FAILURE("Descriptor Heap", "create");
+            return;  
+        }
     }
 }
 
@@ -217,42 +227,4 @@ void Renderer::CreateRootSignature() {
     hr = pDevice->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(&pRootSignature));
 }
 
-
-HRESULT CompileShaderFromFile(const wchar_t* filePath, const char* entryPoint, const char* shaderModel, ID3DBlob** blob)
-{
-    DWORD shaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
-
-#if defined(DEBUG) || defined(_DEBUG)
-    shaderFlags |= D3DCOMPILE_DEBUG;
-#endif
-
-    ID3DBlob* errorBlob = nullptr;
-    HRESULT hr = D3DCompileFromFile(filePath, nullptr, nullptr, entryPoint, shaderModel, shaderFlags, 0, blob, &errorBlob);
-
-    if (FAILED(hr))
-    {
-        if (errorBlob)
-        {
-            OutputDebugStringA(static_cast<const char*>(errorBlob->GetBufferPointer()));
-            errorBlob->Release();
-        }
-        return hr;
-    }
-
-    if (errorBlob)
-        errorBlob->Release();
-
-
-    PRINT("OK");
-
-    return S_OK;
-}
-
-void Renderer::CreateShaders() {
-    ID3DBlob* vertexShaderBlob = nullptr;
-    ID3DBlob* pixelShaderBlob = nullptr;
-
-    CompileShaderFromFile(L"res/shader/VS.hlsl", "main", "vs_5_0", &vertexShaderBlob);
-    CompileShaderFromFile(L"res/shader/PS.hlsl", "main", "ps_5_0", &pixelShaderBlob);
-}
 
