@@ -14,19 +14,18 @@ public:
     void Initialize(Renderer* renderer);
     void PopulateCommandList(Renderer* renderer);
     void WaitForPreviousFrame(Renderer* renderer);
-    void Draw(Renderer* renderer);
+    void Render(Renderer* renderer);
 
 private:
-    struct Vertex {
-        XMFLOAT3 position;
+    struct Vertex
+    {
+        XMFLOAT3 Pos;
+        XMFLOAT4 Color;
     };
 
-    ID3DBlob* vertexShaderBlob;
-    ID3DBlob* pixelShaderBlob;
 
+    int renderCallNum = 0;
     ID3D12Resource* vertexBuffer;
     D3D12_VERTEX_BUFFER_VIEW vertexBufferView;
 
-    D3D12_VIEWPORT m_viewport;
-    D3D12_RECT m_scissorRect;  
 };

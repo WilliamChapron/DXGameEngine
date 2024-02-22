@@ -1,11 +1,37 @@
 #include "Window.h"
+#include "Engine.h"
+#include "../Triangle.h"
+#include "Defines.h"   
 
-LRESULT CALLBACK Window::StaticWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-    switch (msg) {
+LRESULT CALLBACK Window::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+
+    Engine& engineInstance = Engine::GetInstance();
+
+
+
+    switch (message)
+    {
+    case WM_CREATE:
+    {
+        
+    }
+    return 0;
+
     case WM_KEYDOWN:
         if (wParam == VK_ESCAPE) {
             if (MessageBox(0, L"Êtes-vous sûr de vouloir quitter ?", L"Vraiment ?", MB_YESNO | MB_ICONQUESTION) == IDYES)
                 DestroyWindow(hwnd);
+        }
+        return 0;
+
+    case WM_KEYUP:
+        return 0;
+
+    case WM_PAINT:
+        if (engineInstance.isRenderable) {
+            //PRINT("Paint");
+            engineInstance.m_pTriangle->Render(engineInstance.m_pRenderer);
         }
         return 0;
 
@@ -14,8 +40,10 @@ LRESULT CALLBACK Window::StaticWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARA
         return 0;
     }
 
-    return DefWindowProc(hwnd, msg, wParam, lParam);
+
+    return DefWindowProc(hwnd, message, wParam, lParam);
 }
+
 
 bool Window::Init(HINSTANCE hInstance, int nShowCmd) {
     m_wndProps.hwnd = nullptr;
@@ -36,7 +64,7 @@ bool Window::Init(HINSTANCE hInstance, int nShowCmd) {
     WNDCLASSEX wc;
     wc.cbSize = sizeof(WNDCLASSEX);
     wc.style = CS_HREDRAW | CS_VREDRAW;
-    wc.lpfnWndProc = &Window::StaticWndProc;
+    wc.lpfnWndProc = &Window::WndProc;
     wc.cbClsExtra = NULL;
     wc.cbWndExtra = NULL;
     wc.hInstance = hInstance;

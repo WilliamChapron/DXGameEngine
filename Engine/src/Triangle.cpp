@@ -3,65 +3,45 @@
 #include "core/Defines.h"
 #include <stdexcept>
 
-HRESULT CompileShaderFromFile(const wchar_t* filePath, const char* entryPoint, const char* shaderModel, ID3DBlob** blob)
-{
-    DWORD shaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
-
-#if defined(DEBUG) || defined(_DEBUG)
-    shaderFlags |= D3DCOMPILE_DEBUG;
-#endif
-
-    ID3DBlob* errorBlob = nullptr;
-    HRESULT hr = D3DCompileFromFile(filePath, nullptr, nullptr, entryPoint, shaderModel, shaderFlags, 0, blob, &errorBlob);
-
-    if (FAILED(hr))
-    {
-        if (errorBlob)
-        {
-            OutputDebugStringA(static_cast<const char*>(errorBlob->GetBufferPointer()));
-            errorBlob->Release();
-        }
-        return hr;
-    }
-
-    if (errorBlob)
-        errorBlob->Release();
-
-
-    PRINT("OK");
-
-    return S_OK;
-}
+#include <DirectXColors.h> 
 
 
 
-Triangle::Triangle() : vertexBuffer(nullptr), vertexShaderBlob(nullptr), pixelShaderBlob(nullptr) {
-    
+
+
+
+
+Triangle::Triangle() : vertexBuffer(nullptr){
+
 }
 
 Triangle::~Triangle() {
-    
+
+    if (vertexBuffer != nullptr) {
+        vertexBuffer->Release();
+        vertexBuffer = nullptr;
+    }
+
+    PRINT("Triangle destruction complete");
 }
 
 void Triangle::Initialize(Renderer* renderer) {
+
     // Vertices du triangle
     Vertex triangleVertices[] = {
-        {XMFLOAT3(0.0f, 0.5f, 0.0f)},
-        {XMFLOAT3(0.5f, -0.5f, 0.0f)},
-        {XMFLOAT3(-0.5f, -0.5f, 0.0f)}
+        { { 0.0f, 0.25f, 0.0f }, { 1.0f, 0.0f, 0.0f, 1.0f } },
+        { { 0.25f, -0.25f, 0.0f }, { 0.0f, 1.0f, 0.0f, 1.0f } },
+        { { -0.25f, -0.25f, 0.0f }, { 0.0f, 0.0f, 1.0f, 1.0f } }
     };
 
 
-
-    // Charger les shaders spécifiques au Triangle
-    CompileShaderFromFile(L"res/shader/VS.hlsl", "main", "vs_5_0", &vertexShaderBlob);
-    CompileShaderFromFile(L"res/shader/PS.hlsl", "main", "ps_5_0", &pixelShaderBlob);
+    PRINT("Initializing Triangle...");
 
     // Création du vertex buffer
     CD3DX12_HEAP_PROPERTIES heapProps(D3D12_HEAP_TYPE_UPLOAD);
     CD3DX12_RESOURCE_DESC bufferDesc = CD3DX12_RESOURCE_DESC::Buffer(sizeof(triangleVertices));
 
-    renderer->pDevice->CreateCommittedResource(
+    HRESULT hr = renderer->pDevice->CreateCommittedResource(
         &heapProps,
         D3D12_HEAP_FLAG_NONE,
         &bufferDesc,
@@ -69,12 +49,15 @@ void Triangle::Initialize(Renderer* renderer) {
         nullptr,
         IID_PPV_ARGS(&vertexBuffer)
     );
+    ASSERT_FAILED(hr);
 
     UINT8* pVertexDataBegin;
-
     CD3DX12_RANGE readRange(0, 0);
 
-    vertexBuffer->Map(0, &readRange, reinterpret_cast<void**>(&pVertexDataBegin));
+
+
+    hr = vertexBuffer->Map(0, &readRange, reinterpret_cast<void**>(&pVertexDataBegin));
+    ASSERT_FAILED(hr);
 
     memcpy(pVertexDataBegin, triangleVertices, sizeof(triangleVertices));
 
@@ -83,71 +66,117 @@ void Triangle::Initialize(Renderer* renderer) {
     vertexBufferView.BufferLocation = vertexBuffer->GetGPUVirtualAddress();
     vertexBufferView.StrideInBytes = sizeof(Vertex);
     vertexBufferView.SizeInBytes = sizeof(triangleVertices);
+
+    PRINT("Triangle initialization complete");
 }
 
 void Triangle::WaitForPreviousFrame(Renderer* renderer)
 {
+    PRINT("Waiting for previous frame...");
+
     // Signal and increment the fence value.
-    const UINT64 fence = renderer->fenceValue;
-    renderer->pCommandQueue->Signal(renderer->pFence, fence);
+    HRESULT hr = renderer->pCommandQueue->Signal(renderer->pFence.Get(), renderer->fenceValue);
+    ASSERT_FAILED(hr);
+
     renderer->fenceValue++;
 
     // Wait until the previous frame is finished.
-    if (renderer->pFence->GetCompletedValue() < fence)
+    if (renderer->pFence->GetCompletedValue() < renderer->fenceValue)
     {
-        renderer->pFence->SetEventOnCompletion(fence, renderer->pFence);
-        WaitForSingleObject(renderer->pFence, INFINITE);
+        //hr = renderer->pFence->SetEventOnCompletion(renderer->fenceValue, renderer->fenceEvent);
+        //ASSERT_FAILED(hr);
+
+        //WaitForSingleObject(renderer->pFence.Get(), INFINITE); //#ASK Attendre Event Handle ou fence? marche pas #ASK Porblème fence Synchro
+
+        //HANDLE eventHandle = CreateEventEx(nullptr, nullptr, false, EVENT_ALL_ACCESS);
+        //renderer->pFence->SetEventOnCompletion(renderer->fenceValue, eventHandle);
+        //WaitForSingleObject(eventHandle, INFINITE);
     }
 
     renderer->frameIndex = (renderer->frameIndex + 1) % renderer->FRAME_COUNT;
+    PRINT("frameIndex");
+    PRINT(renderer->frameIndex);
+    //renderer->frameIndex = renderer->pSwapChain->GetCurrentBackBufferIndex();
+
+    PRINT("Previous frame completed");
 }
+
+
 
 void Triangle::PopulateCommandList(Renderer* renderer)
 {
-    renderer->pCommandList->SetGraphicsRootSignature(renderer->pRootSignature);
-    renderer->pCommandList->RSSetViewports(1, &m_viewport);
-    renderer->pCommandList->RSSetScissorRects(1, &m_scissorRect);
+    HRESULT hr;
+    PRINT("Populating command list...");
+
+    hr = renderer->pCommandAllocator->Reset();
+    ASSERT_FAILED(hr);
+
+    hr = renderer->pCommandList->Reset(renderer->pCommandAllocator.Get(), renderer->pPipelineState.Get());
+    ASSERT_FAILED(hr);
+
+    renderer->pCommandList->SetGraphicsRootSignature(renderer->pRootSignature.Get());
+    renderer->pCommandList->RSSetViewports(1, renderer->pViewport);
+    renderer->pCommandList->RSSetScissorRects(1, renderer->pScissorRect);
 
     CD3DX12_RESOURCE_BARRIER transitionBarrier = CD3DX12_RESOURCE_BARRIER::Transition(
-        renderer->pRenderTargets[renderer->frameIndex],
+        renderer->pRenderTargets[renderer->frameIndex].Get(),
         D3D12_RESOURCE_STATE_PRESENT,
         D3D12_RESOURCE_STATE_RENDER_TARGET);
-
     renderer->pCommandList->ResourceBarrier(1, &transitionBarrier);
 
-    CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(renderer->pDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), renderer->frameIndex, renderer->pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV));
+
+    CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(
+        renderer->pDescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
+        renderer->frameIndex,
+        renderer->rtvDescriptorSize);
+
     renderer->pCommandList->OMSetRenderTargets(1, &rtvHandle, FALSE, nullptr);
 
     // Record commands.
-    const float clearColor[] = { 0.0f, 0.2f, 0.4f, 1.0f };
+    const float clearColor[] = { 0.3f, 0.8f, 0.1f, 1.0f };
     renderer->pCommandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
     renderer->pCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     renderer->pCommandList->IASetVertexBuffers(0, 1, &vertexBufferView);
 
     // Ajoutez la commande DrawInstanced pour dessiner le triangle
+    PRINT("Draw Success-->");
     renderer->pCommandList->DrawInstanced(3, 1, 0, 0);
+    PRINT("Draw Success<--");
 
     CD3DX12_RESOURCE_BARRIER presentBarrier = CD3DX12_RESOURCE_BARRIER::Transition(
-        renderer->pRenderTargets[renderer->frameIndex],
+        renderer->pRenderTargets[renderer->frameIndex].Get(),
         D3D12_RESOURCE_STATE_RENDER_TARGET,
         D3D12_RESOURCE_STATE_PRESENT);
 
     renderer->pCommandList->ResourceBarrier(1, &presentBarrier);
 
-    renderer->pCommandList->Close();
+    hr = renderer->pCommandList->Close();  // Assurez-vous que Close est appelé même en cas d'erreur
+    ASSERT_FAILED(hr);
+
+    PRINT("Command list populated");
 }
 
-void Triangle::Draw(Renderer* renderer)
+
+void Triangle::Render(Renderer* renderer)
 {
+    HRESULT hr;
+
+    PRINT("Rendering...");
 
     PopulateCommandList(renderer);
 
-    ID3D12CommandList* ppCommandLists[] = { renderer->pCommandList };
+    ID3D12CommandList* ppCommandLists[] = { renderer->pCommandList.Get()};
     renderer->pCommandQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
 
     // Présentez la frame.
-    renderer->pSwapChain->Present(1, 0);
+    hr = renderer->pSwapChain->Present(1, 0);
+    ASSERT_FAILED(hr);
+
 
     WaitForPreviousFrame(renderer);
-}
 
+    PRINT("Rendering complete");
+    renderCallNum++;
+    PRINT(renderCallNum++);
+
+}

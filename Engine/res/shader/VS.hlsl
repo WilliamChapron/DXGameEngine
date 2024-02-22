@@ -1,16 +1,16 @@
-struct VertexInput
-{
-    float3 position : POSITION;
-};
-
-struct VertexOutput
+// Vertex Shader
+struct PSInput
 {
     float4 position : SV_POSITION;
+    float4 color : COLOR;
 };
 
-VertexOutput main(VertexInput input)
+PSInput VSMain(float4 position : POSITION, float4 color : COLOR)
 {
-    VertexOutput output;
-    output.position = float4(input.position, 1.0f);
-    return output;
+    PSInput result;
+
+    result.position = position;
+    result.color = color;
+
+    return result;
 }

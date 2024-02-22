@@ -2,6 +2,7 @@
 #include "../Triangle.h"
 #include "../include.h"   
 #include "../renderer/Renderer.h"   
+#include "Defines.h"   
 
 using namespace DirectX;
 
@@ -35,38 +36,12 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
 
 
     m_pRenderer->InitializeDirectX12Instances();
+
     m_pTriangle = new Triangle;
     m_pTriangle->Initialize(m_pRenderer);
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    //// Création d'un vecteur représentant la position initiale
-    //XMVECTOR initialPosition = XMVectorSet(1.0f, 2.0f, 3.0f, 1.0f);
-
-    //// Affichage de la position initiale
-    //std::cout << "Position initiale : (" << XMVectorGetX(initialPosition) << ", " << XMVectorGetY(initialPosition) << ", " << XMVectorGetZ(initialPosition) << ")\n";
-
-    //// Translation du vecteur
-    //XMVECTOR newPosition = TranslateVector(initialPosition, 1.0f, 2.0f, -3.0f);
-
-    //// Affichage de la nouvelle position
-    //std::cout << "Nouvelle position : (" << XMVectorGetX(newPosition) << ", " << XMVectorGetY(newPosition) << ", " << XMVectorGetZ(newPosition) << ")\n";
-
-    // Lancer la boucle principale
+    isRenderable = true;
     Run();
 }
 
@@ -85,13 +60,14 @@ void Engine::Run() {
     ZeroMemory(&msg, sizeof(MSG));
 
     while (true) {
+        //PRINT("Hello");
         if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
             if (msg.message == WM_QUIT)
                 break;
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
-        m_pTriangle->Draw(m_pRenderer);
+        //m_pTriangle->Render(m_pRenderer);
         //else {
         //    Sleep(1000);
         //    std::cout << "sdsd" << std::endl;

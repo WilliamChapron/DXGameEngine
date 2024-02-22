@@ -18,16 +18,18 @@ public:
     void Update();
 
     static Engine& GetInstance() {
-        static Engine instance;  // Instance unique créée statiquement
+        static Engine instance;  
         return instance;
     }
+
+    Triangle* m_pTriangle;
+    Renderer* m_pRenderer;
+
+    bool isRenderable = false;
 
 private:
     Engine() = default;
 
-    Triangle* m_pTriangle;
-
-    Renderer* m_pRenderer = nullptr;
     HINSTANCE m_hInstance;
     int m_nShowCmd;
     FILE* m_pConsole;

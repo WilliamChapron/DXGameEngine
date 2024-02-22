@@ -4,13 +4,15 @@
 #include "Resources.h"
 #include <iostream>
 #include <vector>
+#include <wrl/client.h>
 
 using namespace DirectX;
+using Microsoft::WRL::ComPtr;
 
 class Renderer {
 public:
     Renderer();
-    //~Renderer();
+    ~Renderer();
 
     void InitializeDirectX12Instances();
     void CreateFactory();
@@ -24,29 +26,36 @@ public:
     void CreatePipelineState();
     void CreateRootSignature();
 
-    //void Render();  // Ajoutez cette fonction pour rendre votre triangle
+    static const UINT FRAME_COUNT = 2;
+    int frameIndex;
+    HANDLE fenceEvent;
+    UINT64 fenceValue;
 
-    const int FRAME_COUNT = 2;
-    int frameIndex = 0;
-    HANDLE fenceEvent = nullptr;
-    UINT64 fenceValue = 0;
+    ComPtr<IDXGIAdapter1> pAdapter;
+    ComPtr<ID3D12Device> pDevice;
+    ComPtr<IDXGIFactory4> pFactory;
+    ComPtr<IDXGISwapChain> pSwapChain;
+    ComPtr<ID3D12CommandQueue> pCommandQueue;
+    ComPtr<ID3D12CommandAllocator> pCommandAllocator;
+    ComPtr<ID3D12GraphicsCommandList> pCommandList;
+    ComPtr<ID3D12Fence> pFence;
+    ComPtr<ID3D12DescriptorHeap> pDescriptorHeap;
+    UINT rtvDescriptorSize;
 
-    IDXGIAdapter1* pAdapter;
-    ID3D12Device* pDevice = nullptr;
-    IDXGIFactory4* pFactory = nullptr;
-    IDXGISwapChain* pSwapChain = nullptr;
-    ID3D12CommandQueue* pCommandQueue = nullptr;
-    ID3D12CommandAllocator* pCommandAllocator = nullptr;
-    ID3D12GraphicsCommandList* pCommandList = nullptr;
-    ID3D12Fence* pFence = nullptr;
-    ID3D12DescriptorHeap* pDescriptorHeap = nullptr;
+    ComPtr<ID3D12Resource> pRenderTargets[FRAME_COUNT];
 
-    ID3D12Resource* pRenderTargets[2];
+    D3D12_VIEWPORT* pViewport;
+    D3D12_RECT* pScissorRect;
 
-    // 
+    ComPtr<ID3DBlob> vertexShaderBlob;
+    ComPtr<ID3DBlob> pixelShaderBlob;
 
-    ID3D12PipelineState* pPipelineState;
-    ID3D12RootSignature* pRootSignature;
+    ComPtr<ID3D12PipelineState> pPipelineState;
+    ComPtr<ID3D12RootSignature> pRootSignature;
+
+    ComPtr<ID3D12Debug> debugController;
+    UINT dxgiFactoryFlags = 0;
+
 
 
 
