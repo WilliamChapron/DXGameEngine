@@ -29,9 +29,9 @@ void Triangle::Initialize(Renderer* renderer) {
 
     // Vertices du triangle
     Vertex triangleVertices[] = {
-        { { 0.0f, 0.25f, 0.0f }, { 1.0f, 0.0f, 0.0f, 1.0f } },
-        { { 0.25f, -0.25f, 0.0f }, { 0.0f, 1.0f, 0.0f, 1.0f } },
-        { { -0.25f, -0.25f, 0.0f }, { 0.0f, 0.0f, 1.0f, 1.0f } }
+        { { 0.0f, 0.45f, 0.0f, 1.0f }, { 1.0f, 0.0f, 0.0f, 1.0f } },
+        { { 0.25f, -0.25f, 0.0f, 1.0f }, { 0.0f, 1.0f, 0.0f, 1.0f } },
+        { { -0.25f, -0.25f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f, 1.0f } }
     };
 
 
@@ -75,10 +75,12 @@ void Triangle::WaitForPreviousFrame(Renderer* renderer)
     PRINT("Waiting for previous frame...");
 
     // Signal and increment the fence value.
-    HRESULT hr = renderer->pCommandQueue->Signal(renderer->pFence.Get(), renderer->fenceValue);
-    ASSERT_FAILED(hr);
+
 
     renderer->fenceValue++;
+
+    HRESULT hr = renderer->pCommandQueue->Signal(renderer->pFence.Get(), renderer->fenceValue);
+    ASSERT_FAILED(hr);
 
     // Wait until the previous frame is finished.
     if (renderer->pFence->GetCompletedValue() < renderer->fenceValue)
@@ -88,12 +90,21 @@ void Triangle::WaitForPreviousFrame(Renderer* renderer)
 
         //WaitForSingleObject(renderer->pFence.Get(), INFINITE); //#ASK Attendre Event Handle ou fence? marche pas #ASK Porblème fence Synchro
 
-        //HANDLE eventHandle = CreateEventEx(nullptr, nullptr, false, EVENT_ALL_ACCESS);
-        //renderer->pFence->SetEventOnCompletion(renderer->fenceValue, eventHandle);
-        //WaitForSingleObject(eventHandle, INFINITE);
+        //Check if the GPU has completed all commands associated with the previous fence value
+        HANDLE eventHandle = CreateEventEx(nullptr, NULL, false, EVENT_ALL_ACCESS);
+
+        //Set the event to the current fence value
+        hr = renderer->pFence->SetEventOnCompletion(renderer->fenceValue, eventHandle);
+        ASSERT_FAILED(hr);
+
+        //Wait for the GPU to complete associated commands
+        WaitForSingleObject(eventHandle, INFINITE);
+
+        //Close the handle to the event
+        CloseHandle(eventHandle);
     }
 
-    renderer->frameIndex = (renderer->frameIndex + 1) % renderer->FRAME_COUNT;
+
     PRINT("frameIndex");
     PRINT(renderer->frameIndex);
     //renderer->frameIndex = renderer->pSwapChain->GetCurrentBackBufferIndex();
@@ -122,6 +133,7 @@ void Triangle::PopulateCommandList(Renderer* renderer)
         renderer->pRenderTargets[renderer->frameIndex].Get(),
         D3D12_RESOURCE_STATE_PRESENT,
         D3D12_RESOURCE_STATE_RENDER_TARGET);
+
     renderer->pCommandList->ResourceBarrier(1, &transitionBarrier);
 
 
@@ -170,12 +182,14 @@ void Triangle::Render(Renderer* renderer)
 
     // Présentez la frame.
     hr = renderer->pSwapChain->Present(1, 0);
+    renderer->frameIndex = (renderer->frameIndex + 1) % renderer->FRAME_COUNT;
     ASSERT_FAILED(hr);
 
 
     WaitForPreviousFrame(renderer);
 
     PRINT("Rendering complete");
+
     renderCallNum++;
     PRINT(renderCallNum++);
 

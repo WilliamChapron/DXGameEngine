@@ -29,10 +29,6 @@ LRESULT CALLBACK Window::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
         return 0;
 
     case WM_PAINT:
-        if (engineInstance.isRenderable) {
-            //PRINT("Paint");
-            engineInstance.m_pTriangle->Render(engineInstance.m_pRenderer);
-        }
         return 0;
 
     case WM_DESTROY:

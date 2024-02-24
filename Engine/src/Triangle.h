@@ -19,7 +19,7 @@ public:
 private:
     struct Vertex
     {
-        XMFLOAT3 Pos;
+        XMFLOAT4 Pos;
         XMFLOAT4 Color;
     };
 

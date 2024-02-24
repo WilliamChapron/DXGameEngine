@@ -67,6 +67,10 @@ void Engine::Run() {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
+        if (isRenderable) {
+            //PRINT("Paint");
+            m_pTriangle->Render(m_pRenderer);
+        }
         //m_pTriangle->Render(m_pRenderer);
         //else {
         //    Sleep(1000);

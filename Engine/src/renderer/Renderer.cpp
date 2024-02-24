@@ -99,7 +99,7 @@ void Renderer::CreateSwapChain() {
     DXGI_MODE_DESC backBufferDesc = {}; // this is to describe our display mode
     backBufferDesc.Width = Window::GetInstance().getWndProps().width; // buffer width
     backBufferDesc.Height = Window::GetInstance().getWndProps().height; // buffer height
-    backBufferDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT; // format of the buffer (rgba 32 bits, 8 bits for each channel)
+    backBufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // format of the buffer (rgba 32 bits, 8 bits for each channel)
 
     // describe our multi-sampling. We are not multi-sampling, so we set the count to 1 (we need at least one sample of course)
     DXGI_SAMPLE_DESC sampleDesc = {};
@@ -185,7 +185,7 @@ void Renderer::CreateFence() {
     hr = pDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&pFence));
     ASSERT_FAILED(hr);
 
-    fenceValue = 1;
+    fenceValue = 0;
 
     // Create fence event
     fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
@@ -283,7 +283,7 @@ void Renderer::CreatePipelineState() {
 
     D3D12_INPUT_ELEMENT_DESC inputElementDescs[] =
     {
-        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+        { "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
         { "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
     };
 
@@ -306,21 +306,19 @@ void Renderer::CreatePipelineState() {
     //layout[1].InstanceDataStepRate = 0;
 
 
-    D3D12_RASTERIZER_DESC rasterizerStateDesc;
-    ZeroMemory(&rasterizerStateDesc, sizeof(D3D12_RASTERIZER_DESC));
-
+    D3D12_RASTERIZER_DESC rasterizerStateDesc {};
     rasterizerStateDesc.FillMode = D3D12_FILL_MODE_SOLID;   // Remplissage solide
-    rasterizerStateDesc.CullMode = D3D12_CULL_MODE_FRONT;   // Culling du côté avant
+    rasterizerStateDesc.CullMode = D3D12_CULL_MODE_FRONT;    // Désactivation du culling
     rasterizerStateDesc.FrontCounterClockwise = TRUE;       // Les triangles sont définis dans le sens inverse des aiguilles d'une montre (orientation des sommets)
     rasterizerStateDesc.DepthBias = 0;
     rasterizerStateDesc.DepthBiasClamp = 0.0f;
     rasterizerStateDesc.SlopeScaledDepthBias = 0;
-    rasterizerStateDesc.DepthClipEnable = TRUE;             // Activation du test de profondeur
+    rasterizerStateDesc.DepthClipEnable = FALSE;             // Activation du test de profondeur
 
     rasterizerStateDesc.MultisampleEnable = FALSE;          // Désactivation de l'échantillonnage multiple
     rasterizerStateDesc.AntialiasedLineEnable = FALSE;
 
-    D3D12_BLEND_DESC blendDesc{};
+    //D3D12_BLEND_DESC blendDesc {};
 
     D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc; // a structure to define a pso
     ZeroMemory(&psoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC)); // IMPORTANT ?
@@ -329,13 +327,14 @@ void Renderer::CreatePipelineState() {
     psoDesc.VS = { vertexShaderBlob->GetBufferPointer(), vertexShaderBlob->GetBufferSize() };
     psoDesc.PS = { pixelShaderBlob->GetBufferPointer(), pixelShaderBlob->GetBufferSize() }; // Use the filled bytecode structure
     psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE; // type of topology we are drawing
-    psoDesc.RTVFormats[0] = DXGI_FORMAT_R16G16B16A16_FLOAT; // format of the render target
-    psoDesc.SampleMask = 0xffffffff; // sample mask has to do with multi-sampling. 0xffffffff means point sampling is done
-    psoDesc.RasterizerState = rasterizerStateDesc; // a default rasterizer state.
-    psoDesc.BlendState = blendDesc; // a default blent state.
-    psoDesc.NumRenderTargets = 2; // we are only binding one render target
+    psoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM; // format of the render target
+    psoDesc.RasterizerState = rasterizerStateDesc;
+    psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
+    psoDesc.DepthStencilState.DepthEnable = FALSE;
+    psoDesc.DepthStencilState.StencilEnable = FALSE;
+    psoDesc.SampleMask = 0xffffffff;
+    psoDesc.NumRenderTargets = 1;
     psoDesc.SampleDesc.Count = 1;
-    psoDesc.SampleDesc.Quality = 0;
 
     hr = pDevice->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&pPipelineState));
     ASSERT_FAILED(hr);
