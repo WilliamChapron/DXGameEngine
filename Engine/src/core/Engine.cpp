@@ -1,21 +1,23 @@
 #include "Engine.h"
 #include "../Triangle.h"
 #include "../include.h"   
-#include "../renderer/Renderer.h"   
+#include "../renderer/Graphics.h"   
 #include "Defines.h"   
+#include "Window.h"  
+
 
 using namespace DirectX;
 
 
 
 
-XMVECTOR TranslateVector(XMVECTOR vector, float deltaX, float deltaY, float deltaZ) {
-    // Création de la matrice de translation
-    XMMATRIX translationMatrix = XMMatrixTranslation(deltaX, deltaY, deltaZ);
-
-    // Application de la translation au vecteur
-    return XMVector3Transform(vector, translationMatrix);
-}
+//XMVECTOR TranslateVector(XMVECTOR vector, float deltaX, float deltaY, float deltaZ) {
+//    // Création de la matrice de translation
+//    XMMATRIX translationMatrix = XMMatrixTranslation(deltaX, deltaY, deltaZ);
+//
+//    // Application de la translation au vecteur
+//    return XMVector3Transform(vector, translationMatrix);
+//}
 
 
 void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
@@ -29,10 +31,10 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
         PostQuitMessage(1);
     }
 
-    Window::GetInstance().Init(hInstance, nShowCmd);
+    m_pWindow = new Window(hInstance, nShowCmd);
 
 
-    m_pRenderer = new Renderer();
+    m_pRenderer = new Renderer(m_pWindow);
 
 
     m_pRenderer->InitializeDirectX12Instances();

@@ -2,12 +2,15 @@
 
 #pragma once
 
-class Renderer;
-class Triangle;
 
 #include <Windows.h>
 #include <iostream>
-#include "Window.h"  // Ajout de l'inclusion de l'en-tête de la classe Window
+
+class Renderer;
+class Triangle;
+class Window;
+
+
 
 class Engine {
 public:
@@ -30,6 +33,7 @@ public:
 private:
     Engine() = default;
 
+    Window* m_pWindow = nullptr;
     HINSTANCE m_hInstance;
     int m_nShowCmd;
     FILE* m_pConsole;

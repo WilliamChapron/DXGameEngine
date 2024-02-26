@@ -3,12 +3,77 @@
 #include "../Triangle.h"
 #include "Defines.h"   
 
+Window::Window(HINSTANCE hInstance, int nShowCmd) {
+
+
+    /*
+    Store Window Data
+    */
+
+    m_wndProps.hwnd = nullptr;
+    m_wndProps.windowName = L"GameEngineDX12App";
+    m_wndProps.windowTitle = L"GameEngineDX12";
+    m_wndProps.width = 1200;
+    m_wndProps.height = 900;
+    m_wndProps.fullScreen = false;
+
+    /*
+    Set up and Create Window
+    */
+
+    if (m_wndProps.fullScreen) {
+        HMONITOR hmon = MonitorFromWindow(m_wndProps.hwnd, MONITOR_DEFAULTTONEAREST);
+        MONITORINFO mi = { sizeof(mi) };
+        GetMonitorInfo(hmon, &mi);
+        m_wndProps.width = mi.rcMonitor.right - mi.rcMonitor.left;
+        m_wndProps.height = mi.rcMonitor.bottom - mi.rcMonitor.top;
+    }
+
+    WNDCLASSEX wc;
+    wc.cbSize = sizeof(WNDCLASSEX);
+    wc.style = CS_HREDRAW | CS_VREDRAW;
+    wc.lpfnWndProc = &Window::WndProc;
+    wc.cbClsExtra = NULL;
+    wc.cbWndExtra = NULL;
+    wc.hInstance = hInstance;
+    wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+    wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+    wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 2);
+    wc.lpszMenuName = NULL;
+    wc.lpszClassName = m_wndProps.windowName;
+    wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
+
+    if (!RegisterClassEx(&wc)) {
+        MessageBox(NULL, L"Erreur d'enregistrement de la classe", L"Erreur", MB_OK | MB_ICONERROR);
+        return;
+    }
+
+    m_wndProps.hwnd = CreateWindowEx(NULL, m_wndProps.windowName, m_wndProps.windowTitle, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 1200, 900, NULL, NULL, hInstance, NULL);
+
+    if (!m_wndProps.hwnd) {
+        MessageBox(NULL, L"Erreur de création de la fenêtre", L"Erreur", MB_OK | MB_ICONERROR);
+        return;
+    }
+
+    if (m_wndProps.fullScreen) {
+        SetWindowLong(m_wndProps.hwnd, GWL_STYLE, 0);
+    }
+
+    /*
+    Show and Update one time window
+    */
+
+    ShowWindow(m_wndProps.hwnd, SW_SHOWNORMAL);
+    UpdateWindow(m_wndProps.hwnd);
+}
+
 LRESULT CALLBACK Window::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+    /*
+    Switch event Window
+    */
 
     Engine& engineInstance = Engine::GetInstance();
-
-
 
     switch (message)
     {
@@ -40,56 +105,4 @@ LRESULT CALLBACK Window::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
     return DefWindowProc(hwnd, message, wParam, lParam);
 }
 
-
-bool Window::Init(HINSTANCE hInstance, int nShowCmd) {
-    m_wndProps.hwnd = nullptr;
-    m_wndProps.windowName = L"GameEngineDX12App";
-    m_wndProps.windowTitle = L"GameEngineDX12";
-    m_wndProps.width = 1200;
-    m_wndProps.height = 900;
-    m_wndProps.fullScreen = false;
-
-    if (m_wndProps.fullScreen) {
-        HMONITOR hmon = MonitorFromWindow(m_wndProps.hwnd, MONITOR_DEFAULTTONEAREST);
-        MONITORINFO mi = { sizeof(mi) };
-        GetMonitorInfo(hmon, &mi);
-        m_wndProps.width = mi.rcMonitor.right - mi.rcMonitor.left;
-        m_wndProps.height = mi.rcMonitor.bottom - mi.rcMonitor.top;
-    }
-
-    WNDCLASSEX wc;
-    wc.cbSize = sizeof(WNDCLASSEX);
-    wc.style = CS_HREDRAW | CS_VREDRAW;
-    wc.lpfnWndProc = &Window::WndProc;
-    wc.cbClsExtra = NULL;
-    wc.cbWndExtra = NULL;
-    wc.hInstance = hInstance;
-    wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
-    wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-    wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 2);
-    wc.lpszMenuName = NULL;
-    wc.lpszClassName = m_wndProps.windowName;
-    wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
-
-    if (!RegisterClassEx(&wc)) {
-        MessageBox(NULL, L"Erreur d'enregistrement de la classe", L"Erreur", MB_OK | MB_ICONERROR);
-        return false;
-    }
-
-    m_wndProps.hwnd = CreateWindowEx(NULL, m_wndProps.windowName, m_wndProps.windowTitle,WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 1200, 900, NULL, NULL, hInstance, NULL);
-
-    if (!m_wndProps.hwnd) {
-        MessageBox(NULL, L"Erreur de création de la fenêtre", L"Erreur", MB_OK | MB_ICONERROR);
-        return false;
-    }
-
-    if (m_wndProps.fullScreen) {
-        SetWindowLong(m_wndProps.hwnd, GWL_STYLE, 0);
-    }
-
-    ShowWindow(m_wndProps.hwnd, SW_SHOWNORMAL);
-    UpdateWindow(m_wndProps.hwnd);
-
-    return true;
-}
 

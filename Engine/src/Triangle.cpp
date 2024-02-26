@@ -1,5 +1,5 @@
 #include "Triangle.h"
-#include "renderer/Renderer.h"
+#include "renderer/Graphics.h"
 #include "core/Defines.h"
 #include <stdexcept>
 
@@ -25,15 +25,27 @@ Triangle::~Triangle() {
     PRINT("Triangle destruction complete");
 }
 
+
+
 void Triangle::Initialize(Renderer* renderer) {
 
     // Vertices du triangle
     Vertex triangleVertices[] = {
-        { { 0.0f, 0.45f, 0.0f, 1.0f }, { 1.0f, 0.0f, 0.0f, 1.0f } },
-        { { 0.25f, -0.25f, 0.0f, 1.0f }, { 0.0f, 1.0f, 0.0f, 1.0f } },
-        { { -0.25f, -0.25f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f, 1.0f } }
+        { { 0.0f, 0.45f, 0.0f}, { 1.0f, 0.0f, 0.0f, 1.0f } },
+        { { 0.25f, -0.25f, 0.0f }, { 0.0f, 1.0f, 0.0f, 1.0f } },
+        { { -0.25f, -0.25f, 0.0f }, { 0.0f, 0.0f, 1.0f, 1.0f } }
     };
 
+    //Vertex triangleVertices[] = {
+    //    { { -0.5f, -0.5f, -0.5f, 1.0f }, { 1.0f, 0.0f, 0.0f, 1.0f } },
+    //    { { -0.5f, -0.5f,  0.5f, 1.0f }, { 0.0f, 1.0f, 0.0f, 1.0f } },
+    //    { { -0.5f,  0.5f, -0.5f, 1.0f }, { 0.0f, 0.0f, 1.0f, 1.0f } },
+    //    { { -0.5f,  0.5f,  0.5f, 1.0f }, { 0.0f, 1.0f, 1.0f, 1.0f } },
+    //    { {  0.5f, -0.5f, -0.5f, 1.0f }, { 1.0f, 0.0f, 1.0f, 1.0f } },
+    //    { {  0.5f, -0.5f,  0.5f, 1.0f }, { 1.0f, 1.0f, 0.0f, 1.0f } },
+    //    { {  0.5f,  0.5f, -0.5f, 1.0f }, { 1.0f, 1.0f, 1.0f, 1.0f } },
+    //    { {  0.5f,  0.5f,  0.5f, 1.0f }, { 0.5f, 0.5f, 0.5f, 1.0f } },
+    //};
 
     PRINT("Initializing Triangle...");
 
@@ -41,7 +53,7 @@ void Triangle::Initialize(Renderer* renderer) {
     CD3DX12_HEAP_PROPERTIES heapProps(D3D12_HEAP_TYPE_UPLOAD);
     CD3DX12_RESOURCE_DESC bufferDesc = CD3DX12_RESOURCE_DESC::Buffer(sizeof(triangleVertices));
 
-    HRESULT hr = renderer->pDevice->CreateCommittedResource(
+    HRESULT hr = renderer->m_pDevice->CreateCommittedResource(
         &heapProps,
         D3D12_HEAP_FLAG_NONE,
         &bufferDesc,
@@ -67,6 +79,34 @@ void Triangle::Initialize(Renderer* renderer) {
     vertexBufferView.StrideInBytes = sizeof(Vertex);
     vertexBufferView.SizeInBytes = sizeof(triangleVertices);
 
+
+    // Init Constant buffer 
+
+    CD3DX12_HEAP_PROPERTIES cbHeapProps(D3D12_HEAP_TYPE_UPLOAD);
+    CD3DX12_RESOURCE_DESC cbDesc = CD3DX12_RESOURCE_DESC::Buffer((sizeof(m_worldViewProj) + 255) & ~255);
+    hr = renderer->m_pDevice->CreateCommittedResource(
+        &cbHeapProps,
+        D3D12_HEAP_FLAG_NONE,
+        &cbDesc,
+        D3D12_RESOURCE_STATE_GENERIC_READ,
+        nullptr,
+        IID_PPV_ARGS(&m_constantBuffer)
+    );
+    ASSERT_FAILED(hr);
+
+    // Créer la vue de tampon de constantes
+    D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc = {};
+    cbvDesc.BufferLocation = m_constantBuffer->GetGPUVirtualAddress();
+    cbvDesc.SizeInBytes = (sizeof(m_worldViewProj) + 255) & ~255; // Alignement sur 256 octets
+    renderer->m_pDevice->CreateConstantBufferView(&cbvDesc, renderer->m_pCbvHeap->GetCPUDescriptorHandleForHeapStart());
+
+    // Mappage initial du tampon de constantes
+    hr = m_constantBuffer->Map(0, nullptr, reinterpret_cast<void**>(&m_mappedConstantBuffer));
+    ASSERT_FAILED(hr);
+
+    // Initialisation des données du tampon de constantes
+    ZeroMemory(m_constantBuffer, sizeof(m_constantBuffer));
+
     PRINT("Triangle initialization complete");
 }
 
@@ -77,24 +117,19 @@ void Triangle::WaitForPreviousFrame(Renderer* renderer)
     // Signal and increment the fence value.
 
 
-    renderer->fenceValue++;
+    renderer->m_fenceValue++;
 
-    HRESULT hr = renderer->pCommandQueue->Signal(renderer->pFence.Get(), renderer->fenceValue);
+    HRESULT hr = renderer->m_pCommandQueue->Signal(renderer->m_pFence.Get(), renderer->m_fenceValue);
     ASSERT_FAILED(hr);
 
     // Wait until the previous frame is finished.
-    if (renderer->pFence->GetCompletedValue() < renderer->fenceValue)
+    if (renderer->m_pFence->GetCompletedValue() < renderer->m_fenceValue)
     {
-        //hr = renderer->pFence->SetEventOnCompletion(renderer->fenceValue, renderer->fenceEvent);
-        //ASSERT_FAILED(hr);
-
-        //WaitForSingleObject(renderer->pFence.Get(), INFINITE); //#ASK Attendre Event Handle ou fence? marche pas #ASK Porblème fence Synchro
-
         //Check if the GPU has completed all commands associated with the previous fence value
         HANDLE eventHandle = CreateEventEx(nullptr, NULL, false, EVENT_ALL_ACCESS);
 
         //Set the event to the current fence value
-        hr = renderer->pFence->SetEventOnCompletion(renderer->fenceValue, eventHandle);
+        hr = renderer->m_pFence->SetEventOnCompletion(renderer->m_fenceValue, eventHandle);
         ASSERT_FAILED(hr);
 
         //Wait for the GPU to complete associated commands
@@ -106,7 +141,7 @@ void Triangle::WaitForPreviousFrame(Renderer* renderer)
 
 
     PRINT("frameIndex");
-    PRINT(renderer->frameIndex);
+    PRINT(renderer->m_frameIndex);
     //renderer->frameIndex = renderer->pSwapChain->GetCurrentBackBufferIndex();
 
     PRINT("Previous frame completed");
@@ -119,50 +154,63 @@ void Triangle::PopulateCommandList(Renderer* renderer)
     HRESULT hr;
     PRINT("Populating command list...");
 
-    hr = renderer->pCommandAllocator->Reset();
+    hr = renderer->m_pCommandAllocator->Reset();
     ASSERT_FAILED(hr);
 
-    hr = renderer->pCommandList->Reset(renderer->pCommandAllocator.Get(), renderer->pPipelineState.Get());
+    hr = renderer->m_pCommandList->Reset(renderer->m_pCommandAllocator.Get(), renderer->m_pPipelineState.Get());
     ASSERT_FAILED(hr);
 
-    renderer->pCommandList->SetGraphicsRootSignature(renderer->pRootSignature.Get());
-    renderer->pCommandList->RSSetViewports(1, renderer->pViewport);
-    renderer->pCommandList->RSSetScissorRects(1, renderer->pScissorRect);
+    renderer->m_pCommandList->SetGraphicsRootSignature(renderer->m_pRootSignature.Get());
+    renderer->m_pCommandList->RSSetViewports(1, renderer->m_pViewport);
+    renderer->m_pCommandList->RSSetScissorRects(1, renderer->m_pScissorRect);
 
     CD3DX12_RESOURCE_BARRIER transitionBarrier = CD3DX12_RESOURCE_BARRIER::Transition(
-        renderer->pRenderTargets[renderer->frameIndex].Get(),
+        renderer->m_pRenderTargets[renderer->m_frameIndex].Get(),
         D3D12_RESOURCE_STATE_PRESENT,
         D3D12_RESOURCE_STATE_RENDER_TARGET);
 
-    renderer->pCommandList->ResourceBarrier(1, &transitionBarrier);
+    renderer->m_pCommandList->ResourceBarrier(1, &transitionBarrier);
 
 
     CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(
-        renderer->pDescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
-        renderer->frameIndex,
-        renderer->rtvDescriptorSize);
+        renderer->m_pRtvHeap->GetCPUDescriptorHandleForHeapStart(),
+        renderer->m_frameIndex,
+        renderer->m_rtvDescriptorSize);
 
-    renderer->pCommandList->OMSetRenderTargets(1, &rtvHandle, FALSE, nullptr);
+
+    // Update constant buffer * 
+
+    //// Définissez la signature racine et les descripteurs nécessaires
+    //renderer->m_pCommandList->SetGraphicsRootSignature(renderer->m_pRootSignature.Get());
+    //ID3D12DescriptorHeap* ppHeaps[] = { renderer->m_pCbvHeap.Get()};
+    //renderer->m_pCommandList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
+
+    //// Liez le tampon constant de la trame actuelle au pipeline
+    //CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(renderer->m_pCbvHeap.Get()->GetGPUDescriptorHandleForHeapStart(), renderer->m_frameIndex, renderer->m_cbvDescriptorSize);
+    //renderer->m_pCommandList->SetGraphicsRootDescriptorTable(0, gpuHandle);
+
+
+    renderer->m_pCommandList->OMSetRenderTargets(1, &rtvHandle, FALSE, nullptr);
 
     // Record commands.
     const float clearColor[] = { 0.3f, 0.8f, 0.1f, 1.0f };
-    renderer->pCommandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
-    renderer->pCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    renderer->pCommandList->IASetVertexBuffers(0, 1, &vertexBufferView);
+    renderer->m_pCommandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
+    renderer->m_pCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    renderer->m_pCommandList->IASetVertexBuffers(0, 1, &vertexBufferView);
 
     // Ajoutez la commande DrawInstanced pour dessiner le triangle
     PRINT("Draw Success-->");
-    renderer->pCommandList->DrawInstanced(3, 1, 0, 0);
+    renderer->m_pCommandList->DrawInstanced(3, 1, 0, 0);
     PRINT("Draw Success<--");
 
     CD3DX12_RESOURCE_BARRIER presentBarrier = CD3DX12_RESOURCE_BARRIER::Transition(
-        renderer->pRenderTargets[renderer->frameIndex].Get(),
+        renderer->m_pRenderTargets[renderer->m_frameIndex].Get(),
         D3D12_RESOURCE_STATE_RENDER_TARGET,
         D3D12_RESOURCE_STATE_PRESENT);
 
-    renderer->pCommandList->ResourceBarrier(1, &presentBarrier);
+    renderer->m_pCommandList->ResourceBarrier(1, &presentBarrier);
 
-    hr = renderer->pCommandList->Close();  // Assurez-vous que Close est appelé même en cas d'erreur
+    hr = renderer->m_pCommandList->Close();  // Assurez-vous que Close est appelé même en cas d'erreur
     ASSERT_FAILED(hr);
 
     PRINT("Command list populated");
@@ -177,12 +225,12 @@ void Triangle::Render(Renderer* renderer)
 
     PopulateCommandList(renderer);
 
-    ID3D12CommandList* ppCommandLists[] = { renderer->pCommandList.Get()};
-    renderer->pCommandQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
+    ID3D12CommandList* ppCommandLists[] = { renderer->m_pCommandList.Get()};
+    renderer->m_pCommandQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
 
     // Présentez la frame.
-    hr = renderer->pSwapChain->Present(1, 0);
-    renderer->frameIndex = (renderer->frameIndex + 1) % renderer->FRAME_COUNT;
+    hr = renderer->m_pSwapChain->Present(1, 0);
+    renderer->m_frameIndex = (renderer->m_frameIndex + 1) % renderer->m_FRAME_COUNT;
     ASSERT_FAILED(hr);
 
 

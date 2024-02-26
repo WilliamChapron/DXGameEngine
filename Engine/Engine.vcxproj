@@ -142,7 +142,8 @@
     <ClInclude Include="src\core\Engine.h" />
     <ClInclude Include="src\core\Window.h" />
     <ClInclude Include="src\include.h" />
-    <ClInclude Include="src\renderer\Renderer.h" />
+    <ClInclude Include="src\renderer\Camera.h" />
+    <ClInclude Include="src\renderer\Graphics.h" />
     <ClInclude Include="src\renderer\Resources.h" />
     <ClInclude Include="src\SwapChain.h" />
     <ClInclude Include="src\Triangle.h" />
@@ -150,11 +151,22 @@
   <ItemGroup>
     <ClCompile Include="src\core\Engine.cpp" />
     <ClCompile Include="src\core\Window.cpp" />
-    <ClCompile Include="src\renderer\Renderer.cpp" />
+    <ClCompile Include="src\renderer\Camera.cpp" />
+    <ClCompile Include="src\renderer\Graphics.cpp" />
     <ClCompile Include="src\renderer\Resources.cpp" />
-    <ClCompile Include="src\Start.cpp" />
+    <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\SwapChain.cpp" />
     <ClCompile Include="src\Triangle.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="res\shader\ShaderTriangle.hlsl">
+      <FileType>Document</FileType>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="res\shader\Shader.hlsl">
+      <FileType>Document</FileType>
+    </Text>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
