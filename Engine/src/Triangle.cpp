@@ -39,15 +39,18 @@ Triangle::~Triangle() {
     //};// Imprimer les valeurs après le mappage
 
 
-
-void Triangle::Initialize(Renderer* renderer) {
-
-    // Vertices du triangle
+// Vertices du triangle
     //Vertex triangleVertices[] = {
     //    { { -0.2f, -0.2f, -0.2f}, { 1.0f, 0.0f, 0.0f, 1.0f } },
     //    { { -0.2f, 0.2f, 0.2f }, { 0.0f, 1.0f, 0.0f, 1.0f } },
     //    { { 0.2f, 0.2f, 0.2f }, { 0.0f, 0.0f, 1.0f, 1.0f } }
     //};
+
+
+
+void Triangle::Initialize(Renderer* renderer) {
+
+    
 
     m_transformData = Transform();
     m_cbData.model = m_transformData.GetTransformMatrix();
@@ -66,18 +69,57 @@ void Triangle::Initialize(Renderer* renderer) {
         { { 0.5f,  0.5f,  0.5f}, {0.5f, 0.5f, 0.5f, 1.0f} }
     };
 
+    UINT cubeIndices[] = {
+        0, 1, 2,   // Face 1
+        1, 3, 2,
+        4, 5, 6,   // Face 2
+        5, 7, 6,
+        0, 2, 4,   // Face 3
+        2, 6, 4,
+        1, 5, 3,   // Face 4
+        5, 7, 3,
+        2, 3, 6,   // Face 5
+        3, 7, 6,
+        0, 1, 4,   // Face 6
+        1, 5, 4
+    };
+
+
+    
     const UINT vertexBufferSize = sizeof(cubeVertices);
+    const UINT indexBufferSize = sizeof(cubeIndices);
 
 
 
-    // INIT MATRIX 
+    // Index Buffer
+    CD3DX12_HEAP_PROPERTIES heapPropsIndex(D3D12_HEAP_TYPE_UPLOAD);
+    CD3DX12_RESOURCE_DESC bufferDescIndex = CD3DX12_RESOURCE_DESC::Buffer(indexBufferSize);
 
-    // Initialisation de la matrice de modèle (model)
+    HRESULT hr = renderer->m_pDevice->CreateCommittedResource(
+        &heapPropsIndex,
+        D3D12_HEAP_FLAG_NONE,
+        &bufferDescIndex,
+        D3D12_RESOURCE_STATE_GENERIC_READ,
+        nullptr,
+        IID_PPV_ARGS(&indexBuffer)
+    );
+    ASSERT_FAILED(hr);
 
-     //Initialisation de la matrice de modèle (model)
-    //XMMATRIX modelMatrix = XMMatrixIdentity();  // Vous devrez fournir la valeur de la matrice de modèle
-    //XMMATRIX transposedModelMatrix = XMMatrixTranspose(modelMatrix);
-    //XMStoreFloat4x4(&m_cbData.model, transposedModelMatrix);
+    UINT8* pIndexDataBegin;
+    CD3DX12_RANGE readRangeIndex(0, 0);
+
+    hr = indexBuffer->Map(0, &readRangeIndex, reinterpret_cast<void**>(&pIndexDataBegin));
+    ASSERT_FAILED(hr);
+    memcpy(pIndexDataBegin, cubeIndices, indexBufferSize);
+    indexBuffer->Unmap(0, nullptr);
+
+    indexBufferView.BufferLocation = indexBuffer->GetGPUVirtualAddress();
+    indexBufferView.Format = DXGI_FORMAT_R32_UINT;
+    indexBufferView.SizeInBytes = indexBufferSize;
+
+
+
+    // ** MATRIX
 
     // Initialisation de la matrice de vue (view)
     XMFLOAT3 eye(0.0f, 0.0f, -2.0f);    // Position de la caméra
@@ -94,15 +136,16 @@ void Triangle::Initialize(Renderer* renderer) {
     XMMATRIX transposedProjectionMatrix = XMMatrixTranspose(projectionMatrix);
     XMStoreFloat4x4(&m_cbData.projection, transposedProjectionMatrix);
 
-    //
+    // MATRIX **
 
-    PRINT("Initializing Triangle...");
 
-    // Création du vertex buffer
+
+
+    // Vertex Buffer * 
     CD3DX12_HEAP_PROPERTIES heapProps(D3D12_HEAP_TYPE_UPLOAD);
     CD3DX12_RESOURCE_DESC bufferDesc = CD3DX12_RESOURCE_DESC::Buffer(vertexBufferSize);
 
-    HRESULT hr = renderer->m_pDevice->CreateCommittedResource(
+    hr = renderer->m_pDevice->CreateCommittedResource(
         &heapProps,
         D3D12_HEAP_FLAG_NONE,
         &bufferDesc,
@@ -127,9 +170,8 @@ void Triangle::Initialize(Renderer* renderer) {
     vertexBufferView.SizeInBytes = vertexBufferSize;
 
 
-    // * Init Constant buffer *
 
-    // Constant buffer
+    // * Constant Buffer
     CD3DX12_HEAP_PROPERTIES cbHeapProps(D3D12_HEAP_TYPE_UPLOAD);
     CD3DX12_RESOURCE_DESC cbDesc = CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstantBufferData) + 255) & ~255);
 
@@ -159,6 +201,7 @@ void Triangle::Initialize(Renderer* renderer) {
     cbvDesc.BufferLocation = m_constantBuffer->GetGPUVirtualAddress();
     cbvDesc.SizeInBytes = (sizeof(ConstantBufferData) + 255) & ~255; // Alignement sur 256 octets
     renderer->m_pDevice->CreateConstantBufferView(&cbvDesc, renderer->m_pCbvHeap->GetCPUDescriptorHandleForHeapStart());
+    // Constant Buffer *
 
     PRINT("Triangle initialization complete");
 }
@@ -203,7 +246,7 @@ void Triangle::WaitForPreviousFrame(Renderer* renderer)
 void Triangle::PopulateCommandList(Renderer* renderer)
 {
 
-    // Don't repeat command to each triangle
+    // #TODO Don't repeat command to each triangle
 
 
     HRESULT hr;
@@ -233,37 +276,16 @@ void Triangle::PopulateCommandList(Renderer* renderer)
         renderer->m_rtvDescriptorSize);
 
 
-    // Update constant buffer * 
-    // Translate
-    //static float translationOffset = 0.03f;
-
-    //XMMATRIX translationMatrix = XMMatrixTranslation(translationOffset, translationOffset, translationOffset);
-
-    //XMMATRIX modelMatrix = XMLoadFloat4x4(&m_cbData.model);
-    //modelMatrix = DirectX::XMMatrixMultiply(modelMatrix, translationMatrix);
-    //modelMatrix = DirectX::XMMatrixTranspose(modelMatrix);
-
-    //XMStoreFloat4x4(&m_cbData.model, modelMatrix);
+    renderer->m_pCommandList->OMSetRenderTargets(1, &rtvHandle, FALSE, nullptr);
 
 
-    //static float rotationAngle = 0.01f;
-    //m_transformData.Translate(rotationAngle, 0.0f, 0.0f);
-    //m_cbData.model = m_transformData.GetTransformMatrix();
 
+
+    // Rotate
     static float rotationAngle = 0.0f;
     rotationAngle += 1.0f;
     m_transformData.Rotate(0, rotationAngle, 0);
     m_cbData.model = m_transformData.GetTransformMatrix();
-
-
-
-
-    //PRINT("Model Matrix After Mapping:");
-    //PrintMatrix(m_cbData.model);
-    //PRINT("View Matrix After Mapping:");
-    //PrintMatrix(m_cbData.view);
-    //PRINT("Projection Matrix After Mapping:");
-    //PrintMatrix(m_cbData.projection);
 
     // Map 
     hr = m_constantBuffer->Map(0, nullptr, reinterpret_cast<void**>(&m_mappedConstantBuffer));
@@ -272,27 +294,25 @@ void Triangle::PopulateCommandList(Renderer* renderer)
     m_constantBuffer->Unmap(0, nullptr);
     
 
-    // Update root signature
+    // * Update constant buffer 
     D3D12_GPU_VIRTUAL_ADDRESS cbvAddress = m_constantBuffer->GetGPUVirtualAddress();
     renderer->m_pCommandList->SetGraphicsRootConstantBufferView(0, cbvAddress);
+    // Update constant buffer *
 
-    // * Update constant buffer 
 
 
-    renderer->m_pCommandList->OMSetRenderTargets(1, &rtvHandle, FALSE, nullptr);
+
+
+
 
     // Record commands.
     const float clearColor[] = { 0.3f, 0.8f, 0.1f, 1.0f };
     renderer->m_pCommandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
     renderer->m_pCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     renderer->m_pCommandList->IASetVertexBuffers(0, 1, &vertexBufferView);
+    renderer->m_pCommandList->IASetIndexBuffer(&indexBufferView);
 
-
-
-    // Ajoutez la commande DrawInstanced pour dessiner le triangle
-    PRINT("Draw Success-->");
-    renderer->m_pCommandList->DrawInstanced(8, 1, 0, 0);
-    PRINT("Draw Success<--");
+    renderer->m_pCommandList->DrawIndexedInstanced(36, 1, 0, 0, 0);
 
     CD3DX12_RESOURCE_BARRIER presentBarrier = CD3DX12_RESOURCE_BARRIER::Transition(
         renderer->m_pRenderTargets[renderer->m_frameIndex].Get(),
@@ -301,7 +321,7 @@ void Triangle::PopulateCommandList(Renderer* renderer)
 
     renderer->m_pCommandList->ResourceBarrier(1, &presentBarrier);
 
-    hr = renderer->m_pCommandList->Close();  // Assurez-vous que Close est appelé même en cas d'erreur
+    hr = renderer->m_pCommandList->Close();  
     ASSERT_FAILED(hr);
 
     PRINT("Command list populated");
