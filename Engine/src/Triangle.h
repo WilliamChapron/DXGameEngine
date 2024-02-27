@@ -3,8 +3,11 @@
 #include "./include.h"
 #include <d3d12.h>
 
-class Renderer;
+#include "./physics/Transform.h"
 
+//struct Transform;
+
+class Renderer;
 using namespace DirectX;
 
 class Triangle {
@@ -33,6 +36,8 @@ private:
         XMFLOAT4X4 view;
         XMFLOAT4X4 projection;
     };
+
+    Transform m_transformData;
 
     ConstantBufferData m_cbData;
 

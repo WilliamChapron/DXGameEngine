@@ -5,6 +5,8 @@
 #include "Defines.h"   
 #include "Window.h"  
 
+#include "../Utils.h"
+#include "../physics/Transform.h"
 
 using namespace DirectX;
 
@@ -63,6 +65,26 @@ void Engine::Run() {
 
     while (true) {
         //PRINT("Hello");
+
+
+
+
+
+            // Créer une instance de la classe Transform
+        Transform transform;
+
+        // Déboguer la matrice de transformation initiale
+        XMFLOAT4X4 initialTransformMatrix = transform.GetTransformMatrix();
+        std::cout << "Initial Transform Matrix:" << std::endl;
+        PrintMatrix(initialTransformMatrix);
+
+        // Effectuer une rotation relative pour mettre à jour la transformation
+        transform.Rotate(45.0f, 0.0f, 0.0f);
+
+        // Déboguer la matrice de transformation mise à jour
+        XMFLOAT4X4 updatedTransformMatrix = transform.GetTransformMatrix();
+        std::cout << "Updated Transform Matrix:" << std::endl;
+        PrintMatrix(updatedTransformMatrix);
         if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
             if (msg.message == WM_QUIT)
                 break;

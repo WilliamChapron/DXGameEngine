@@ -326,8 +326,8 @@ void Renderer::CreatePipelineState() {
 
     D3D12_RASTERIZER_DESC rasterizerStateDesc {};
     rasterizerStateDesc.FillMode = D3D12_FILL_MODE_SOLID;   // Remplissage solide
-    rasterizerStateDesc.CullMode = D3D12_CULL_MODE_FRONT;    // Désactivation du culling
-    rasterizerStateDesc.FrontCounterClockwise = TRUE;       // Les triangles sont définis dans le sens inverse des aiguilles d'une montre (orientation des sommets)
+    rasterizerStateDesc.CullMode = D3D12_CULL_MODE_NONE;    // Désactivation du culling
+    rasterizerStateDesc.FrontCounterClockwise = FALSE;       // Les triangles sont définis dans le sens inverse des aiguilles d'une montre (orientation des sommets)
     rasterizerStateDesc.DepthBias = 0;
     rasterizerStateDesc.DepthBiasClamp = 0.0f;
     rasterizerStateDesc.SlopeScaledDepthBias = 0;

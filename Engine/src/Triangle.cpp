@@ -3,6 +3,7 @@
 #include "core/Defines.h"
 #include <stdexcept>
 
+#include "Utils.h"
 #include <DirectXColors.h> 
 
 
@@ -37,53 +38,46 @@ Triangle::~Triangle() {
     //    { {  0.5f,  0.5f,  0.5f, 1.0f }, { 0.5f, 0.5f, 0.5f, 1.0f } },
     //};// Imprimer les valeurs après le mappage
 
-#include <iomanip>
 
-void PrintMatrix(const DirectX::XMFLOAT4X4& matrix)
-{
-    // Réglage de la précision pour l'affichage des nombres à virgule flottante
-    std::cout << std::fixed << std::setprecision(3);
-
-    for (int i = 0; i < 4; ++i)
-    {
-        for (int j = 0; j < 4; ++j)
-        {
-            std::cout << std::setw(8) << matrix.m[i][j] << " ";
-        }
-        std::cout << std::endl;
-    }
-
-    std::cout << std::endl;
-}
 
 void Triangle::Initialize(Renderer* renderer) {
 
     // Vertices du triangle
-    Vertex triangleVertices[] = {
-        { { -0.2f, -0.2f, -0.2f}, { 1.0f, 0.0f, 0.0f, 1.0f } },
-        { { -0.2f, 0.2f, 0.2f }, { 0.0f, 1.0f, 0.0f, 1.0f } },
-        { { 0.2f, 0.2f, 0.2f }, { 0.0f, 0.0f, 1.0f, 1.0f } }
+    //Vertex triangleVertices[] = {
+    //    { { -0.2f, -0.2f, -0.2f}, { 1.0f, 0.0f, 0.0f, 1.0f } },
+    //    { { -0.2f, 0.2f, 0.2f }, { 0.0f, 1.0f, 0.0f, 1.0f } },
+    //    { { 0.2f, 0.2f, 0.2f }, { 0.0f, 0.0f, 1.0f, 1.0f } }
+    //};
+
+    m_transformData = Transform();
+    m_cbData.model = m_transformData.GetTransformMatrix();
+
+    PrintMatrix(m_cbData.model);
+
+
+    Vertex cubeVertices[] = {
+        { {-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f, 1.0f} },
+        { {-0.5f, -0.5f,  0.5f}, {0.0f, 1.0f, 0.0f, 1.0f} },
+        { {-0.5f,  0.5f, -0.5f}, {0.0f, 0.0f, 1.0f, 1.0f} },
+        { {-0.5f,  0.5f,  0.5f}, {0.0f, 1.0f, 1.0f, 1.0f} },
+        { { 0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 1.0f, 1.0f} },
+        { { 0.5f, -0.5f,  0.5f}, {1.0f, 1.0f, 0.0f, 1.0f} },
+        { { 0.5f,  0.5f, -0.5f}, {1.0f, 1.0f, 1.0f, 1.0f} },
+        { { 0.5f,  0.5f,  0.5f}, {0.5f, 0.5f, 0.5f, 1.0f} }
     };
 
-    //Vertex triangleVertices[] = {
-    //{ { -0.5f, -0.5f, -0.5 }, { 1.0f, 0.0f, 0.0f, 1.0f } },
-    //{ { -0.5f, -0.5f,  0.5f  }, { 0.0f, 1.0f, 0.0f, 1.0f } },
-    //{ { -0.5f,  0.5f, -0.5f  }, { 0.0f, 0.0f, 1.0f, 1.0f } },
-    //{ { -0.5f,  0.5f,  0.5f }, { 0.0f, 1.0f, 1.0f, 1.0f } },
-    //{ {  0.5f, -0.5f, -0.5f }, { 1.0f, 0.0f, 1.0f, 1.0f } },
-    //{ {  0.5f, -0.5f,  0.5f}, { 1.0f, 1.0f, 0.0f, 1.0f } },
-    //{ {  0.5f,  0.5f, -0.5f }, { 1.0f, 1.0f, 1.0f, 1.0f } },
-    //{ {  0.5f,  0.5f,  0.5f }, { 0.5f, 0.5f, 0.5f, 1.0f } }
-    //};
+    const UINT vertexBufferSize = sizeof(cubeVertices);
+
+
 
     // INIT MATRIX 
 
     // Initialisation de la matrice de modèle (model)
 
-    // Initialisation de la matrice de modèle (model)
-    XMMATRIX modelMatrix = XMMatrixIdentity();  // Vous devrez fournir la valeur de la matrice de modèle
-    XMMATRIX transposedModelMatrix = XMMatrixTranspose(modelMatrix);
-    XMStoreFloat4x4(&m_cbData.model, transposedModelMatrix);
+     //Initialisation de la matrice de modèle (model)
+    //XMMATRIX modelMatrix = XMMatrixIdentity();  // Vous devrez fournir la valeur de la matrice de modèle
+    //XMMATRIX transposedModelMatrix = XMMatrixTranspose(modelMatrix);
+    //XMStoreFloat4x4(&m_cbData.model, transposedModelMatrix);
 
     // Initialisation de la matrice de vue (view)
     XMFLOAT3 eye(0.0f, 0.0f, -2.0f);    // Position de la caméra
@@ -106,7 +100,7 @@ void Triangle::Initialize(Renderer* renderer) {
 
     // Création du vertex buffer
     CD3DX12_HEAP_PROPERTIES heapProps(D3D12_HEAP_TYPE_UPLOAD);
-    CD3DX12_RESOURCE_DESC bufferDesc = CD3DX12_RESOURCE_DESC::Buffer(sizeof(triangleVertices));
+    CD3DX12_RESOURCE_DESC bufferDesc = CD3DX12_RESOURCE_DESC::Buffer(vertexBufferSize);
 
     HRESULT hr = renderer->m_pDevice->CreateCommittedResource(
         &heapProps,
@@ -125,12 +119,12 @@ void Triangle::Initialize(Renderer* renderer) {
 
     hr = vertexBuffer->Map(0, &readRange, reinterpret_cast<void**>(&pVertexDataBegin));
     ASSERT_FAILED(hr);
-    memcpy(pVertexDataBegin, triangleVertices, sizeof(triangleVertices));
+    memcpy(pVertexDataBegin, cubeVertices, vertexBufferSize);
     vertexBuffer->Unmap(0, nullptr);
 
     vertexBufferView.BufferLocation = vertexBuffer->GetGPUVirtualAddress();
     vertexBufferView.StrideInBytes = sizeof(Vertex);
-    vertexBufferView.SizeInBytes = sizeof(triangleVertices);
+    vertexBufferView.SizeInBytes = vertexBufferSize;
 
 
     // * Init Constant buffer *
@@ -148,6 +142,11 @@ void Triangle::Initialize(Renderer* renderer) {
         IID_PPV_ARGS(&m_constantBuffer)
     );
     ASSERT_FAILED(hr);
+
+    static float rotationAngle = 0.0f;
+    rotationAngle += 1.0f;
+    m_transformData.Rotate(rotationAngle, 0, 0);
+    m_cbData.model = m_transformData.GetTransformMatrix();
 
     hr = m_constantBuffer->Map(0, nullptr, reinterpret_cast<void**>(&m_mappedConstantBuffer));
     ASSERT_FAILED(hr);
@@ -236,15 +235,29 @@ void Triangle::PopulateCommandList(Renderer* renderer)
 
     // Update constant buffer * 
     // Translate
-    static float translationOffset = 0.03f;
+    //static float translationOffset = 0.03f;
 
-    XMMATRIX translationMatrix = XMMatrixTranslation(translationOffset, translationOffset, translationOffset);
+    //XMMATRIX translationMatrix = XMMatrixTranslation(translationOffset, translationOffset, translationOffset);
 
-    XMMATRIX modelMatrix = XMLoadFloat4x4(&m_cbData.model);
-    modelMatrix = DirectX::XMMatrixMultiply(modelMatrix, translationMatrix);
-    modelMatrix = DirectX::XMMatrixTranspose(modelMatrix);
+    //XMMATRIX modelMatrix = XMLoadFloat4x4(&m_cbData.model);
+    //modelMatrix = DirectX::XMMatrixMultiply(modelMatrix, translationMatrix);
+    //modelMatrix = DirectX::XMMatrixTranspose(modelMatrix);
 
-    XMStoreFloat4x4(&m_cbData.model, modelMatrix);
+    //XMStoreFloat4x4(&m_cbData.model, modelMatrix);
+
+
+    //static float rotationAngle = 0.01f;
+    //m_transformData.Translate(rotationAngle, 0.0f, 0.0f);
+    //m_cbData.model = m_transformData.GetTransformMatrix();
+
+    static float rotationAngle = 0.0f;
+    rotationAngle += 1.0f;
+    m_transformData.Rotate(0, rotationAngle, 0);
+    m_cbData.model = m_transformData.GetTransformMatrix();
+
+
+
+
     //PRINT("Model Matrix After Mapping:");
     //PrintMatrix(m_cbData.model);
     //PRINT("View Matrix After Mapping:");
@@ -278,7 +291,7 @@ void Triangle::PopulateCommandList(Renderer* renderer)
 
     // Ajoutez la commande DrawInstanced pour dessiner le triangle
     PRINT("Draw Success-->");
-    renderer->m_pCommandList->DrawInstanced(3, 1, 0, 0);
+    renderer->m_pCommandList->DrawInstanced(8, 1, 0, 0);
     PRINT("Draw Success<--");
 
     CD3DX12_RESOURCE_BARRIER presentBarrier = CD3DX12_RESOURCE_BARRIER::Transition(
