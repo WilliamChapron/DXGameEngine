@@ -323,18 +323,18 @@ void Renderer::CreatePipelineState() {
         { "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
     };
 
+    
+    //D3D12_RASTERIZER_DESC rasterizerStateDesc {};
+    //rasterizerStateDesc.FillMode = D3D12_FILL_MODE_SOLID;   // Remplissage solide
+    //rasterizerStateDesc.CullMode = D3D12_CULL_MODE_FRONT;    // Désactivation du culling
+    //rasterizerStateDesc.FrontCounterClockwise = TRUE;       // Les triangles sont définis dans le sens inverse des aiguilles d'une montre (orientation des sommets)
+    //rasterizerStateDesc.DepthBias = 0;
+    //rasterizerStateDesc.DepthBiasClamp = 0.0f;
+    //rasterizerStateDesc.SlopeScaledDepthBias = 0;
+    //rasterizerStateDesc.DepthClipEnable = FALSE;             // Activation du test de profondeur
 
-    D3D12_RASTERIZER_DESC rasterizerStateDesc {};
-    rasterizerStateDesc.FillMode = D3D12_FILL_MODE_SOLID;   // Remplissage solide
-    rasterizerStateDesc.CullMode = D3D12_CULL_MODE_NONE;    // Désactivation du culling
-    rasterizerStateDesc.FrontCounterClockwise = FALSE;       // Les triangles sont définis dans le sens inverse des aiguilles d'une montre (orientation des sommets)
-    rasterizerStateDesc.DepthBias = 0;
-    rasterizerStateDesc.DepthBiasClamp = 0.0f;
-    rasterizerStateDesc.SlopeScaledDepthBias = 0;
-    rasterizerStateDesc.DepthClipEnable = FALSE;             // Activation du test de profondeur
-
-    rasterizerStateDesc.MultisampleEnable = FALSE;          // Désactivation de l'échantillonnage multiple
-    rasterizerStateDesc.AntialiasedLineEnable = FALSE;
+    //rasterizerStateDesc.MultisampleEnable = FALSE;          // Désactivation de l'échantillonnage multiple
+    //rasterizerStateDesc.AntialiasedLineEnable = FALSE;
 
     //D3D12_BLEND_DESC blendDesc {};
 
@@ -346,7 +346,7 @@ void Renderer::CreatePipelineState() {
     psoDesc.PS = { m_pixelShaderBlob->GetBufferPointer(), m_pixelShaderBlob->GetBufferSize() }; // Use the filled bytecode structure
     psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE; // type of topology we are drawing
     psoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM; // format of the render target
-    psoDesc.RasterizerState = rasterizerStateDesc;
+    psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
     psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
     psoDesc.DepthStencilState.DepthEnable = FALSE;
     psoDesc.DepthStencilState.StencilEnable = FALSE;

@@ -59,29 +59,54 @@ void Triangle::Initialize(Renderer* renderer) {
 
 
     Vertex cubeVertices[] = {
-        { {-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f, 1.0f} },
-        { {-0.5f, -0.5f,  0.5f}, {0.0f, 1.0f, 0.0f, 1.0f} },
-        { {-0.5f,  0.5f, -0.5f}, {0.0f, 0.0f, 1.0f, 1.0f} },
-        { {-0.5f,  0.5f,  0.5f}, {0.0f, 1.0f, 1.0f, 1.0f} },
-        { { 0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 1.0f, 1.0f} },
-        { { 0.5f, -0.5f,  0.5f}, {1.0f, 1.0f, 0.0f, 1.0f} },
-        { { 0.5f,  0.5f, -0.5f}, {1.0f, 1.0f, 1.0f, 1.0f} },
-        { { 0.5f,  0.5f,  0.5f}, {0.5f, 0.5f, 0.5f, 1.0f} }
+        { {-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f, 1.0f} },  // Rouge
+        { {-0.5f, -0.5f,  0.5f}, {1.0f, 0.0f, 0.0f, 1.0f} },  // Rouge
+        { {-0.5f,  0.5f, -0.5f}, {0.0f, 0.0f, 1.0f, 1.0f} },  // Bleu
+        { {-0.5f,  0.5f,  0.5f}, {0.0f, 0.0f, 1.0f, 1.0f} },  // Bleu
+        { { 0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 0.0f, 1.0f} },  // Jaune
+        { { 0.5f, -0.5f,  0.5f}, {1.0f, 1.0f, 0.0f, 1.0f} },  // Jaune
+        { { 0.5f,  0.5f, -0.5f}, {0.5f, 0.5f, 0.5f, 1.0f} },  // Gris
+        { { 0.5f,  0.5f,  0.5f}, {0.5f, 0.5f, 0.5f, 1.0f} }   // Gris
     };
+    // # TO THINK - Opacity?
+
+    //Vertex cubeVertices[] = {
+    //{ {-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f, 0.0f} },  // Rouge
+    //{ {-0.5f, -0.5f,  0.5f}, {1.0f, 0.0f, 0.0f, 0.0f} },  // Rouge
+    //{ {-0.5f,  0.5f, -0.5f}, {0.0f, 0.0f, 1.0f, 0.0f} },  // Bleu
+    //{ {-0.5f,  0.5f,  0.5f}, {0.0f, 0.0f, 1.0f, 0.0f} },  // Bleu
+    //{ { 0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 0.0f, 0.0f} },  // Jaune
+    //{ { 0.5f, -0.5f,  0.5f}, {1.0f, 1.0f, 0.0f, 0.0f} },  // Jaune
+    //{ { 0.5f,  0.5f, -0.5f}, {0.5f, 0.5f, 0.5f, 0.0f} },  // Gris
+    //{ { 0.5f,  0.5f,  0.5f}, {0.5f, 0.5f, 0.5f, 0.0f} }   // Gris
+    //};
+
+
+    //Vertex cubeVertices[] = {
+    //    { {-0.5f, -0.5f, -0.5f}, {1.0f, 0.5f, 0.8f, 1.0f} },
+    //    { {-0.5f, -0.5f,  0.5f}, {1.0f, 0.5f, 0.8f, 1.0f} },
+    //    { {-0.5f,  0.5f, -0.5f}, {1.0f, 0.5f, 0.8f, 1.0f} },
+    //    { {-0.5f,  0.5f,  0.5f}, {1.0f, 0.5f, 0.8f, 1.0f} },
+    //    { { 0.5f, -0.5f, -0.5f}, {1.0f, 0.5f, 0.8f, 1.0f} },
+    //    { { 0.5f, -0.5f,  0.5f}, {1.0f, 0.5f, 0.8f, 1.0f} },
+    //    { { 0.5f,  0.5f, -0.5f}, {1.0f, 0.5f, 0.8f, 1.0f} },
+    //    { { 0.5f,  0.5f,  0.5f}, {1.0f, 0.5f, 0.8f, 1.0f} }
+    //};
+
 
     UINT cubeIndices[] = {
-        0, 1, 2,   // Face 1
-        1, 3, 2,
-        4, 5, 6,   // Face 2
-        5, 7, 6,
-        0, 2, 4,   // Face 3
-        2, 6, 4,
-        1, 5, 3,   // Face 4
-        5, 7, 3,
-        2, 3, 6,   // Face 5
-        3, 7, 6,
-        0, 1, 4,   // Face 6
-        1, 5, 4
+        0, 1, 2,   // Face 1 (clockwise)
+        2, 1, 3,   // Face 2 (clockwise)
+        4, 6, 5,   // Face 3 (clockwise)
+        6, 7, 5,   // Face 4 (clockwise)
+        0, 2, 4,   // Face 5 (clockwise)
+        2, 6, 4,   // Face 6 (clockwise)
+        1, 5, 3,   // Face 7 (clockwise)
+        3, 5, 7,   // Face 8 (clockwise)
+        2, 3, 6,   // Face 9 (clockwise)
+        3, 7, 6,   // Face 10 (clockwise)
+        0, 4, 1,   // Face 11 (clockwise)
+        1, 4, 5    // Face 12 (clockwise)
     };
 
 
@@ -185,10 +210,10 @@ void Triangle::Initialize(Renderer* renderer) {
     );
     ASSERT_FAILED(hr);
 
-    static float rotationAngle = 0.0f;
-    rotationAngle += 1.0f;
-    m_transformData.Rotate(rotationAngle, 0, 0);
-    m_cbData.model = m_transformData.GetTransformMatrix();
+    //static float rotationAngle = 0.0f;
+    //rotationAngle += 1.0f;
+    //m_transformData.Rotate(0, 0, rotationAngle);
+    //m_cbData.model = m_transformData.GetTransformMatrix();
 
     hr = m_constantBuffer->Map(0, nullptr, reinterpret_cast<void**>(&m_mappedConstantBuffer));
     ASSERT_FAILED(hr);
