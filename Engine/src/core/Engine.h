@@ -7,7 +7,8 @@
 #include <iostream>
 
 class Renderer;
-class Triangle;
+//class Triangle;
+class GameObject;
 class Window;
 
 
@@ -25,7 +26,8 @@ public:
         return instance;
     }
 
-    Triangle* m_pTriangle;
+    //Triangle* m_pTriangle;
+    GameObject* m_pGameObject;
     Renderer* m_pRenderer;
 
     bool isRenderable = false;

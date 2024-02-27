@@ -1,5 +1,6 @@
 #include "Engine.h"
-#include "../Triangle.h"
+//#include "../Triangle.h"
+#include "../GameObject.h"
 #include "../include.h"   
 #include "../renderer/Graphics.h"   
 #include "Defines.h"   
@@ -39,9 +40,13 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
 
     m_pRenderer->InitializeDirectX12Instances();
 
-    m_pTriangle = new Triangle;
-    m_pTriangle->Initialize(m_pRenderer);
+    /*m_pTriangle = new Triangle;
+    m_pTriangle->Initialize(m_pRenderer);*/
 
+    m_pGameObject = new GameObject;
+    m_pGameObject->Initialize(m_pRenderer);
+    Triangle triangle1 = { { {0.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f} }, {1.0f, 0.0f, 0.0f, 1.0f} };
+    m_pGameObject->AddTriangle(triangle1);
 
     isRenderable = true;
     Run();
@@ -71,7 +76,8 @@ void Engine::Run() {
         }
         if (isRenderable) {
             //PRINT("Paint");
-            m_pTriangle->Render(m_pRenderer);
+            //m_pTriangle->Render(m_pRenderer);
+            m_pGameObject->Render(m_pRenderer);
         }
         //m_pTriangle->Render(m_pRenderer);
         //else {

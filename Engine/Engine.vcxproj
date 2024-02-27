@@ -140,7 +140,9 @@
     <ClInclude Include="extern\d3dx12.h" />
     <ClInclude Include="src\core\Defines.h" />
     <ClInclude Include="src\core\Engine.h" />
+    <ClInclude Include="src\core\Init.h" />
     <ClInclude Include="src\core\Window.h" />
+    <ClInclude Include="src\GameObject.h" />
     <ClInclude Include="src\include.h" />
     <ClInclude Include="src\renderer\Camera.h" />
     <ClInclude Include="src\renderer\Graphics.h" />
@@ -149,7 +151,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\Engine.cpp" />
+    <ClCompile Include="src\core\Init.cpp" />
     <ClCompile Include="src\core\Window.cpp" />
+    <ClCompile Include="src\GameObject.cpp" />
     <ClCompile Include="src\renderer\Camera.cpp" />
     <ClCompile Include="src\renderer\Graphics.cpp" />
     <ClCompile Include="src\renderer\Resources.cpp" />
