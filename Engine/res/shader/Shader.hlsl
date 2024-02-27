@@ -1,8 +1,8 @@
 cbuffer Data : register(b0)
 {
-    matrix model;
-    matrix view;
-    matrix projection;
+    float4x4 model;
+    float4x4 view;
+    float4x4 projection;
 };
 
 struct VSInput
@@ -21,7 +21,10 @@ VSOutput VSMain(VSInput input)
 {
     VSOutput result;
 
-    result.position = float4(input.position, 1.0f);
+    result.position = mul(float4(input.position, 1.0f), model);
+    result.position = mul(result.position, view);
+    result.position = mul(result.position, projection);
+
     result.color = input.color;
 
     return result;

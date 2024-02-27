@@ -27,9 +27,18 @@ private:
 
     int renderCallNum = 0;
 
-    XMMATRIX m_worldViewProj; 
+
+    struct ConstantBufferData {
+        XMFLOAT4X4 model;
+        XMFLOAT4X4 view;
+        XMFLOAT4X4 projection;
+    };
+
+    ConstantBufferData m_cbData;
+
     ID3D12Resource* m_constantBuffer;
     UINT8* m_mappedConstantBuffer;
+
 
     // Vertex buffer
     ID3D12Resource* vertexBuffer;

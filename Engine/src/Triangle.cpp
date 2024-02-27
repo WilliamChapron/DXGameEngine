@@ -26,17 +26,7 @@ Triangle::~Triangle() {
 }
 
 
-
-void Triangle::Initialize(Renderer* renderer) {
-
-    // Vertices du triangle
-    Vertex triangleVertices[] = {
-        { { 0.0f, 0.45f, 0.0f}, { 1.0f, 0.0f, 0.0f, 1.0f } },
-        { { 0.25f, -0.25f, 0.0f }, { 0.0f, 1.0f, 0.0f, 1.0f } },
-        { { -0.25f, -0.25f, 0.0f }, { 0.0f, 0.0f, 1.0f, 1.0f } }
-    };
-
-    //Vertex triangleVertices[] = {
+//Vertex triangleVertices[] = {
     //    { { -0.5f, -0.5f, -0.5f, 1.0f }, { 1.0f, 0.0f, 0.0f, 1.0f } },
     //    { { -0.5f, -0.5f,  0.5f, 1.0f }, { 0.0f, 1.0f, 0.0f, 1.0f } },
     //    { { -0.5f,  0.5f, -0.5f, 1.0f }, { 0.0f, 0.0f, 1.0f, 1.0f } },
@@ -45,7 +35,72 @@ void Triangle::Initialize(Renderer* renderer) {
     //    { {  0.5f, -0.5f,  0.5f, 1.0f }, { 1.0f, 1.0f, 0.0f, 1.0f } },
     //    { {  0.5f,  0.5f, -0.5f, 1.0f }, { 1.0f, 1.0f, 1.0f, 1.0f } },
     //    { {  0.5f,  0.5f,  0.5f, 1.0f }, { 0.5f, 0.5f, 0.5f, 1.0f } },
+    //};// Imprimer les valeurs après le mappage
+
+#include <iomanip>
+
+void PrintMatrix(const DirectX::XMFLOAT4X4& matrix)
+{
+    // Réglage de la précision pour l'affichage des nombres à virgule flottante
+    std::cout << std::fixed << std::setprecision(3);
+
+    for (int i = 0; i < 4; ++i)
+    {
+        for (int j = 0; j < 4; ++j)
+        {
+            std::cout << std::setw(8) << matrix.m[i][j] << " ";
+        }
+        std::cout << std::endl;
+    }
+
+    std::cout << std::endl;
+}
+
+void Triangle::Initialize(Renderer* renderer) {
+
+    // Vertices du triangle
+    Vertex triangleVertices[] = {
+        { { -0.2f, -0.2f, -0.2f}, { 1.0f, 0.0f, 0.0f, 1.0f } },
+        { { -0.2f, 0.2f, 0.2f }, { 0.0f, 1.0f, 0.0f, 1.0f } },
+        { { 0.2f, 0.2f, 0.2f }, { 0.0f, 0.0f, 1.0f, 1.0f } }
+    };
+
+    //Vertex triangleVertices[] = {
+    //{ { -0.5f, -0.5f, -0.5 }, { 1.0f, 0.0f, 0.0f, 1.0f } },
+    //{ { -0.5f, -0.5f,  0.5f  }, { 0.0f, 1.0f, 0.0f, 1.0f } },
+    //{ { -0.5f,  0.5f, -0.5f  }, { 0.0f, 0.0f, 1.0f, 1.0f } },
+    //{ { -0.5f,  0.5f,  0.5f }, { 0.0f, 1.0f, 1.0f, 1.0f } },
+    //{ {  0.5f, -0.5f, -0.5f }, { 1.0f, 0.0f, 1.0f, 1.0f } },
+    //{ {  0.5f, -0.5f,  0.5f}, { 1.0f, 1.0f, 0.0f, 1.0f } },
+    //{ {  0.5f,  0.5f, -0.5f }, { 1.0f, 1.0f, 1.0f, 1.0f } },
+    //{ {  0.5f,  0.5f,  0.5f }, { 0.5f, 0.5f, 0.5f, 1.0f } }
     //};
+
+    // INIT MATRIX 
+
+    // Initialisation de la matrice de modèle (model)
+
+    // Initialisation de la matrice de modèle (model)
+    XMMATRIX modelMatrix = XMMatrixIdentity();  // Vous devrez fournir la valeur de la matrice de modèle
+    XMMATRIX transposedModelMatrix = XMMatrixTranspose(modelMatrix);
+    XMStoreFloat4x4(&m_cbData.model, transposedModelMatrix);
+
+    // Initialisation de la matrice de vue (view)
+    XMFLOAT3 eye(0.0f, 0.0f, -2.0f);    // Position de la caméra
+    XMFLOAT3 at(0.0f, 0.0f, 0.0f);      // Point où la caméra regarde
+    XMFLOAT3 up(0.0f, 1.0f, 0.0f);      // Vecteur "up" (orienté vers le haut)
+    XMMATRIX viewMatrix = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&at), XMLoadFloat3(&up));
+    XMMATRIX transposedViewMatrix = XMMatrixTranspose(viewMatrix);
+    XMStoreFloat4x4(&m_cbData.view, transposedViewMatrix);
+
+    // Initialisation de la matrice de projection
+    float aspectRatio = 16.0f / 9.0f;   // Vous devrez fournir la valeur de l'aspect ratio
+    float fieldOfView = XM_PIDIV4;  // Angle de champ de vision (45 degrés ici)
+    XMMATRIX projectionMatrix = XMMatrixPerspectiveFovLH(fieldOfView, aspectRatio, 0.1f, 100.0f);
+    XMMATRIX transposedProjectionMatrix = XMMatrixTranspose(projectionMatrix);
+    XMStoreFloat4x4(&m_cbData.projection, transposedProjectionMatrix);
+
+    //
 
     PRINT("Initializing Triangle...");
 
@@ -70,9 +125,7 @@ void Triangle::Initialize(Renderer* renderer) {
 
     hr = vertexBuffer->Map(0, &readRange, reinterpret_cast<void**>(&pVertexDataBegin));
     ASSERT_FAILED(hr);
-
     memcpy(pVertexDataBegin, triangleVertices, sizeof(triangleVertices));
-
     vertexBuffer->Unmap(0, nullptr);
 
     vertexBufferView.BufferLocation = vertexBuffer->GetGPUVirtualAddress();
@@ -80,10 +133,12 @@ void Triangle::Initialize(Renderer* renderer) {
     vertexBufferView.SizeInBytes = sizeof(triangleVertices);
 
 
-    // Init Constant buffer 
+    // * Init Constant buffer *
 
+    // Constant buffer
     CD3DX12_HEAP_PROPERTIES cbHeapProps(D3D12_HEAP_TYPE_UPLOAD);
-    CD3DX12_RESOURCE_DESC cbDesc = CD3DX12_RESOURCE_DESC::Buffer((sizeof(m_worldViewProj) + 255) & ~255);
+    CD3DX12_RESOURCE_DESC cbDesc = CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstantBufferData) + 255) & ~255);
+
     hr = renderer->m_pDevice->CreateCommittedResource(
         &cbHeapProps,
         D3D12_HEAP_FLAG_NONE,
@@ -94,18 +149,17 @@ void Triangle::Initialize(Renderer* renderer) {
     );
     ASSERT_FAILED(hr);
 
-    // Créer la vue de tampon de constantes
-    D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc = {};
-    cbvDesc.BufferLocation = m_constantBuffer->GetGPUVirtualAddress();
-    cbvDesc.SizeInBytes = (sizeof(m_worldViewProj) + 255) & ~255; // Alignement sur 256 octets
-    renderer->m_pDevice->CreateConstantBufferView(&cbvDesc, renderer->m_pCbvHeap->GetCPUDescriptorHandleForHeapStart());
-
-    // Mappage initial du tampon de constantes
     hr = m_constantBuffer->Map(0, nullptr, reinterpret_cast<void**>(&m_mappedConstantBuffer));
     ASSERT_FAILED(hr);
+    
+    memcpy(m_mappedConstantBuffer, &m_cbData, sizeof(ConstantBufferData));
+    m_constantBuffer->Unmap(0, nullptr);
 
-    // Initialisation des données du tampon de constantes
-    ZeroMemory(m_constantBuffer, sizeof(m_constantBuffer));
+
+    D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc = {};
+    cbvDesc.BufferLocation = m_constantBuffer->GetGPUVirtualAddress();
+    cbvDesc.SizeInBytes = (sizeof(ConstantBufferData) + 255) & ~255; // Alignement sur 256 octets
+    renderer->m_pDevice->CreateConstantBufferView(&cbvDesc, renderer->m_pCbvHeap->GetCPUDescriptorHandleForHeapStart());
 
     PRINT("Triangle initialization complete");
 }
@@ -115,8 +169,6 @@ void Triangle::WaitForPreviousFrame(Renderer* renderer)
     PRINT("Waiting for previous frame...");
 
     // Signal and increment the fence value.
-
-
     renderer->m_fenceValue++;
 
     HRESULT hr = renderer->m_pCommandQueue->Signal(renderer->m_pFence.Get(), renderer->m_fenceValue);
@@ -151,6 +203,10 @@ void Triangle::WaitForPreviousFrame(Renderer* renderer)
 
 void Triangle::PopulateCommandList(Renderer* renderer)
 {
+
+    // Don't repeat command to each triangle
+
+
     HRESULT hr;
     PRINT("Populating command list...");
 
@@ -179,9 +235,35 @@ void Triangle::PopulateCommandList(Renderer* renderer)
 
 
     // Update constant buffer * 
+    // Translate
+    static float translationOffset = 0.03f;
 
+    XMMATRIX translationMatrix = XMMatrixTranslation(translationOffset, translationOffset, translationOffset);
 
-    //commandList->SetGraphicsRootConstantBufferView(0, );
+    XMMATRIX modelMatrix = XMLoadFloat4x4(&m_cbData.model);
+    modelMatrix = DirectX::XMMatrixMultiply(modelMatrix, translationMatrix);
+    modelMatrix = DirectX::XMMatrixTranspose(modelMatrix);
+
+    XMStoreFloat4x4(&m_cbData.model, modelMatrix);
+    //PRINT("Model Matrix After Mapping:");
+    //PrintMatrix(m_cbData.model);
+    //PRINT("View Matrix After Mapping:");
+    //PrintMatrix(m_cbData.view);
+    //PRINT("Projection Matrix After Mapping:");
+    //PrintMatrix(m_cbData.projection);
+
+    // Map 
+    hr = m_constantBuffer->Map(0, nullptr, reinterpret_cast<void**>(&m_mappedConstantBuffer));
+    ASSERT_FAILED(hr);
+    memcpy(m_mappedConstantBuffer, &m_cbData, sizeof(ConstantBufferData));
+    m_constantBuffer->Unmap(0, nullptr);
+    
+
+    // Update root signature
+    D3D12_GPU_VIRTUAL_ADDRESS cbvAddress = m_constantBuffer->GetGPUVirtualAddress();
+    renderer->m_pCommandList->SetGraphicsRootConstantBufferView(0, cbvAddress);
+
+    // * Update constant buffer 
 
 
     renderer->m_pCommandList->OMSetRenderTargets(1, &rtvHandle, FALSE, nullptr);
@@ -191,6 +273,8 @@ void Triangle::PopulateCommandList(Renderer* renderer)
     renderer->m_pCommandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
     renderer->m_pCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     renderer->m_pCommandList->IASetVertexBuffers(0, 1, &vertexBufferView);
+
+
 
     // Ajoutez la commande DrawInstanced pour dessiner le triangle
     PRINT("Draw Success-->");
