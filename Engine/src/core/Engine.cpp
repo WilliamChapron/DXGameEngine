@@ -5,6 +5,7 @@
 #include "Defines.h"   
 #include "Window.h"  
 #include "../../Time.h"
+#include <string>
 
 
 using namespace DirectX;
@@ -67,6 +68,9 @@ void Engine::Run() {
     while (true) {
         time.UpdateTime();
         std::cout << "FPS : " << time.GetFramePerSecond() << std::endl;
+
+        
+        (*m_pWindow).UpdateTitleWithFPS(time.GetFramePerSecond());
 
         //PRINT("Hello");
         if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {

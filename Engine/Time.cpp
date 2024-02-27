@@ -31,3 +31,4 @@ int Time::GetFramePerSecond()
     return static_cast<int>(floor(1.0f / GetDeltaTime()));
 }
 
+

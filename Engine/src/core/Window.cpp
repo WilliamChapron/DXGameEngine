@@ -105,4 +105,11 @@ LRESULT CALLBACK Window::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
     return DefWindowProc(hwnd, message, wParam, lParam);
 }
 
+void Window::UpdateTitleWithFPS(int fps)
+{
+    std::string chain = "DirectX12 Engine FPS : " + std::to_string(fps);
 
+    std::wstring newTitle(chain.begin(), chain.end());
+
+    SetWindowText(m_wndProps.hwnd, newTitle.c_str());
+}
