@@ -138,6 +138,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="extern\d3dx12.h" />
+    <ClInclude Include="src\Input.h" />
     <ClInclude Include="src\core\Defines.h" />
     <ClInclude Include="src\core\Engine.h" />
     <ClInclude Include="src\core\Window.h" />
@@ -146,8 +147,10 @@
     <ClInclude Include="src\renderer\Graphics.h" />
     <ClInclude Include="src\renderer\Resources.h" />
     <ClInclude Include="src\Triangle.h" />
+    <ClInclude Include="src\StateMachine.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Input.cpp" />
     <ClCompile Include="src\core\Engine.cpp" />
     <ClCompile Include="src\core\Window.cpp" />
     <ClCompile Include="src\renderer\Camera.cpp" />
@@ -155,6 +158,7 @@
     <ClCompile Include="src\renderer\Resources.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Triangle.cpp" />
+    <ClCompile Include="src\StateMachine.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="res\shader\ShaderTriangle.hlsl">
