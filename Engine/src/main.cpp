@@ -4,7 +4,7 @@
 #include "include.h"   
 #include "core/Window.h"
 #include "core/Engine.h"
-
+#include "../time.h"
 
 
 
@@ -20,8 +20,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     //Console::GetInstance().Init();
     //Console::GetInstance().WriteToConsole("Hello");
-
-
 
     return 0;
 }

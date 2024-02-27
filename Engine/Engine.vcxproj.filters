@@ -10,6 +10,7 @@
     <ClInclude Include="src\renderer\Graphics.h" />
     <ClInclude Include="src\Triangle.h" />
     <ClInclude Include="src\renderer\Camera.h" />
+    <ClInclude Include="Time.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\Engine.cpp" />
@@ -19,6 +20,7 @@
     <ClCompile Include="src\renderer\Graphics.cpp" />
     <ClCompile Include="src\Triangle.cpp" />
     <ClCompile Include="src\renderer\Camera.cpp" />
+    <ClCompile Include="Time.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="res\shader\ShaderTriangle.hlsl" />

@@ -145,6 +145,7 @@
     <ClInclude Include="src\renderer\Camera.h" />
     <ClInclude Include="src\renderer\Graphics.h" />
     <ClInclude Include="src\renderer\Resources.h" />
+    <ClInclude Include="Time.h" />
     <ClInclude Include="src\Triangle.h" />
   </ItemGroup>
   <ItemGroup>
@@ -154,6 +155,7 @@
     <ClCompile Include="src\renderer\Graphics.cpp" />
     <ClCompile Include="src\renderer\Resources.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="Time.cpp" />
     <ClCompile Include="src\Triangle.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -4,6 +4,7 @@
 #include "../renderer/Graphics.h"   
 #include "Defines.h"   
 #include "Window.h"  
+#include "../../Time.h"
 
 
 using namespace DirectX;
@@ -57,11 +58,16 @@ void Engine::Cleanup() {
 void Engine::Run() {
     std::cout << "Main Loop Started" << std::endl;
 
+    Time time;
+
 
     MSG msg;
     ZeroMemory(&msg, sizeof(MSG));
 
     while (true) {
+        time.UpdateTime();
+        std::cout << "FPS : " << time.GetFramePerSecond() << std::endl;
+
         //PRINT("Hello");
         if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
             if (msg.message == WM_QUIT)
