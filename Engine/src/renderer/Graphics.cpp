@@ -222,7 +222,7 @@ void Renderer::CreateDescriptorHeap() {
 
     // Create CBV descriptor heap
     D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc = {};
-    cbvHeapDesc.NumDescriptors = 1;
+    cbvHeapDesc.NumDescriptors = 100;
     cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
     cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 
@@ -265,12 +265,31 @@ HRESULT CompileShaderFromFile(const wchar_t* filePath, const char* entryPoint, c
 }
 
 void Renderer::CreateRootSignature() {
-    D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc;
-    rootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
-    rootSignatureDesc.NumParameters = 0;
-    rootSignatureDesc.pParameters = nullptr;
-    rootSignatureDesc.NumStaticSamplers = 0;
-    rootSignatureDesc.pStaticSamplers = nullptr;
+
+   // CD3DX12_DESCRIPTOR_RANGE range[2];
+    CD3DX12_ROOT_PARAMETER parameter[1];
+
+ //   range[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
+ //   range[1].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 1);
+    parameter[0].InitAsConstantBufferView(0);
+    //parameter[1].InitAsConstantBufferView(1);
+
+   // InitAsDescriptorTable(_countof(range), range, D3D12_SHADER_VISIBILITY_ALL);
+  //  parameter[0].InitAsDescriptorTable(_countof(range), range, D3D12_SHADER_VISIBILITY_ALL);
+
+    D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
+        D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT | 
+        D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS |
+        D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS |
+        D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS;
+
+    CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDesc;
+    rootSignatureDesc.Init(_countof(parameter), parameter, 0, nullptr, rootSignatureFlags);
+
+
+
+
+
 
     ID3DBlob* signature = nullptr;
     ID3DBlob* error = nullptr;

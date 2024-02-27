@@ -180,14 +180,8 @@ void Triangle::PopulateCommandList(Renderer* renderer)
 
     // Update constant buffer * 
 
-    //// Définissez la signature racine et les descripteurs nécessaires
-    //renderer->m_pCommandList->SetGraphicsRootSignature(renderer->m_pRootSignature.Get());
-    //ID3D12DescriptorHeap* ppHeaps[] = { renderer->m_pCbvHeap.Get()};
-    //renderer->m_pCommandList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
 
-    //// Liez le tampon constant de la trame actuelle au pipeline
-    //CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle(renderer->m_pCbvHeap.Get()->GetGPUDescriptorHandleForHeapStart(), renderer->m_frameIndex, renderer->m_cbvDescriptorSize);
-    //renderer->m_pCommandList->SetGraphicsRootDescriptorTable(0, gpuHandle);
+    //commandList->SetGraphicsRootConstantBufferView(0, );
 
 
     renderer->m_pCommandList->OMSetRenderTargets(1, &rtvHandle, FALSE, nullptr);

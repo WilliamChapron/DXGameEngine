@@ -1,9 +1,9 @@
-//cbuffer ModelViewProjectionConstantBuffer : register(b0)
-//{
-//    matrix model;
-//    matrix view;
-//    matrix projection;
-//};
+cbuffer Data : register(b0)
+{
+    matrix model;
+    matrix view;
+    matrix projection;
+};
 
 struct VSInput
 {
