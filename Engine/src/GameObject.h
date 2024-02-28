@@ -23,13 +23,13 @@ public:
     GameObject();
 
     // Ajouter un triangle au gestionnaire
-    void AddObject(std::string index, const GameObject& objects);
+    void AddObject(std::string name, const GameObject& objects);
 
     // Supprimer un triangle du gestionnaire
-    void RemoveObject(std::string index);
+    void RemoveObject(std::string name);
 
     // Mettre à jour un triangle existant
-    void UpdateObject(std::string index, const GameObject& newObject);
+    void UpdateObject(std::string name, const GameObject& newObject);
 
     // Méthode de rendu des triangles
     void Render(Renderer* renderer);

@@ -5,21 +5,21 @@
 GameObject::GameObject() {}
 
 // Ajouter un objet au gestionnaire
-void GameObject::AddObject(std::string index, const GameObject& object) {
-    objectMap[index] = object;
+void GameObject::AddObject(std::string name, const GameObject& object) {
+    objectMap[name] = object;
     PRINT("Object added");
-    std::cout << index << std::endl;
+    std::cout << name << std::endl;
 }
 
 // Supprimer un objet du gestionnaire
-void GameObject::RemoveObject(std::string index) {
-    objectMap.erase(index);
+void GameObject::RemoveObject(std::string name) {
+    objectMap.erase(name);
     PRINT("Object erased");
 }
 
 // Mettre à jour un objet existant
-void GameObject::UpdateObject(std::string index, const GameObject& newObject) {
-    objectMap[index] = newObject;
+void GameObject::UpdateObject(std::string name, const GameObject& newObject) {
+    objectMap[name] = newObject;
     PRINT("Object updated");
 }
 
