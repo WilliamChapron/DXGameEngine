@@ -19,7 +19,7 @@ public:
     void Update();
 
     static Engine& GetInstance() {
-        static Engine instance;  
+        static Engine instance;
         return instance;
     }
 
