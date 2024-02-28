@@ -8,15 +8,40 @@ struct Transform
     Transform();
     Transform(const XMFLOAT3& pos, const XMFLOAT3& rot, const XMFLOAT3& scale);
 
-    XMFLOAT3 position;
-    XMFLOAT4 rotation;  // Utilisation d'un quaternion pour la rotation
-    XMFLOAT3 scale;
 
-    XMFLOAT4X4 matrix;
+    // Translate data
+    XMFLOAT3 vPosition;
+    XMFLOAT4X4 mPosition;
 
+    // Rotate data
+    XMFLOAT4 vRotation;  // Quaternion 
+    XMFLOAT4X4 mRotation;
+
+
+    // Scale data
+    XMFLOAT3 vScale;
+    XMFLOAT4X4 mScale;
+
+
+    // RIGHT HANDED ?
+    // Direction vector 
+    XMFLOAT3 vForward;
+    XMFLOAT3 vRight;
+    XMFLOAT3 vUp;
+
+
+    // World Matrix
+    XMFLOAT4X4 mWorld;
+
+    // Getter
     XMFLOAT4X4 GetTransformMatrix() const;
 
+    // Update them between each other
     void UpdateTransformMatrix();
-    void Rotate(float pitch, float roll, float yaw);
+
+    // Transform
     void Translate(float offsetX, float offsetY, float offsetZ);
+    void Rotate(float pitch, float roll, float yaw);
+    void Scale(float scaleX, float scaleY, float scaleZ);
+
 };

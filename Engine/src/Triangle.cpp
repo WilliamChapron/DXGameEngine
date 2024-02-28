@@ -210,9 +210,9 @@ void Triangle::Initialize(Renderer* renderer) {
     );
     ASSERT_FAILED(hr);
 
-    //static float rotationAngle = 0.0f;
-    //rotationAngle += 1.0f;
-    //m_transformData.Rotate(0, 0, rotationAngle);
+    //static float translationAngle = 0.0f;
+    //translationAngle += 10.0f;
+    //m_transformData.Translate(translationAngle, translationAngle, 0);
     //m_cbData.model = m_transformData.GetTransformMatrix();
 
     hr = m_constantBuffer->Map(0, nullptr, reinterpret_cast<void**>(&m_mappedConstantBuffer));
@@ -305,12 +305,24 @@ void Triangle::PopulateCommandList(Renderer* renderer)
 
 
 
-
-    // Rotate
-    static float rotationAngle = 0.0f;
-    rotationAngle += 1.0f;
-    m_transformData.Rotate(0, rotationAngle, 0);
+    static float translationOffset = 0.0f;
+    translationOffset += 0.0001f;
+    //PRINT("translationAngle");
+    //PRINT(translationAngle);
+    m_transformData.Translate(translationOffset, translationOffset, translationOffset);
     m_cbData.model = m_transformData.GetTransformMatrix();
+    /* Rotate*/
+    static float rotationAngle = 0.0f;
+    rotationAngle += 0.01;
+    m_transformData.Rotate(rotationAngle, rotationAngle, rotationAngle);
+
+
+    static float fScale = 0.0f;
+    fScale += 0.001f;
+    m_transformData.Scale(fScale, fScale, fScale);
+    m_cbData.model = m_transformData.GetTransformMatrix();
+
+
 
     // Map 
     hr = m_constantBuffer->Map(0, nullptr, reinterpret_cast<void**>(&m_mappedConstantBuffer));

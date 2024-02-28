@@ -1,67 +1,74 @@
 #include "Transform.h"
 
-Transform::Transform() : position(0.0f, 0.0f, 0.0f), rotation(0.0f, 0.0f, 0.0f, 1.0f), scale(1.0f, 1.0f, 1.0f)
+Transform::Transform() : vPosition(0.0f, 0.0f, 0.0f), vRotation(0.0f, 0.0f, 0.0f, 1.0f), vScale(1.0f, 1.0f, 1.0f)
 {
-    XMMATRIX modelMatrix = XMMatrixIdentity();  
-    XMMATRIX transposedModelMatrix = XMMatrixTranspose(modelMatrix);
-    XMStoreFloat4x4(&matrix, transposedModelMatrix);
+
+    XMMATRIX positionMatrix = XMMatrixIdentity();
+    XMStoreFloat4x4(&mPosition, positionMatrix);
+
+
+    XMMATRIX rotationMatrix = XMMatrixIdentity();
+    XMStoreFloat4x4(&mRotation, rotationMatrix);
+
+
+    XMMATRIX scaleMatrix = XMMatrixIdentity();
+    XMStoreFloat4x4(&mScale, scaleMatrix);
+
+
+    XMMATRIX worldMatrix = XMMatrixIdentity();
+    XMStoreFloat4x4(&mWorld, worldMatrix);
+
+
+    vForward = XMFLOAT3(0.0f, 0.0f, 1.0f); 
+    vRight = XMFLOAT3(1.0f, 0.0f, 0.0f);   
+    vUp = XMFLOAT3(0.0f, 1.0f, 0.0f);      
 }
 
-Transform::Transform(const XMFLOAT3& pos, const XMFLOAT3& rot, const XMFLOAT3& scl)
-    : position(pos), scale(scl)
+Transform::Transform(const XMFLOAT3& pos, const XMFLOAT3& rot, const XMFLOAT3& scl) : vPosition(pos), vScale(scl)
 {
-
-
-    // Init transform Matrix
     UpdateTransformMatrix();
 }
 
 XMFLOAT4X4 Transform::GetTransformMatrix() const
 {
-    return matrix;
+    return mWorld;
 }
 
 void Transform::UpdateTransformMatrix()
 {
-
-    XMMATRIX transformMatrix = XMMatrixScalingFromVector(XMLoadFloat3(&scale)) * XMMatrixRotationQuaternion(XMLoadFloat4(&rotation)) * XMMatrixTranslationFromVector(XMLoadFloat3(&position));
+    XMMATRIX transformMatrix = XMLoadFloat4x4(&mScale) * XMLoadFloat4x4(&mRotation) * XMLoadFloat4x4(&mPosition);
 
     transformMatrix = XMMatrixTranspose(transformMatrix);
-    XMStoreFloat4x4(&matrix, transformMatrix);
+
+    XMStoreFloat4x4(&mWorld, transformMatrix);
 }
 
 void Transform::Rotate(float pitch, float roll, float yaw)
 {
-    float pitchRadians = XMConvertToRadians(pitch);
-    float rollRadians = XMConvertToRadians(roll);
-    float yawRadians = XMConvertToRadians(yaw);
 
-    // Création des quaternions de rotation
-    XMVECTOR pitchQuaternion = XMQuaternionRotationAxis(XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f), pitchRadians);
-    XMVECTOR rollQuaternion = XMQuaternionRotationAxis(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), rollRadians);
-    XMVECTOR yawQuaternion = XMQuaternionRotationAxis(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), yawRadians);
+    XMMATRIX pitchMatrix = XMMatrixRotationX(pitch);
+    XMMATRIX rollMatrix = XMMatrixRotationY(roll);
+    XMMATRIX yawMatrix = XMMatrixRotationZ(yaw);
 
-    // Multiplication des quaternions pour obtenir la rotation combinée
-    XMVECTOR combinedRotation = XMQuaternionMultiply(XMQuaternionMultiply(pitchQuaternion, rollQuaternion), yawQuaternion);
+    XMMATRIX rotationMatrix = pitchMatrix * rollMatrix * yawMatrix;
 
-    // Convertir le quaternion résultant en une matrice de rotation
-    XMMATRIX rotationMatrix = XMMatrixRotationQuaternion(combinedRotation);
+    XMStoreFloat4x4(&mRotation, rotationMatrix);
 
-    // Appliquer la rotation à la matrice actuelle
-    XMMATRIX currentMatrix = XMLoadFloat4x4(&matrix);
-    currentMatrix = XMMatrixMultiply(currentMatrix, rotationMatrix);
-
-    currentMatrix = XMMatrixTranspose(currentMatrix);
-    XMStoreFloat4x4(&matrix, currentMatrix); 
+    UpdateTransformMatrix();
 }
 
 void Transform::Translate(float offsetX, float offsetY, float offsetZ)
 {
+
     XMMATRIX translationMatrix = XMMatrixTranslation(offsetX, offsetY, offsetZ);
-    XMMATRIX currentMatrix = XMLoadFloat4x4(&matrix);
+    XMStoreFloat4x4(&mPosition, translationMatrix);
 
+    UpdateTransformMatrix();
+}
 
-    currentMatrix = XMMatrixMultiply(currentMatrix, translationMatrix);
-    currentMatrix = XMMatrixTranspose(currentMatrix);
-    XMStoreFloat4x4(&matrix, currentMatrix);
+void Transform::Scale(float scaleX, float scaleY, float scaleZ) {
+    XMMATRIX scalingMatrix = XMMatrixScaling(scaleX, scaleY, scaleZ);
+
+    XMStoreFloat4x4(&mScale, scalingMatrix);
+    UpdateTransformMatrix();
 }
