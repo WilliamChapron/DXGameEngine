@@ -6,12 +6,12 @@
 #include "Window.h"  
 #include "../Time.h"
 #include <string>
+#include "../State.h"
+#include "../StateMachine.h"
+#include <iostream>
 
 
 using namespace DirectX;
-
-
-
 
 //XMVECTOR TranslateVector(XMVECTOR vector, float deltaX, float deltaY, float deltaZ) {
 //    // Création de la matrice de translation
@@ -21,17 +21,48 @@ using namespace DirectX;
 //    return XMVector3Transform(vector, translationMatrix);
 //}
 
+class StateInitialization : public State {
+public:
+    void enter() override {
+        std::cout << "Initialiaztion" << std::endl;
+    }
+
+    void exit() override {
+        std::cout << "End of initialization" << std::endl;
+    }
+};
+
+class StateRun : public State {
+public:
+    void enter() override {
+        std::cout << "Run" << std::endl;
+    }
+
+    void exit() override {
+        std::cout << "End of Run" << std::endl;
+    }
+};
+
+
 
 void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
     m_hInstance = hInstance;
 
     AllocConsole();
 
+
     if (freopen_s(&m_pConsole, "CONOUT$", "w", stdout) != 0) {
         MessageBox(0, L"Failed to redirect console output", L"Error", MB_OK);
         Cleanup();
         PostQuitMessage(1);
     }
+
+    stateMachine = new StateMachine();
+    (*stateMachine).AddState(new StateInitialization);
+    (*stateMachine).AddState(new StateRun);
+
+    (*stateMachine).ChangeState(0);
+
 
     m_pWindow = new Window(hInstance, nShowCmd);
 
@@ -46,6 +77,8 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
 
 
     isRenderable = true;
+
+    (*stateMachine).ChangeState(1);
     Run();
 }
 

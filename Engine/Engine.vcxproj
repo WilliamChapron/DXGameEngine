@@ -147,6 +147,8 @@
     <ClInclude Include="src\renderer\Resources.h" />
     <ClInclude Include="src\Time.h" />
     <ClInclude Include="src\Triangle.h" />
+    <ClInclude Include="src\StateMachine.h" />
+    <ClInclude Include="src\State.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\Engine.cpp" />
@@ -157,6 +159,7 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Time.cpp" />
     <ClCompile Include="src\Triangle.cpp" />
+    <ClCompile Include="src\StateMachine.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="res\shader\ShaderTriangle.hlsl">
