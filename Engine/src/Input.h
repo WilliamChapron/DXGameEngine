@@ -16,6 +16,7 @@ public:
 	bool isKeyDown(int keyCode) const;
 	bool isKeyUp(int keyCode) const;
 	bool isKeyPressed(int keyCode) const;
+	bool isMouseDown() const; 
 
 
 };

@@ -1,1 +1,2 @@
-﻿LINK : fatal error LNK1168: impossible d'ouvrir C:\Users\jkillingback\source\repos\DXproject\x64\Debug\Engine.exe pour écrire
+﻿  main.cpp
+  Engine.vcxproj -> C:\Users\jkillingback\Documents\DXGameEngine-Justin\DXGameEngine-Justin\x64\Debug\Engine.exe

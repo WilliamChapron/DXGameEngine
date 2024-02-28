@@ -32,3 +32,7 @@ bool Input::isKeyPressed(int keyCode) const {
 		(previousIt == previousKeys.end() || !previousIt->second);
 }
 
+bool Input::isMouseDown() const {
+	return GetAsyncKeyState(VK_LBUTTON) & 0x8000; // Check si le click gauche est préssé 
+}
+
