@@ -1,10 +1,10 @@
 #include "Triangle.h"
-#include "renderer/Graphics.h"
-#include "core/Defines.h"
+#include "../../renderer/Graphics.h"
+#include "../../core/Defines.h"
 #include <stdexcept>
 
-#include "Utils.h"
-#include <DirectXColors.h> 
+#include "../../Utils.h"
+#include <DirectXColors.h>
 
 
 

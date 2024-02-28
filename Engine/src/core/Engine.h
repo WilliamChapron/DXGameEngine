@@ -5,7 +5,7 @@
 
 #include <Windows.h>
 #include <iostream>
-#include "../StateMachine.h"
+#include "../ecs/systems/StateMachine.h"
 class Renderer;
 class Triangle;
 class Window;

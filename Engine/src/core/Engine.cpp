@@ -1,14 +1,14 @@
 #include "Engine.h"
-#include "../Triangle.h"
+#include "../ecs/entities/Triangle.h"
 #include "../include.h"   
 #include "../renderer/Graphics.h"   
 #include "Defines.h"   
 #include "Window.h"  
 
 #include "../Utils.h"
-#include "../physics/Transform.h"
+#include "../ecs/components/Transform.h"
 
-#include "../Time.h"
+#include "../ecs/systems/Time.h"
 
 using namespace DirectX;
 

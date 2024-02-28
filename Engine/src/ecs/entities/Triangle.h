@@ -1,14 +1,13 @@
 
-#include "./include.h"
+#include "../../include.h"
 #include <d3d12.h>
 
-#include "./physics/Transform.h"
+#include "../components/Transform.h"
 
-//struct Transform;
+#include "GameObject.h"
 
 class Renderer;
 using namespace DirectX;
-#include "./GameObject.h"
 
 class Triangle : public GameObject {
 public:
@@ -16,9 +15,4 @@ public:
     ~Triangle();
     void Initialize(Renderer* renderer);
     //void Update(float deltaTime, Renderer* renderer) override;
-
-
-private:
-
-
 };

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "physics/Transform.h"
-#include "include.h"
+#include "../components/Transform.h"
+#include "../../include.h"
 
 using namespace DirectX;
 

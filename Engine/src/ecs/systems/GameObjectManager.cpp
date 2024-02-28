@@ -1,5 +1,5 @@
 #include "GameObjectManager.h"
-#include "renderer/Graphics.h" // renderer
+#include "../../renderer/Graphics.h" // renderer
 
 // Constructeur par défaut
 GameObjectManager::GameObjectManager() {}
@@ -24,10 +24,10 @@ void GameObjectManager::UpdateObject(std::string name, const GameObject& newObje
 }
 
 // Méthode de rendu des objets
-void GameObjectManager::Render(Renderer* renderer) {
-    // Boucle à travers tous les objets et appeler leur méthode de rendu individuelle
-    for (auto& pair : objectMap) {
-        pair.second.Render(renderer);
-    }
-    PRINT("Object rendered");
-}
+//void GameObjectManager::Render(Renderer* renderer) {
+//    // Boucle à travers tous les objets et appeler leur méthode de rendu individuelle
+//    for (auto& pair : objectMap) {
+//        pair.second.Render(renderer);
+//    }
+//    PRINT("Object rendered");
+//}

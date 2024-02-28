@@ -1,6 +1,6 @@
 #include "GameObject.h"
-#include "./renderer/Graphics.h"
-#include "./core/Defines.h"
+#include "../../renderer/Graphics.h"
+#include "../../core/Defines.h"
 
 GameObject::GameObject() : m_transform(), m_vertexBuffer(nullptr)
 {

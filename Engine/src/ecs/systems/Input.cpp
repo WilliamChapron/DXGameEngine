@@ -1,5 +1,5 @@
 #include "Input.h"
-#include "core/Defines.h"
+#include "../../core/Defines.h"
 #include <Windows.h>
 #define PRINT(x) std::cout << x << std::endl
 

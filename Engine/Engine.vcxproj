@@ -138,32 +138,38 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="extern\d3dx12.h" />
-    <ClInclude Include="src\GameObject.h" />
+    <ClInclude Include="src\ecs\entities\GameObject.h" />
     <ClInclude Include="src\core\Defines.h" />
     <ClInclude Include="src\core\Engine.h" />
     <ClInclude Include="src\core\Window.h" />
+    <ClInclude Include="src\ecs\systems\GameObjectManager.h" />
     <ClInclude Include="src\include.h" />
-    <ClInclude Include="src\physics\Transform.h" />
-    <ClInclude Include="src\renderer\Camera.h" />
+    <ClInclude Include="src\ecs\systems\Input.h" />
+    <ClInclude Include="src\ecs\components\Transform.h" />
+    <ClInclude Include="src\ecs\components\Camera.h" />
     <ClInclude Include="src\renderer\Graphics.h" />
     <ClInclude Include="src\renderer\Resources.h" />
-    <ClInclude Include="src\State.h" />
-    <ClInclude Include="src\StateMachine.h" />
-    <ClInclude Include="src\Time.h" />
-    <ClInclude Include="src\Triangle.h" />
+    <ClInclude Include="src\ecs\systems\State.h" />
+    <ClInclude Include="src\ecs\systems\StateMachine.h" />
+    <ClInclude Include="src\ecs\systems\Time.h" />
+    <ClInclude Include="src\ecs\entities\Triangle.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\GameObject.cpp" />
+    <ClCompile Include="src\ecs\components\Shader.cpp" />
+    <ClCompile Include="src\ecs\components\Shader.h.cpp" />
+    <ClCompile Include="src\ecs\entities\GameObject.cpp" />
     <ClCompile Include="src\core\Engine.cpp" />
     <ClCompile Include="src\core\Window.cpp" />
-    <ClCompile Include="src\physics\Transform.cpp" />
-    <ClCompile Include="src\renderer\Camera.cpp" />
+    <ClCompile Include="src\ecs\systems\GameObjectManager.cpp" />
+    <ClCompile Include="src\ecs\systems\Input.cpp" />
+    <ClCompile Include="src\ecs\components\Transform.cpp" />
+    <ClCompile Include="src\ecs\components\Camera.cpp" />
     <ClCompile Include="src\renderer\Graphics.cpp" />
     <ClCompile Include="src\renderer\Resources.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\StateMachine.cpp" />
-    <ClCompile Include="src\Time.cpp" />
-    <ClCompile Include="src\Triangle.cpp" />
+    <ClCompile Include="src\ecs\systems\StateMachine.cpp" />
+    <ClCompile Include="src\ecs\systems\Time.cpp" />
+    <ClCompile Include="src\ecs\entities\Triangle.cpp" />
     <ClCompile Include="src\Utils.cpp" />
     <ClCompile Include="src\Utils.h" />
   </ItemGroup>

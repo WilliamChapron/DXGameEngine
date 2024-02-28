@@ -1,6 +1,6 @@
 #include "Window.h"
 #include "Engine.h"
-#include "../Triangle.h"
+#include "../ecs/entities/Triangle.h"
 #include "Defines.h"   
 
 Window::Window(HINSTANCE hInstance, int nShowCmd) {

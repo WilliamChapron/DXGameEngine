@@ -1,16 +1,15 @@
 #pragma once
 
-#include "include.h"
-#include "core/Defines.h"
+#include "../../include.h"
+#include "../../core/Defines.h"
 #include <vector>
 #include <unordered_map>
 #include <string>
-
+#include "../entities/GameObject.h"
 
 using namespace std;
 
 class Renderer;
-
 class GameObject;
 
 
