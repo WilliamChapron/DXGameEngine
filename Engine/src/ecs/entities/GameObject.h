@@ -7,6 +7,19 @@ using namespace DirectX;
 
 class Renderer;
 
+// Vertex
+struct Vertex
+{
+    XMFLOAT3 Pos;
+    XMFLOAT4 Color;
+};
+
+struct ConstantBufferData {
+    XMFLOAT4X4 model;
+    XMFLOAT4X4 view;
+    XMFLOAT4X4 projection;
+};
+
 class GameObject
 {
 public:
@@ -15,16 +28,7 @@ public:
 
     void Update(float deltaTime, Renderer* renderer);
 
-    struct ConstantBufferData {
-        XMFLOAT4X4 model;
-        XMFLOAT4X4 view;
-        XMFLOAT4X4 projection;
-    };
-
-
-
     const Transform& GetTransform() const { return m_transform; }
-    const int GetRenderCallNum() const { return m_renderCallNum; }
     const ConstantBufferData& GetConstantBufferData() const { return m_cbData; }
 
  
@@ -34,16 +38,6 @@ public:
     const D3D12_INDEX_BUFFER_VIEW& GetIndexBufferView() const { return m_indexBufferView; }
 
 protected:
-    // Vertex
-    struct Vertex
-    {
-        XMFLOAT3 Pos;
-        XMFLOAT4 Color;
-    };
-
-
-    int m_renderCallNum = 0;
-
 
     Transform m_transformData;
 

@@ -7,12 +7,13 @@
 #include "GameObject.h"
 
 class Renderer;
+class Camera;
 using namespace DirectX;
 
 class Triangle : public GameObject {
 public:
     Triangle();
     ~Triangle();
-    void Initialize(Renderer* renderer);
+    void Initialize(Renderer* renderer, Camera* camera);
     //void Update(float deltaTime, Renderer* renderer) override;
 };

@@ -75,6 +75,8 @@ public:
     ComPtr<ID3D12DescriptorHeap> m_pCbvHeap; 
     UINT m_cbvDescriptorSize;
 
+    int m_renderCallNum = 0;
+
 
 
 

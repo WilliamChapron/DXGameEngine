@@ -17,15 +17,20 @@ void GameObjectManager::RemoveObject(std::string name) {
     PRINT("Object erased");
 }
 
-// Mettre à jour un objet existant
-//void GameObjectManager::UpdateObject(std::string name, const GameObject& newObject) {
-//    objectMap[name] = newObject;
-//    PRINT("Object updated");
+
+//std::vector<GameObject> GameObjectManager::FindObjectsByName(const std::string& name) {
+//    std::vector<GameObject> matchingObjects;
+//
+//    for (auto& pair : objectMap) {
+//        if (pair.first == name) {
+//            matchingObjects.push_back(pair.second);
+//        }
+//    }
+//
+//    return matchingObjects;
 //}
 
-// Méthode de rendu des objets
 void GameObjectManager::Update(Renderer* renderer) {
-    // Boucle à travers tous les objets et appeler leur méthode de rendu individuelle
     HRESULT hr;
 
     PRINT("Rendering...");
@@ -34,11 +39,10 @@ void GameObjectManager::Update(Renderer* renderer) {
     
     for (auto& pair : objectMap) {
         GameObject& gameObject = pair.second;
-        // Appeler la méthode de mise à jour de chaque objet
-        gameObject.Update(1.0, renderer); // Supposons que chaque objet a une méthode Update
+        gameObject.Update(1.0, renderer); 
     }
 
-    //triangle->Update(1.0, this);
+
 
     renderer->Postcommandlist();
 

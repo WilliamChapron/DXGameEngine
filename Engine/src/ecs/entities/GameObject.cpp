@@ -2,9 +2,9 @@
 #include "../../renderer/Graphics.h"
 #include "../../core/Defines.h"
 
-GameObject::GameObject() : m_transform(), m_vertexBuffer(nullptr)
+GameObject::GameObject() : m_transform(), m_vertexBuffer(nullptr), m_indexBuffer(nullptr)
 {
-    
+
 }
 
 GameObject::GameObject(const XMFLOAT3& position, const XMFLOAT3& rotation, const XMFLOAT3& scale) : m_transform(position, rotation, scale)

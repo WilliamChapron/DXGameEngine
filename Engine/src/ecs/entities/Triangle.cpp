@@ -6,6 +6,10 @@
 #include "../../Utils.h"
 #include <DirectXColors.h>
 
+#include "../components/Camera.h"
+
+#include "../../renderer/Resources.h"
+
 
 
 Triangle::Triangle() {
@@ -18,54 +22,17 @@ Triangle::~Triangle() {
         m_vertexBuffer->Release();
         m_vertexBuffer = nullptr;
     }
-
-    //PRINT("Triangle destruction complete");
 }
 
 
-
-
-//Vertex triangleVertices[] = {
-    //    { { -0.5f, -0.5f, -0.5f, 1.0f }, { 1.0f, 0.0f, 0.0f, 1.0f } },
-    //    { { -0.5f, -0.5f,  0.5f, 1.0f }, { 0.0f, 1.0f, 0.0f, 1.0f } },
-    //    { { -0.5f,  0.5f, -0.5f, 1.0f }, { 0.0f, 0.0f, 1.0f, 1.0f } },
-    //    { { -0.5f,  0.5f,  0.5f, 1.0f }, { 0.0f, 1.0f, 1.0f, 1.0f } },
-    //    { {  0.5f, -0.5f, -0.5f, 1.0f }, { 1.0f, 0.0f, 1.0f, 1.0f } },
-    //    { {  0.5f, -0.5f,  0.5f, 1.0f }, { 1.0f, 1.0f, 0.0f, 1.0f } },
-    //    { {  0.5f,  0.5f, -0.5f, 1.0f }, { 1.0f, 1.0f, 1.0f, 1.0f } },
-    //    { {  0.5f,  0.5f,  0.5f, 1.0f }, { 0.5f, 0.5f, 0.5f, 1.0f } },
-    //};// Imprimer les valeurs après le mappage
-
-
-// Vertices du triangle
-    //Vertex triangleVertices[] = {
-    //    { { -0.2f, -0.2f, -0.2f}, { 1.0f, 0.0f, 0.0f, 1.0f } },
-    //    { { -0.2f, 0.2f, 0.2f }, { 0.0f, 1.0f, 0.0f, 1.0f } },
-    //    { { 0.2f, 0.2f, 0.2f }, { 0.0f, 0.0f, 1.0f, 1.0f } }
-    //};
-
-
-
-void Triangle::Initialize(Renderer* renderer) {
+void Triangle::Initialize(Renderer* renderer, Camera* camera) {
     m_transformData = Transform();
     m_cbData.model = m_transformData.GetTransformMatrix();
 
     // ** MATRIX
 
-    // Initialisation de la matrice de vue (view)
-    XMFLOAT3 eye(0.0f, 0.0f, -2.0f);    // Position de la caméra
-    XMFLOAT3 at(0.0f, 0.0f, 0.0f);      // Point où la caméra regarde
-    XMFLOAT3 up(0.0f, 1.0f, 0.0f);      // Vecteur "up" (orienté vers le haut)
-    XMMATRIX viewMatrix = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&at), XMLoadFloat3(&up));
-    XMMATRIX transposedViewMatrix = XMMatrixTranspose(viewMatrix);
-    XMStoreFloat4x4(&m_cbData.view, transposedViewMatrix);
-
-    // Initialisation de la matrice de projection
-    float aspectRatio = 16.0f / 9.0f;   // Vous devrez fournir la valeur de l'aspect ratio
-    float fieldOfView = XM_PIDIV4;  // Angle de champ de vision (45 degrés ici)
-    XMMATRIX projectionMatrix = XMMatrixPerspectiveFovLH(fieldOfView, aspectRatio, 0.1f, 100.0f);
-    XMMATRIX transposedProjectionMatrix = XMMatrixTranspose(projectionMatrix);
-    XMStoreFloat4x4(&m_cbData.projection, transposedProjectionMatrix);
+    m_cbData.view = camera->GetViewMatrix();
+    m_cbData.projection = camera->GetProjectionMatrix();
 
     // MATRIX **
 
@@ -95,64 +62,72 @@ void Triangle::Initialize(Renderer* renderer) {
         1, 4, 5    // Face 12 (clockwise)
     };
 
-    const UINT vertexBufferSize = sizeof(cubeVertices);
-    const UINT indexBufferSize = sizeof(cubeIndices);
+    const UINT vertexBufferSize = sizeof(cubeVertices);// *sizeof(Vertex);
+    const UINT indexBufferSize = sizeof(cubeIndices);// *sizeof(UINT);
+    const UINT stride = sizeof(Vertex);
 
-    // Index Buffer
-    CD3DX12_HEAP_PROPERTIES heapPropsIndex(D3D12_HEAP_TYPE_UPLOAD);
-    CD3DX12_RESOURCE_DESC bufferDescIndex = CD3DX12_RESOURCE_DESC::Buffer(indexBufferSize);
+    HRESULT hr;
 
-    HRESULT hr = renderer->m_pDevice->CreateCommittedResource(
-        &heapPropsIndex,
-        D3D12_HEAP_FLAG_NONE,
-        &bufferDescIndex,
-        D3D12_RESOURCE_STATE_GENERIC_READ,
-        nullptr,
-        IID_PPV_ARGS(&m_indexBuffer)
-    );
-    ASSERT_FAILED(hr);
-
-    UINT8* pIndexDataBegin;
-    CD3DX12_RANGE readRangeIndex(0, 0);
-
-    hr = m_indexBuffer->Map(0, &readRangeIndex, reinterpret_cast<void**>(&pIndexDataBegin));
-    ASSERT_FAILED(hr);
-    memcpy(pIndexDataBegin, cubeIndices, indexBufferSize);
-    m_indexBuffer->Unmap(0, nullptr);
-
-    m_indexBufferView.BufferLocation = m_indexBuffer->GetGPUVirtualAddress();
-    m_indexBufferView.Format = DXGI_FORMAT_R32_UINT;
-    m_indexBufferView.SizeInBytes = indexBufferSize;
+    CreateIndexBuffer(indexBufferSize, cubeIndices, m_indexBuffer, m_indexBufferView, renderer);
+    CreateVertexBuffer(vertexBufferSize, cubeVertices, m_vertexBuffer, m_vertexBufferView, stride, renderer);
 
 
-    
 
-    // Vertex Buffer * 
-    CD3DX12_HEAP_PROPERTIES heapProps(D3D12_HEAP_TYPE_UPLOAD);
-    CD3DX12_RESOURCE_DESC bufferDesc = CD3DX12_RESOURCE_DESC::Buffer(vertexBufferSize);
+    //// Index Buffer
+    //CD3DX12_HEAP_PROPERTIES heapPropsIndex(D3D12_HEAP_TYPE_UPLOAD);
+    //CD3DX12_RESOURCE_DESC bufferDescIndex = CD3DX12_RESOURCE_DESC::Buffer(indexBufferSize);
 
-    hr = renderer->m_pDevice->CreateCommittedResource(
-        &heapProps,
-        D3D12_HEAP_FLAG_NONE,
-        &bufferDesc,
-        D3D12_RESOURCE_STATE_GENERIC_READ,
-        nullptr,
-        IID_PPV_ARGS(&m_vertexBuffer)
-    );
-    ASSERT_FAILED(hr);
+    //hr = renderer->m_pDevice->CreateCommittedResource(
+    //    &heapPropsIndex,
+    //    D3D12_HEAP_FLAG_NONE,
+    //    &bufferDescIndex,
+    //    D3D12_RESOURCE_STATE_GENERIC_READ,
+    //    nullptr,
+    //    IID_PPV_ARGS(&m_indexBuffer)
+    //);
+    //ASSERT_FAILED(hr);
 
-    UINT8* pVertexDataBegin;
-    CD3DX12_RANGE readRange(0, 0);
+    //UINT8* pIndexDataBegin;
+    //CD3DX12_RANGE readRangeIndex(0, 0);
+
+    //hr = m_indexBuffer->Map(0, &readRangeIndex, reinterpret_cast<void**>(&pIndexDataBegin));
+    //ASSERT_FAILED(hr);
+    //memcpy(pIndexDataBegin, cubeIndices, indexBufferSize);
+    //m_indexBuffer->Unmap(0, nullptr);
+
+    //m_indexBufferView.BufferLocation = m_indexBuffer->GetGPUVirtualAddress();
+    //m_indexBufferView.Format = DXGI_FORMAT_R32_UINT;
+    //m_indexBufferView.SizeInBytes = indexBufferSize;
 
 
-    hr = m_vertexBuffer->Map(0, &readRange, reinterpret_cast<void**>(&pVertexDataBegin));
-    ASSERT_FAILED(hr);
-    memcpy(pVertexDataBegin, cubeVertices, vertexBufferSize);
-    m_vertexBuffer->Unmap(0, nullptr);
+    //
 
-    m_vertexBufferView.BufferLocation = m_vertexBuffer->GetGPUVirtualAddress();
-    m_vertexBufferView.StrideInBytes = sizeof(Vertex);
-    m_vertexBufferView.SizeInBytes = vertexBufferSize;
+    //// Vertex Buffer * 
+    //CD3DX12_HEAP_PROPERTIES heapProps(D3D12_HEAP_TYPE_UPLOAD);
+    //CD3DX12_RESOURCE_DESC bufferDesc = CD3DX12_RESOURCE_DESC::Buffer(vertexBufferSize);
+
+    //hr = renderer->m_pDevice->CreateCommittedResource(
+    //    &heapProps,
+    //    D3D12_HEAP_FLAG_NONE,
+    //    &bufferDesc,
+    //    D3D12_RESOURCE_STATE_GENERIC_READ,
+    //    nullptr,
+    //    IID_PPV_ARGS(&m_vertexBuffer)
+    //);
+    //ASSERT_FAILED(hr);
+
+    //UINT8* pVertexDataBegin;
+    //CD3DX12_RANGE readRange(0, 0);
+
+
+    //hr = m_vertexBuffer->Map(0, &readRange, reinterpret_cast<void**>(&pVertexDataBegin));
+    //ASSERT_FAILED(hr);
+    //memcpy(pVertexDataBegin, cubeVertices, vertexBufferSize);
+    //m_vertexBuffer->Unmap(0, nullptr);
+
+    //m_vertexBufferView.BufferLocation = m_vertexBuffer->GetGPUVirtualAddress();
+    //m_vertexBufferView.StrideInBytes = sizeof(Vertex);
+    //m_vertexBufferView.SizeInBytes = vertexBufferSize;
 
 
 

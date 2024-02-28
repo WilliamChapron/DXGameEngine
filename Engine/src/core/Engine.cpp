@@ -11,6 +11,9 @@
 
 #include "../ecs/systems/Time.h"
 
+
+#include "../ecs/components/Camera.h"
+
 using namespace DirectX;
 
 
@@ -41,12 +44,16 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
 
     m_pRenderer = new Renderer(m_pWindow);
 
-    m_pGameObjectManager = new GameObjectManager();
-
     m_pRenderer->InitializeDirectX12Instances();
 
+    m_pGameObjectManager = new GameObjectManager();
+
+    m_pCamera = new Camera();
+
+
+
     m_pTriangle = new Triangle;
-    m_pTriangle->Initialize(m_pRenderer);
+    m_pTriangle->Initialize(m_pRenderer, m_pCamera);
 
     m_pGameObjectManager->AddObject("Triangle", *m_pTriangle);
 
