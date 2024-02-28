@@ -1,6 +1,7 @@
 #pragma once
 #include <Windows.h>
 #include <iostream>
+#include <string>
 
 struct WindowProperties
 {
@@ -17,6 +18,7 @@ public:
     Window(HINSTANCE hInstance, int nShowCmd);
     ~Window();
 
+    void UpdateTitleWithFPS(int fps);
 
     static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 

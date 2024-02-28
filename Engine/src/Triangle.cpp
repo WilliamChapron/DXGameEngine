@@ -19,7 +19,7 @@ Triangle::~Triangle() {
         m_vertexBuffer = nullptr;
     }
 
-    PRINT("Triangle destruction complete");
+    //PRINT("Triangle destruction complete");
 }
 
 

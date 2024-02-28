@@ -5,11 +5,11 @@
 
 #include <Windows.h>
 #include <iostream>
+#include "../StateMachine.h"
 
 class Renderer;
 class Triangle;
 class Window;
-
 
 
 class Engine {
@@ -32,6 +32,7 @@ public:
 
 private:
     Engine() = default;
+    StateMachine* stateMachine;
 
     Window* m_pWindow = nullptr;
     HINSTANCE m_hInstance;
