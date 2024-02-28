@@ -6,6 +6,10 @@
 #include "Window.h"  
 
 #include "../GameObject.h"
+#include "../Input.h"
+
+#include <windows.h>
+#include <iostream>
 
 using namespace DirectX;
 
@@ -59,6 +63,36 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
     // Méthode de rendu des objets
     gameObject.Render(nullptr);
     //------
+    
+    ////------ TEST INPUT
+    //Input input;
+
+    //bool running = true;
+    //while (running) {
+    //    PRINT("go input");
+    //    input.update();
+    //    PRINT("Checking input");
+
+    //    if (input.isKeyDown(VK_ESCAPE)) {
+    //        PRINT("ESCAPE pressed!");
+    //        running = false;
+    //    }
+
+    //    if (input.isKeyDown(VK_UP)) {
+    //        //std::cout << "UP arrow key pressed" << std::endl;
+    //        PRINT("UP arrow key pressed!"); //Checking if spacebar is pressed!
+    //    }
+
+    //    if (input.isMouseDown()) {
+    //        //std::cout << "Mouse left button pressed!" << std::endl;
+    //        PRINT("Mouse left button pressed!"); // Check si le clic gauche est préssé
+    //    }
+
+    //    // On rajoute autant de chack inputs qu'on souhaite
+    //    Sleep(100);
+    //}
+
+    ////------
 
     isRenderable = true;
     Run();

@@ -10,8 +10,8 @@
     <ClInclude Include="src\renderer\Graphics.h" />
     <ClInclude Include="src\Triangle.h" />
     <ClInclude Include="src\renderer\Camera.h" />
-    <ClInclude Include="src\GameObject.h" />
-    <ClInclude Include="src\core\Init.h" />
+    <ClInclude Include="src\GameObjectManager.h" />
+    <ClInclude Include="src\Input.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\Engine.cpp" />
@@ -21,8 +21,8 @@
     <ClCompile Include="src\renderer\Graphics.cpp" />
     <ClCompile Include="src\Triangle.cpp" />
     <ClCompile Include="src\renderer\Camera.cpp" />
-    <ClCompile Include="src\GameObject.cpp" />
-    <ClCompile Include="src\core\Init.cpp" />
+    <ClCompile Include="src\GameObjectManager.cpp" />
+    <ClCompile Include="src\Input.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="res\shader\ShaderTriangle.hlsl" />

@@ -11,16 +11,18 @@ using namespace std;
 
 class Renderer;
 
+class GameObject;
+
 
 // Classe GameObject
-class GameObject {
+class GameObjectManager {
 private:
 
     std::unordered_map<std::string, GameObject> objectMap; // Map des objets avec leurs indices
 
 
 public:
-    GameObject();
+    GameObjectManager();
 
     // Ajouter un triangle au gestionnaire
     void AddObject(std::string name, const GameObject& objects);
