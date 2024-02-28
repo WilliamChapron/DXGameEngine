@@ -306,10 +306,10 @@ void Triangle::PopulateCommandList(Renderer* renderer)
 
 
     static float translationOffset = 0.0f;
-    translationOffset += 0.0001f;
+    translationOffset -= 0.0003f;
     //PRINT("translationAngle");
     //PRINT(translationAngle);
-    m_transformData.Translate(translationOffset, translationOffset, translationOffset);
+    m_transformData.Translate(translationOffset, translationOffset, 0);
     m_cbData.model = m_transformData.GetTransformMatrix();
     /* Rotate*/
     static float rotationAngle = 0.0f;
@@ -317,8 +317,8 @@ void Triangle::PopulateCommandList(Renderer* renderer)
     m_transformData.Rotate(rotationAngle, rotationAngle, rotationAngle);
 
 
-    static float fScale = 0.0f;
-    fScale += 0.001f;
+    static float fScale = 0.5f;
+    fScale += 0.0001f;
     m_transformData.Scale(fScale, fScale, fScale);
     m_cbData.model = m_transformData.GetTransformMatrix();
 
