@@ -4,6 +4,7 @@
 #include "Graphics.h"
 #include "../core/Defines.h"
 #include "../core/Window.h"
+#include "../GameObject.h"
 
 
 Renderer::Renderer(Window* pWindow) {
@@ -364,3 +365,125 @@ void Renderer::CreatePipelineState() {
 
 
 
+void Renderer::WaitForPreviousFrame()
+{
+    PRINT("Waiting for previous frame...");
+
+    // Signal and increment the fence value.
+    m_fenceValue++;
+
+    HRESULT hr = m_pCommandQueue->Signal(m_pFence.Get(), m_fenceValue);
+    ASSERT_FAILED(hr);
+
+    // Wait until the previous frame is finished.
+    if (m_pFence->GetCompletedValue() < m_fenceValue)
+    {
+        //Check if the GPU has completed all commands associated with the previous fence value
+        HANDLE eventHandle = CreateEventEx(nullptr, NULL, false, EVENT_ALL_ACCESS);
+
+        //Set the event to the current fence value
+        hr = m_pFence->SetEventOnCompletion(m_fenceValue, eventHandle);
+        ASSERT_FAILED(hr);
+
+        //Wait for the GPU to complete associated commands
+        WaitForSingleObject(eventHandle, INFINITE);
+
+        //Close the handle to the event
+        CloseHandle(eventHandle);
+    }
+
+
+    PRINT("frameIndex");
+    PRINT(m_frameIndex);
+    //frameIndex = pSwapChain->GetCurrentBackBufferIndex();
+
+    PRINT("Previous frame completed");
+}
+
+
+
+void Renderer::Postcommandlist()
+{
+
+    HRESULT hr;
+
+    // #TODO Don't repeat command to each triangle
+    CD3DX12_RESOURCE_BARRIER presentBarrier = CD3DX12_RESOURCE_BARRIER::Transition(
+        m_pRenderTargets[m_frameIndex].Get(),
+        D3D12_RESOURCE_STATE_RENDER_TARGET,
+        D3D12_RESOURCE_STATE_PRESENT);
+
+    m_pCommandList->ResourceBarrier(1, &presentBarrier);
+
+    hr = m_pCommandList->Close();
+    ASSERT_FAILED(hr);
+
+    PRINT("Command list populated");
+
+
+
+}
+
+void Renderer::Precommandlist() {
+
+    HRESULT hr;
+    PRINT("Populating command list...");
+
+    hr = m_pCommandAllocator->Reset();
+    ASSERT_FAILED(hr);
+
+    hr = m_pCommandList->Reset(m_pCommandAllocator.Get(), m_pPipelineState.Get());
+    ASSERT_FAILED(hr);
+
+    m_pCommandList->SetGraphicsRootSignature(m_pRootSignature.Get());
+    m_pCommandList->RSSetViewports(1, m_pViewport);
+    m_pCommandList->RSSetScissorRects(1, m_pScissorRect);
+
+    CD3DX12_RESOURCE_BARRIER transitionBarrier = CD3DX12_RESOURCE_BARRIER::Transition(
+        m_pRenderTargets[m_frameIndex].Get(),
+        D3D12_RESOURCE_STATE_PRESENT,
+        D3D12_RESOURCE_STATE_RENDER_TARGET);
+
+    m_pCommandList->ResourceBarrier(1, &transitionBarrier);
+
+
+    CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(
+        m_pRtvHeap->GetCPUDescriptorHandleForHeapStart(),
+        m_frameIndex,
+        m_rtvDescriptorSize);
+
+
+    m_pCommandList->OMSetRenderTargets(1, &rtvHandle, FALSE, nullptr);
+
+{
+
+
+void Renderer::Render(GameObject* triangle)
+{
+    HRESULT hr;
+
+    PRINT("Rendering...");
+
+    Precommandlist();
+
+    triangle->Update()
+
+    Postcommandlist();
+
+    ID3D12CommandList* ppCommandLists[] = { m_pCommandList.Get() };
+    m_pCommandQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
+
+    // Présentez la frame.
+    hr = m_pSwapChain->Present(1, 0);
+    m_frameIndex = (m_frameIndex + 1) % m_FRAME_COUNT;
+    ASSERT_FAILED(hr);
+
+
+    WaitForPreviousFrame(renderer);
+
+    PRINT("Rendering complete");
+
+    //m_renderCallNum++;
+    //PRINT(m_renderCallNum++);
+
+}

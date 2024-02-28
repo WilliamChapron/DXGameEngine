@@ -28,6 +28,15 @@ public:
     void CreatePipelineState();
     void CreateRootSignature();
 
+
+
+    void WaitForPreviousFrame();
+
+    void Render(GameObject* triangle);
+
+    void Precommandlist();
+    void Postcommandlist();
+
     static const UINT m_FRAME_COUNT = 2;
     int m_frameIndex;
     HANDLE m_fenceEvent;

@@ -8,47 +8,16 @@
 
 class Renderer;
 using namespace DirectX;
+#include "./GameObject.h"
 
-class Triangle {
+class Triangle : public GameObject {
 public:
     Triangle();
     ~Triangle();
     void Initialize(Renderer* renderer);
-    void PopulateCommandList(Renderer* renderer);
-    void WaitForPreviousFrame(Renderer* renderer);
-    void Render(Renderer* renderer);
+
 
 private:
-    // Vertex
-    struct Vertex
-    {
-        XMFLOAT3 Pos;
-        XMFLOAT4 Color;
-    };
 
-
-    int renderCallNum = 0;
-
-
-    struct ConstantBufferData {
-        XMFLOAT4X4 model;
-        XMFLOAT4X4 view;
-        XMFLOAT4X4 projection;
-    };
-
-    Transform m_transformData;
-
-    ConstantBufferData m_cbData;
-
-    ID3D12Resource* m_constantBuffer;
-    UINT8* m_mappedConstantBuffer;
-
-
-    // Vertex buffer
-    ID3D12Resource* vertexBuffer;
-    D3D12_VERTEX_BUFFER_VIEW vertexBufferView;
-
-    ID3D12Resource* indexBuffer;
-    D3D12_INDEX_BUFFER_VIEW indexBufferView;
 
 };

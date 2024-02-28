@@ -11,6 +11,7 @@
     <ClInclude Include="src\Triangle.h" />
     <ClInclude Include="src\renderer\Camera.h" />
     <ClInclude Include="src\physics\Transform.h" />
+    <ClInclude Include="src\GameObject.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\Engine.cpp" />
@@ -23,6 +24,7 @@
     <ClCompile Include="src\physics\Transform.cpp" />
     <ClCompile Include="src\Utils.h" />
     <ClCompile Include="src\Utils.cpp" />
+    <ClCompile Include="src\GameObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="res\shader\ShaderTriangle.hlsl" />

@@ -59,49 +59,32 @@ void Engine::Cleanup() {
 void Engine::Run() {
     std::cout << "Main Loop Started" << std::endl;
 
-
     MSG msg;
     ZeroMemory(&msg, sizeof(MSG));
 
+
+    std::vector<GameObject> triangles;
+
+
+    //triangles.push_back(*m_pTriangle1);
+    //triangles.push_back(*m_pTriangle2);
+    // Ajoutez d'autres triangles au besoin
+
     while (true) {
-        //PRINT("Hello");
-
-
-
-
-
-            // Créer une instance de la classe Transform
-        Transform transform;
-
-        // Déboguer la matrice de transformation initiale
-        XMFLOAT4X4 initialTransformMatrix = transform.GetTransformMatrix();
-        std::cout << "Initial Transform Matrix:" << std::endl;
-        PrintMatrix(initialTransformMatrix);
-
-        // Effectuer une rotation relative pour mettre à jour la transformation
-        transform.Rotate(45.0f, 0.0f, 0.0f);
-
-        // Déboguer la matrice de transformation mise à jour
-        XMFLOAT4X4 updatedTransformMatrix = transform.GetTransformMatrix();
-        std::cout << "Updated Transform Matrix:" << std::endl;
-        PrintMatrix(updatedTransformMatrix);
         if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
             if (msg.message == WM_QUIT)
                 break;
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
+
         if (isRenderable) {
-            //PRINT("Paint");
-            m_pTriangle->Render(m_pRenderer);
+            // Appelez la fonction Render de la classe Renderer et passez-lui la liste de triangles
+            m_pRenderer->Render(m_pTriangle);
         }
-        //m_pTriangle->Render(m_pRenderer);
-        //else {
-        //    Sleep(1000);
-        //    std::cout << "sdsd" << std::endl;
-        //}
     }
 }
+
 void Engine::Update() {
     // static instance
 
