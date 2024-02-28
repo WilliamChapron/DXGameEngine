@@ -5,13 +5,15 @@
 
 using namespace DirectX;
 
+class Renderer;
+
 class GameObject
 {
 public:
     GameObject();
     GameObject(const XMFLOAT3& position, const XMFLOAT3& rotation, const XMFLOAT3& scale);
 
-    virtual void Update(float deltaTime, Renderer* renderer);
+    void Update(float deltaTime, Renderer* renderer);
 
     struct ConstantBufferData {
         XMFLOAT4X4 model;

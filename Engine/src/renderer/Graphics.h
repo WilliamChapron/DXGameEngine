@@ -7,6 +7,7 @@
 #include <wrl/client.h>
 
 class Window;
+class GameObject;
 
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;

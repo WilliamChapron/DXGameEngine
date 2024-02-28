@@ -23,6 +23,8 @@ Triangle::~Triangle() {
 }
 
 
+
+
 //Vertex triangleVertices[] = {
     //    { { -0.5f, -0.5f, -0.5f, 1.0f }, { 1.0f, 0.0f, 0.0f, 1.0f } },
     //    { { -0.5f, -0.5f,  0.5f, 1.0f }, { 0.0f, 1.0f, 0.0f, 1.0f } },
@@ -45,14 +47,27 @@ Triangle::~Triangle() {
 
 
 void Triangle::Initialize(Renderer* renderer) {
-
-    
-
     m_transformData = Transform();
     m_cbData.model = m_transformData.GetTransformMatrix();
 
-    PrintMatrix(m_cbData.model);
+    // ** MATRIX
 
+    // Initialisation de la matrice de vue (view)
+    XMFLOAT3 eye(0.0f, 0.0f, -2.0f);    // Position de la caméra
+    XMFLOAT3 at(0.0f, 0.0f, 0.0f);      // Point où la caméra regarde
+    XMFLOAT3 up(0.0f, 1.0f, 0.0f);      // Vecteur "up" (orienté vers le haut)
+    XMMATRIX viewMatrix = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&at), XMLoadFloat3(&up));
+    XMMATRIX transposedViewMatrix = XMMatrixTranspose(viewMatrix);
+    XMStoreFloat4x4(&m_cbData.view, transposedViewMatrix);
+
+    // Initialisation de la matrice de projection
+    float aspectRatio = 16.0f / 9.0f;   // Vous devrez fournir la valeur de l'aspect ratio
+    float fieldOfView = XM_PIDIV4;  // Angle de champ de vision (45 degrés ici)
+    XMMATRIX projectionMatrix = XMMatrixPerspectiveFovLH(fieldOfView, aspectRatio, 0.1f, 100.0f);
+    XMMATRIX transposedProjectionMatrix = XMMatrixTranspose(projectionMatrix);
+    XMStoreFloat4x4(&m_cbData.projection, transposedProjectionMatrix);
+
+    // MATRIX **
 
     Vertex cubeVertices[] = {
         { {-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f, 1.0f} },  // Rouge
@@ -64,31 +79,6 @@ void Triangle::Initialize(Renderer* renderer) {
         { { 0.5f,  0.5f, -0.5f}, {0.5f, 0.5f, 0.5f, 1.0f} },  // Gris
         { { 0.5f,  0.5f,  0.5f}, {0.5f, 0.5f, 0.5f, 1.0f} }   // Gris
     };
-    // # TO THINK - Opacity?
-
-    //Vertex cubeVertices[] = {
-    //{ {-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f, 0.0f} },  // Rouge
-    //{ {-0.5f, -0.5f,  0.5f}, {1.0f, 0.0f, 0.0f, 0.0f} },  // Rouge
-    //{ {-0.5f,  0.5f, -0.5f}, {0.0f, 0.0f, 1.0f, 0.0f} },  // Bleu
-    //{ {-0.5f,  0.5f,  0.5f}, {0.0f, 0.0f, 1.0f, 0.0f} },  // Bleu
-    //{ { 0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 0.0f, 0.0f} },  // Jaune
-    //{ { 0.5f, -0.5f,  0.5f}, {1.0f, 1.0f, 0.0f, 0.0f} },  // Jaune
-    //{ { 0.5f,  0.5f, -0.5f}, {0.5f, 0.5f, 0.5f, 0.0f} },  // Gris
-    //{ { 0.5f,  0.5f,  0.5f}, {0.5f, 0.5f, 0.5f, 0.0f} }   // Gris
-    //};
-
-
-    //Vertex cubeVertices[] = {
-    //    { {-0.5f, -0.5f, -0.5f}, {1.0f, 0.5f, 0.8f, 1.0f} },
-    //    { {-0.5f, -0.5f,  0.5f}, {1.0f, 0.5f, 0.8f, 1.0f} },
-    //    { {-0.5f,  0.5f, -0.5f}, {1.0f, 0.5f, 0.8f, 1.0f} },
-    //    { {-0.5f,  0.5f,  0.5f}, {1.0f, 0.5f, 0.8f, 1.0f} },
-    //    { { 0.5f, -0.5f, -0.5f}, {1.0f, 0.5f, 0.8f, 1.0f} },
-    //    { { 0.5f, -0.5f,  0.5f}, {1.0f, 0.5f, 0.8f, 1.0f} },
-    //    { { 0.5f,  0.5f, -0.5f}, {1.0f, 0.5f, 0.8f, 1.0f} },
-    //    { { 0.5f,  0.5f,  0.5f}, {1.0f, 0.5f, 0.8f, 1.0f} }
-    //};
-
 
     UINT cubeIndices[] = {
         0, 1, 2,   // Face 1 (clockwise)
@@ -105,12 +95,8 @@ void Triangle::Initialize(Renderer* renderer) {
         1, 4, 5    // Face 12 (clockwise)
     };
 
-
-    
     const UINT vertexBufferSize = sizeof(cubeVertices);
     const UINT indexBufferSize = sizeof(cubeIndices);
-
-
 
     // Index Buffer
     CD3DX12_HEAP_PROPERTIES heapPropsIndex(D3D12_HEAP_TYPE_UPLOAD);
@@ -139,28 +125,7 @@ void Triangle::Initialize(Renderer* renderer) {
     m_indexBufferView.SizeInBytes = indexBufferSize;
 
 
-
-    // ** MATRIX
-
-    // Initialisation de la matrice de vue (view)
-    XMFLOAT3 eye(0.0f, 0.0f, -2.0f);    // Position de la caméra
-    XMFLOAT3 at(0.0f, 0.0f, 0.0f);      // Point où la caméra regarde
-    XMFLOAT3 up(0.0f, 1.0f, 0.0f);      // Vecteur "up" (orienté vers le haut)
-    XMMATRIX viewMatrix = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&at), XMLoadFloat3(&up));
-    XMMATRIX transposedViewMatrix = XMMatrixTranspose(viewMatrix);
-    XMStoreFloat4x4(&m_cbData.view, transposedViewMatrix);
-
-    // Initialisation de la matrice de projection
-    float aspectRatio = 16.0f / 9.0f;   // Vous devrez fournir la valeur de l'aspect ratio
-    float fieldOfView = XM_PIDIV4;  // Angle de champ de vision (45 degrés ici)
-    XMMATRIX projectionMatrix = XMMatrixPerspectiveFovLH(fieldOfView, aspectRatio, 0.1f, 100.0f);
-    XMMATRIX transposedProjectionMatrix = XMMatrixTranspose(projectionMatrix);
-    XMStoreFloat4x4(&m_cbData.projection, transposedProjectionMatrix);
-
-    // MATRIX **
-
-
-
+    
 
     // Vertex Buffer * 
     CD3DX12_HEAP_PROPERTIES heapProps(D3D12_HEAP_TYPE_UPLOAD);
@@ -178,7 +143,6 @@ void Triangle::Initialize(Renderer* renderer) {
 
     UINT8* pVertexDataBegin;
     CD3DX12_RANGE readRange(0, 0);
-
 
 
     hr = m_vertexBuffer->Map(0, &readRange, reinterpret_cast<void**>(&pVertexDataBegin));
@@ -205,11 +169,6 @@ void Triangle::Initialize(Renderer* renderer) {
         IID_PPV_ARGS(&m_constantBuffer)
     );
     ASSERT_FAILED(hr);
-
-    //static float translationAngle = 0.0f;
-    //translationAngle += 10.0f;
-    //m_transformData.Translate(translationAngle, translationAngle, 0);
-    //m_cbData.model = m_transformData.GetTransformMatrix();
 
     hr = m_constantBuffer->Map(0, nullptr, reinterpret_cast<void**>(&m_mappedConstantBuffer));
     ASSERT_FAILED(hr);
