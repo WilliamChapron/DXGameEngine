@@ -23,27 +23,21 @@ void GameObject::UpdateTransformation(float deltaTime)
     HRESULT hr;
 
     PRINT("Update TRANSFORM");
-    static float translationOffset = 0.0f;
-    translationOffset -= 0.0003f;
+    static float translationOffset = 0.05f;
+    //translationOffset -= 0.0003f;
 
-    static float rotationAngle = 0.0f;
-    rotationAngle += 0.01;
+    static float rotationAngle = 0.03f;
+    /*rotationAngle += 0.01;*/
 
-    static float fScale = 0.5f;
-    fScale += 0.001f;
-
-
-    m_transformData.Translate(translationOffset, translationOffset, 0);
-    m_cbData.model = m_transformData.GetTransformMatrix();
-    /* Rotate*/
+    static float fScale = 0.1f;
+    fScale += 0.01f;
 
 
+    //m_transformData.Translate(translationOffset, translationOffset, 0);
+    m_transformData.Rotate(0, 0, rotationAngle);
+    //m_transformData.Scale(1, fScale, 1);
 
-    m_transformData.Rotate(rotationAngle, rotationAngle, rotationAngle);
 
-
-
-    m_transformData.Scale(fScale, fScale, fScale);
     m_cbData.model = m_transformData.GetTransformMatrix();
 
 

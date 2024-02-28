@@ -1,6 +1,6 @@
 #include "Transform.h"
 
-Transform::Transform() : vPosition(0.0f, 0.0f, 0.0f), vRotation(0.0f, 0.0f, 0.0f, 1.0f), vScale(1.0f, 1.0f, 1.0f)
+Transform::Transform() : vPosition(0.0f, 0.0f, 0.0f), qRotation(0.0f, 0.0f, 0.0f, 1.0f), vScale(1.0f, 1.0f, 1.0f)
 {
 
     XMMATRIX positionMatrix = XMMatrixIdentity();
@@ -45,17 +45,43 @@ void Transform::UpdateTransformMatrix()
 
 void Transform::Rotate(float pitch, float roll, float yaw)
 {
+    XMVECTOR forwardVector = XMLoadFloat3(&vForward);
+    XMVECTOR rightVector = XMLoadFloat3(&vRight);
+    XMVECTOR upVector = XMLoadFloat3(&vUp);
 
-    XMMATRIX pitchMatrix = XMMatrixRotationX(pitch);
-    XMMATRIX rollMatrix = XMMatrixRotationY(roll);
-    XMMATRIX yawMatrix = XMMatrixRotationZ(yaw);
 
-    XMMATRIX rotationMatrix = pitchMatrix * rollMatrix * yawMatrix;
+    XMVECTOR qRoll = XMQuaternionRotationAxis(forwardVector, roll);
+    XMVECTOR qPitch = XMQuaternionRotationAxis(rightVector, pitch);
+    XMVECTOR qYaw = XMQuaternionRotationAxis(upVector, yaw);
+    XMVECTOR q = XMQuaternionMultiply(qRoll, qPitch);
+    q = XMQuaternionMultiply(q, qYaw);
 
+    //Ajout rotation à quaternion / Multiplier qRotation stocké a q transform
+    XMVECTOR rotationQuaternion = XMLoadFloat4(&qRotation);
+    rotationQuaternion = XMQuaternionMultiply(rotationQuaternion, q);
+    XMStoreFloat4(&qRotation, rotationQuaternion);
+
+    //Convertir le quaternion en une matrice
+    XMMATRIX rotationMatrix = XMMatrixRotationQuaternion(rotationQuaternion);
     XMStoreFloat4x4(&mRotation, rotationMatrix);
+
+    //Mise à jour des axes
+    vRight.x = mRotation._11;
+    vRight.y = mRotation._12;
+    vRight.z = mRotation._13;
+
+    vUp.x = mRotation._21;
+    vUp.y = mRotation._22;
+    vUp.z = mRotation._23;
+
+    vForward.x = mRotation._31;
+    vForward.y = mRotation._32;
+    vForward.z = mRotation._33;
 
     UpdateTransformMatrix();
 }
+
+
 
 void Transform::Translate(float offsetX, float offsetY, float offsetZ)
 {
