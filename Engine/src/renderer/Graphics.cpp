@@ -393,8 +393,8 @@ void Renderer::WaitForPreviousFrame()
     }
 
 
-    PRINT("frameIndex");
-    PRINT(m_frameIndex);
+    //PRINT("frameIndex");
+    //PRINT(m_frameIndex);
     //frameIndex = pSwapChain->GetCurrentBackBufferIndex();
 
     PRINT("Previous frame completed");
@@ -402,27 +402,7 @@ void Renderer::WaitForPreviousFrame()
 
 
 
-void Renderer::Postcommandlist()
-{
 
-    HRESULT hr;
-
-    // #TODO Don't repeat command to each triangle
-    CD3DX12_RESOURCE_BARRIER presentBarrier = CD3DX12_RESOURCE_BARRIER::Transition(
-        m_pRenderTargets[m_frameIndex].Get(),
-        D3D12_RESOURCE_STATE_RENDER_TARGET,
-        D3D12_RESOURCE_STATE_PRESENT);
-
-    m_pCommandList->ResourceBarrier(1, &presentBarrier);
-
-    hr = m_pCommandList->Close();
-    ASSERT_FAILED(hr);
-
-    PRINT("Command list populated");
-
-
-
-}
 
 void Renderer::Precommandlist() {
 
@@ -455,7 +435,30 @@ void Renderer::Precommandlist() {
 
     m_pCommandList->OMSetRenderTargets(1, &rtvHandle, FALSE, nullptr);
 
+
+    const float clearColor[] = { 0.8f, 0.8f, 0.1f, 1.0f };
+    m_pCommandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
+
+}
+
+void Renderer::Postcommandlist()
 {
+
+    HRESULT hr;
+
+    // #TODO Don't repeat command to each triangle
+    CD3DX12_RESOURCE_BARRIER presentBarrier = CD3DX12_RESOURCE_BARRIER::Transition(
+        m_pRenderTargets[m_frameIndex].Get(),
+        D3D12_RESOURCE_STATE_RENDER_TARGET,
+        D3D12_RESOURCE_STATE_PRESENT);
+
+    m_pCommandList->ResourceBarrier(1, &presentBarrier);
+
+    hr = m_pCommandList->Close();
+    ASSERT_FAILED(hr);
+
+    PRINT("Command list populated");
+}
 
 
 void Renderer::Render(GameObject* triangle)
@@ -466,24 +469,20 @@ void Renderer::Render(GameObject* triangle)
 
     Precommandlist();
 
-    triangle->Update()
+    triangle->Update(1.0, this);
 
     Postcommandlist();
 
     ID3D12CommandList* ppCommandLists[] = { m_pCommandList.Get() };
     m_pCommandQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
 
-    // Présentez la frame.
     hr = m_pSwapChain->Present(1, 0);
     m_frameIndex = (m_frameIndex + 1) % m_FRAME_COUNT;
     ASSERT_FAILED(hr);
 
-
-    WaitForPreviousFrame(renderer);
+    WaitForPreviousFrame();
 
     PRINT("Rendering complete");
 
-    //m_renderCallNum++;
-    //PRINT(m_renderCallNum++);
 
 }

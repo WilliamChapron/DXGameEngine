@@ -22,7 +22,7 @@ void GameObject::UpdateTransformation(float deltaTime)
 {
     HRESULT hr;
 
-
+    PRINT("Update TRANSFORM");
     static float translationOffset = 0.0f;
     translationOffset -= 0.0003f;
 
@@ -30,7 +30,7 @@ void GameObject::UpdateTransformation(float deltaTime)
     rotationAngle += 0.01;
 
     static float fScale = 0.5f;
-    fScale += 0.0001f;
+    fScale += 0.001f;
 
 
     m_transformData.Translate(translationOffset, translationOffset, 0);
@@ -66,12 +66,11 @@ void GameObject::UpdateDrawingOperations(Renderer* renderer)
     D3D12_GPU_VIRTUAL_ADDRESS cbvAddress = m_constantBuffer->GetGPUVirtualAddress();
     renderer->m_pCommandList->SetGraphicsRootConstantBufferView(0, cbvAddress);
     // Update constant buffer * 
+    PRINT("Drawing Op");
 
     // Record commands.
-    const float clearColor[] = { 0.3f, 0.8f, 0.1f, 1.0f };
-    renderer->m_pCommandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
     renderer->m_pCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    renderer->m_pCommandList->IASetVertexBuffers(0, 1, &m_);
+    renderer->m_pCommandList->IASetVertexBuffers(0, 1, &m_vertexBufferView);
     renderer->m_pCommandList->IASetIndexBuffer(&m_indexBufferView);
 
     renderer->m_pCommandList->DrawIndexedInstanced(36, 1, 0, 0, 0);

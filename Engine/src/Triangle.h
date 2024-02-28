@@ -15,6 +15,7 @@ public:
     Triangle();
     ~Triangle();
     void Initialize(Renderer* renderer);
+    //void Update(float deltaTime, Renderer* renderer) override;
 
 
 private:
