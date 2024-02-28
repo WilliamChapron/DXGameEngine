@@ -1,11 +1,11 @@
 #include "Engine.h"
-//#include "../Triangle.h"
-#include "../GameObject.h"
+#include "../Triangle.h"
 #include "../include.h"   
 #include "../renderer/Graphics.h"   
 #include "Defines.h"   
 #include "Window.h"  
 
+#include "../GameObject.h"
 
 using namespace DirectX;
 
@@ -13,7 +13,7 @@ using namespace DirectX;
 
 
 //XMVECTOR TranslateVector(XMVECTOR vector, float deltaX, float deltaY, float deltaZ) {
-//    // Création de la matrice de translation
+//    // Cr?ation de la matrice de translation
 //    XMMATRIX translationMatrix = XMMatrixTranslation(deltaX, deltaY, deltaZ);
 //
 //    // Application de la translation au vecteur
@@ -40,13 +40,25 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
 
     m_pRenderer->InitializeDirectX12Instances();
 
-    /*m_pTriangle = new Triangle;
-    m_pTriangle->Initialize(m_pRenderer);*/
+    m_pTriangle = new Triangle;
+    m_pTriangle->Initialize(m_pRenderer);
 
-    m_pGameObject = new GameObject;
-    m_pGameObject->Initialize(m_pRenderer);
-    Triangle triangle1 = { { {0.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f} }, {1.0f, 0.0f, 0.0f, 1.0f} };
-    m_pGameObject->AddTriangle(triangle1);
+    //------ TEST GAMEOBJECTM
+    // Créer un objet GameObject
+    GameObject gameObject;
+
+    // Ajouter un objet
+    gameObject.AddObject("1", GameObject());
+
+    // Mettre à jour un objet
+    gameObject.UpdateObject("1", GameObject());
+
+    // Supprimer un objet
+    gameObject.RemoveObject("1");
+
+    // Méthode de rendu des objets
+    gameObject.Render(nullptr);
+    //------
 
     isRenderable = true;
     Run();
@@ -76,8 +88,7 @@ void Engine::Run() {
         }
         if (isRenderable) {
             //PRINT("Paint");
-            //m_pTriangle->Render(m_pRenderer);
-            m_pGameObject->Render(m_pRenderer);
+            m_pTriangle->Render(m_pRenderer);
         }
         //m_pTriangle->Render(m_pRenderer);
         //else {

@@ -7,8 +7,7 @@
 #include <iostream>
 
 class Renderer;
-//class Triangle;
-class GameObject;
+class Triangle;
 class Window;
 
 
@@ -22,12 +21,11 @@ public:
     void Update();
 
     static Engine& GetInstance() {
-        static Engine instance;  
+        static Engine instance;
         return instance;
     }
 
-    //Triangle* m_pTriangle;
-    GameObject* m_pGameObject;
+    Triangle* m_pTriangle;
     Renderer* m_pRenderer;
 
     bool isRenderable = false;
