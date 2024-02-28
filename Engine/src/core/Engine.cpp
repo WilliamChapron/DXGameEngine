@@ -27,6 +27,8 @@ public:
         std::cout << "Initialiaztion" << std::endl;
     }
 
+    void update() override {}
+
     void exit() override {
         std::cout << "End of initialization" << std::endl;
     }
@@ -37,6 +39,8 @@ public:
     void enter() override {
         std::cout << "Run" << std::endl;
     }
+
+    void update() override {}
 
     void exit() override {
         std::cout << "End of Run" << std::endl;
