@@ -12,6 +12,9 @@
     <ClInclude Include="src\renderer\Camera.h" />
     <ClInclude Include="src\physics\Transform.h" />
     <ClInclude Include="src\GameObject.h" />
+    <ClInclude Include="src\State.h" />
+    <ClInclude Include="src\StateMachine.h" />
+    <ClInclude Include="src\Time.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\Engine.cpp" />
@@ -25,6 +28,8 @@
     <ClCompile Include="src\Utils.h" />
     <ClCompile Include="src\Utils.cpp" />
     <ClCompile Include="src\GameObject.cpp" />
+    <ClCompile Include="src\StateMachine.cpp" />
+    <ClCompile Include="src\Time.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="res\shader\ShaderTriangle.hlsl" />

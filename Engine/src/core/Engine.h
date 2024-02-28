@@ -6,11 +6,9 @@
 #include <Windows.h>
 #include <iostream>
 #include "../StateMachine.h"
-
 class Renderer;
 class Triangle;
 class Window;
-
 
 class Engine {
 public:
@@ -31,6 +29,7 @@ public:
     bool isRenderable = false;
 
 private:
+    
     Engine() = default;
     StateMachine* stateMachine;
 

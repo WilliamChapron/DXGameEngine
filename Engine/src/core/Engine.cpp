@@ -8,6 +8,8 @@
 #include "../Utils.h"
 #include "../physics/Transform.h"
 
+#include "../Time.h"
+
 using namespace DirectX;
 
 
@@ -45,6 +47,7 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
     m_pTriangle->Initialize(m_pRenderer);
 
 
+
     isRenderable = true;
     Run();
 }
@@ -59,6 +62,8 @@ void Engine::Cleanup() {
 void Engine::Run() {
     std::cout << "Main Loop Started" << std::endl;
 
+    Time time;
+
     MSG msg;
     ZeroMemory(&msg, sizeof(MSG));
 
@@ -71,6 +76,9 @@ void Engine::Run() {
     // Ajoutez d'autres triangles au besoin
 
     while (true) {
+        time.UpdateTime();
+        m_pWindow->UpdateTitleWithFPS(time.GetFramePerSecond());
+
         if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
             if (msg.message == WM_QUIT)
                 break;

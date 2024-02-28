@@ -147,6 +147,9 @@
     <ClInclude Include="src\renderer\Camera.h" />
     <ClInclude Include="src\renderer\Graphics.h" />
     <ClInclude Include="src\renderer\Resources.h" />
+    <ClInclude Include="src\State.h" />
+    <ClInclude Include="src\StateMachine.h" />
+    <ClInclude Include="src\Time.h" />
     <ClInclude Include="src\Triangle.h" />
   </ItemGroup>
   <ItemGroup>
@@ -158,6 +161,8 @@
     <ClCompile Include="src\renderer\Graphics.cpp" />
     <ClCompile Include="src\renderer\Resources.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\StateMachine.cpp" />
+    <ClCompile Include="src\Time.cpp" />
     <ClCompile Include="src\Triangle.cpp" />
     <ClCompile Include="src\Utils.cpp" />
     <ClCompile Include="src\Utils.h" />
