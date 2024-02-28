@@ -30,9 +30,9 @@ public:
     void RemoveObject(std::string name);
 
     // Mettre à jour un triangle existant
-    void UpdateObject(std::string name, const GameObject& newObject);
+    //void UpdateObject(std::string name, const GameObject& newObject);
 
     // Méthode de rendu des triangles
-    void Render(Renderer* renderer);
+    void Update(Renderer* renderer);
 
 };

@@ -18,16 +18,38 @@ void GameObjectManager::RemoveObject(std::string name) {
 }
 
 // Mettre à jour un objet existant
-void GameObjectManager::UpdateObject(std::string name, const GameObject& newObject) {
-    objectMap[name] = newObject;
-    PRINT("Object updated");
-}
+//void GameObjectManager::UpdateObject(std::string name, const GameObject& newObject) {
+//    objectMap[name] = newObject;
+//    PRINT("Object updated");
+//}
 
 // Méthode de rendu des objets
-//void GameObjectManager::Render(Renderer* renderer) {
-//    // Boucle à travers tous les objets et appeler leur méthode de rendu individuelle
-//    for (auto& pair : objectMap) {
-//        pair.second.Render(renderer);
-//    }
-//    PRINT("Object rendered");
-//}
+void GameObjectManager::Update(Renderer* renderer) {
+    // Boucle à travers tous les objets et appeler leur méthode de rendu individuelle
+    HRESULT hr;
+
+    PRINT("Rendering...");
+
+    renderer->Precommandlist();
+    
+    for (auto& pair : objectMap) {
+        GameObject& gameObject = pair.second;
+        // Appeler la méthode de mise à jour de chaque objet
+        gameObject.Update(1.0, renderer); // Supposons que chaque objet a une méthode Update
+    }
+
+    //triangle->Update(1.0, this);
+
+    renderer->Postcommandlist();
+
+    ID3D12CommandList* ppCommandLists[] = { renderer->m_pCommandList.Get() };
+    renderer->m_pCommandQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
+
+    hr = renderer->m_pSwapChain->Present(1, 0);
+    renderer->m_frameIndex = (renderer->m_frameIndex + 1) % renderer->m_FRAME_COUNT;
+    ASSERT_FAILED(hr);
+
+    renderer->WaitForPreviousFrame();
+
+    PRINT("Rendering complete");
+}

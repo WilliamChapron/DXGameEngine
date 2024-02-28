@@ -4,6 +4,7 @@
 #include "../renderer/Graphics.h"   
 #include "Defines.h"   
 #include "Window.h"  
+#include "../ecs/systems/GameObjectManager.h"  
 
 #include "../Utils.h"
 #include "../ecs/components/Transform.h"
@@ -40,11 +41,14 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
 
     m_pRenderer = new Renderer(m_pWindow);
 
+    m_pGameObjectManager = new GameObjectManager();
 
     m_pRenderer->InitializeDirectX12Instances();
 
     m_pTriangle = new Triangle;
     m_pTriangle->Initialize(m_pRenderer);
+
+    m_pGameObjectManager->AddObject("Triangle", *m_pTriangle);
 
 
 
@@ -88,7 +92,7 @@ void Engine::Run() {
 
         if (isRenderable) {
             // Appelez la fonction Render de la classe Renderer et passez-lui la liste de triangles
-            m_pRenderer->Render(m_pTriangle);
+            m_pGameObjectManager->Update(m_pRenderer);
         }
     }
 }

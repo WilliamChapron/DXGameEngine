@@ -4,7 +4,7 @@
 #include "Graphics.h"
 #include "../core/Defines.h"
 #include "../core/Window.h"
-#include "../GameObject.h"
+#include "../ecs/entities/GameObject.h"
 
 
 Renderer::Renderer(Window* pWindow) {
@@ -461,28 +461,3 @@ void Renderer::Postcommandlist()
 }
 
 
-void Renderer::Render(GameObject* triangle)
-{
-    HRESULT hr;
-
-    PRINT("Rendering...");
-
-    Precommandlist();
-
-    triangle->Update(1.0, this);
-
-    Postcommandlist();
-
-    ID3D12CommandList* ppCommandLists[] = { m_pCommandList.Get() };
-    m_pCommandQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
-
-    hr = m_pSwapChain->Present(1, 0);
-    m_frameIndex = (m_frameIndex + 1) % m_FRAME_COUNT;
-    ASSERT_FAILED(hr);
-
-    WaitForPreviousFrame();
-
-    PRINT("Rendering complete");
-
-
-}

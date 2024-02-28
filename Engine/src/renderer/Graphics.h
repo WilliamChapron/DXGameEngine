@@ -33,7 +33,6 @@ public:
 
     void WaitForPreviousFrame();
 
-    void Render(GameObject* triangle);
 
     void Precommandlist();
     void Postcommandlist();

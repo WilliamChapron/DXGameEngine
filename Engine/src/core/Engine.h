@@ -9,6 +9,7 @@
 class Renderer;
 class Triangle;
 class Window;
+class GameObjectManager;
 
 class Engine {
 public:
@@ -25,6 +26,7 @@ public:
 
     Triangle* m_pTriangle;
     Renderer* m_pRenderer;
+    GameObjectManager* m_pGameObjectManager;
 
     bool isRenderable = false;
 
