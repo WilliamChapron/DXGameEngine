@@ -14,6 +14,8 @@
 
 #include "../ecs/components/Camera.h"
 
+#include "../ecs/systems/Input.h"
+
 using namespace DirectX;
 
 
@@ -49,6 +51,10 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
     m_pGameObjectManager = new GameObjectManager();
 
     m_pCamera = new Camera();
+    
+    m_pStateMachine = new StateMachine();
+
+    m_pInput = new Input(m_pStateMachine);
 
 
 
@@ -89,6 +95,24 @@ void Engine::Run() {
     while (true) {
         time.UpdateTime();
         m_pWindow->UpdateTitleWithFPS(time.GetFramePerSecond());
+
+        //----- TEST INPUT
+        m_pInput->Update();
+
+        // Affichez la liste des touches et leur état
+        std::cout << "Touches pressees : " << std::endl;
+        for (const auto& pair : m_pInput->GetKeyStates()) {
+            std::cout << "Touche : " << pair.first << ", Etat : " << (pair.second ? "Pressee" : "Non pressee") << std::endl;
+        }
+
+        // Affichez les coordonnées de la souris
+        std::cout << "Position de la souris : X = " << m_pInput->GetMousePosition().x << ", Y = " << m_pInput->GetMousePosition().y << std::endl;
+
+        // Vérifiez également l'état des boutons de la souris
+        std::cout << "Bouton gauche de la souris : " << (m_pInput->GetKeyState(VK_LBUTTON) ? "Enfoncé" : "Non enfoncé") << std::endl;
+        std::cout << "Bouton droit de la souris : " << (m_pInput->GetKeyState(VK_RBUTTON) ? "Enfoncé" : "Non enfoncé") << std::endl;
+
+        //-----
 
         if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
             if (msg.message == WM_QUIT)

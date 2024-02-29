@@ -6,11 +6,13 @@
 #include <Windows.h>
 #include <iostream>
 #include "../ecs/systems/StateMachine.h"
+
 class Renderer;
 class Triangle;
 class Window;
 class GameObjectManager;
 class Camera;
+class Input;
 
 
 class Engine {
@@ -30,13 +32,14 @@ public:
     Renderer* m_pRenderer;
     GameObjectManager* m_pGameObjectManager;
     Camera* m_pCamera;
+    StateMachine* m_pStateMachine;
+    Input* m_pInput;
 
     bool isRenderable = false;
 
 private:
     
     Engine() = default;
-    StateMachine* stateMachine;
 
     Window* m_pWindow = nullptr;
     HINSTANCE m_hInstance;
