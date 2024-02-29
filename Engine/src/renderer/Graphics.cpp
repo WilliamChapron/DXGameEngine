@@ -231,7 +231,7 @@ void Renderer::CreateDescriptorHeap() {
     ASSERT_FAILED(hr);
 
     m_cbvDescriptorSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-    CD3DX12_CPU_DESCRIPTOR_HANDLE cbvHandle(m_pCbvSrvHeap->GetCPUDescriptorHandleForHeapStart());
+    //CD3DX12_CPU_DESCRIPTOR_HANDLE cbvHandle(m_pCbvSrvHeap->GetCPUDescriptorHandleForHeapStart());
 }
 
 
@@ -267,16 +267,13 @@ HRESULT CompileShaderFromFile(const wchar_t* filePath, const char* entryPoint, c
 
 void Renderer::CreateRootSignature() {
 
-   // CD3DX12_DESCRIPTOR_RANGE range[2];
-    CD3DX12_ROOT_PARAMETER parameter[1];
+    CD3DX12_DESCRIPTOR_RANGE range;
+    range.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+        
+    CD3DX12_ROOT_PARAMETER parameter[2];
+    parameter[0].InitAsDescriptorTable(1, &range, D3D12_SHADER_VISIBILITY_ALL);
+    parameter[1].InitAsConstantBufferView(0); //b0
 
- //   range[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
- //   range[1].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 1);
-    parameter[0].InitAsConstantBufferView(0);
-    //parameter[1].InitAsConstantBufferView(1);
-
-   // InitAsDescriptorTable(_countof(range), range, D3D12_SHADER_VISIBILITY_ALL);
-  //  parameter[0].InitAsDescriptorTable(_countof(range), range, D3D12_SHADER_VISIBILITY_ALL);
 
     D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
         D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT | 
@@ -321,7 +318,8 @@ void Renderer::CreatePipelineState() {
     D3D12_INPUT_ELEMENT_DESC inputElementDescs[] =
     {
         { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-        { "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
+        { "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+        { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 28, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
     };
 
     
@@ -412,9 +410,10 @@ void Renderer::Precommandlist() {
     hr = m_pCommandAllocator->Reset();
     ASSERT_FAILED(hr);
 
-    hr = m_pCommandList->Reset(m_pCommandAllocator.Get(), m_pPipelineState.Get());
+    hr = m_pCommandList->Reset(m_pCommandAllocator.Get(), nullptr);
     ASSERT_FAILED(hr);
 
+    m_pCommandList->SetPipelineState(m_pPipelineState.Get());
     m_pCommandList->SetGraphicsRootSignature(m_pRootSignature.Get());
     m_pCommandList->RSSetViewports(1, m_pViewport);
     m_pCommandList->RSSetScissorRects(1, m_pScissorRect);

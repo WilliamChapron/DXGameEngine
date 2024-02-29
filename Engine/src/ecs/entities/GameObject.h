@@ -12,6 +12,7 @@ struct Vertex
 {
     XMFLOAT3 Pos;
     XMFLOAT4 Color;
+    XMFLOAT2 Uv;
 };
 
 struct ConstantBufferData {
@@ -52,6 +53,11 @@ protected:
     ID3D12Resource* m_indexBuffer;
     D3D12_INDEX_BUFFER_VIEW m_indexBufferView;
     Transform m_transform;
+
+
+    // Texture
+    ID3D12Resource* m_textureBuffer;
+    //ID3D12ShaderResourceView* m_textureBufferView
 
 
 

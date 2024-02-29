@@ -51,9 +51,13 @@ void GameObject::UpdateDrawingOperations(Renderer* renderer)
 {
     HRESULT hr;
 
+    CD3DX12_GPU_DESCRIPTOR_HANDLE cbvSrvHandle(renderer->m_pCbvSrvHeap.Get()->GetGPUDescriptorHandleForHeapStart());
+
     // * Update constant buffer 
+    //CD3DX12_CPU_DESCRIPTOR_HANDLE cbvSrvHandle(renderer->m_pCbvSrvHeap.Get()->GetGPUDescriptorHandleForHeapStart());
+    renderer->m_pCommandList->SetGraphicsRootDescriptorTable(0, cbvSrvHandle);
     D3D12_GPU_VIRTUAL_ADDRESS cbvAddress = m_constantBuffer->GetGPUVirtualAddress();
-    renderer->m_pCommandList->SetGraphicsRootConstantBufferView(0, cbvAddress);
+    renderer->m_pCommandList->SetGraphicsRootConstantBufferView(1, cbvAddress);
     // Update constant buffer * 
     PRINT("Drawing Op");
 

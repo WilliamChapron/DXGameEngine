@@ -137,6 +137,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\DDSTextureLoader.h" />
     <ClInclude Include="extern\d3dx12.h" />
     <ClInclude Include="src\ecs\entities\GameObject.h" />
     <ClInclude Include="src\core\Defines.h" />
@@ -155,6 +156,7 @@
     <ClInclude Include="src\ecs\entities\Triangle.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\DDSTextureLoader.cpp" />
     <ClCompile Include="src\ecs\components\Shader.cpp" />
     <ClCompile Include="src\ecs\components\Shader.h.cpp" />
     <ClCompile Include="src\ecs\entities\GameObject.cpp" />

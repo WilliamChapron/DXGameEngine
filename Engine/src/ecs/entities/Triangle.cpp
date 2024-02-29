@@ -10,6 +10,10 @@
 
 #include "../../renderer/Resources.h"
 
+//#include "../../DDSTextureLoader.h"
+
+
+
 
 
 Triangle::Triangle() : GameObject()
@@ -98,7 +102,63 @@ void Triangle::Initialize(Renderer* renderer, Camera* camera, const XMFLOAT3& po
     renderer->m_pDevice->CreateConstantBufferView(&cbvDesc, renderer->m_pCbvSrvHeap->GetCPUDescriptorHandleForHeapStart());
     // Constant Buffer *
 
-    PRINT("Triangle initialization complete");
+
+    // 
+
+            // Describe and create a Texture2D.
+    D3D12_RESOURCE_DESC textureDesc = {};
+    textureDesc.MipLevels = 1;
+    textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    textureDesc.Width = 1024;
+    textureDesc.Height = 128;
+    textureDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
+    textureDesc.DepthOrArraySize = 1;
+    textureDesc.SampleDesc.Count = 1;
+    textureDesc.SampleDesc.Quality = 0;
+    textureDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+
+    renderer->m_pDevice->CreateCommittedResource(
+        &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+        D3D12_HEAP_FLAG_NONE,
+        &textureDesc,
+        D3D12_RESOURCE_STATE_COPY_DEST,
+        nullptr,
+        IID_PPV_ARGS(&m_textureBuffer));
+
+    const UINT64 uploadBufferSize = GetRequiredIntermediateSize(m_textureBuffer, 0, 1);
+    ID3D12Resource* uploadTexture;
+    // Create the GPU upload buffer.
+    renderer->m_pDevice->CreateCommittedResource(
+        &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+        D3D12_HEAP_FLAG_NONE,
+        &CD3DX12_RESOURCE_DESC::Buffer(uploadBufferSize),
+        D3D12_RESOURCE_STATE_GENERIC_READ,
+        nullptr,
+        IID_PPV_ARGS(&uploadTexture));
+
+    // Copy data to the intermediate upload heap and then schedule a copy 
+    // from the upload heap to the Texture2D.
+    std::vector<UINT8> texture = GenerateTextureData();
+
+    D3D12_SUBRESOURCE_DATA textureData = {};
+    textureData.pData = &texture[0];
+    textureData.RowPitch = 1024 * TexturePixelSize;
+    textureData.SlicePitch = textureData.RowPitch * 128;
+
+    UpdateSubresources(renderer->m_pCommandList.Get(), m_textureBuffer, uploadTexture, 0, 0, 1, &textureData);
+    renderer->m_pCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_textureBuffer, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE));
+
+    // Describe and create a SRV for the texture.
+    D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+    srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+    srvDesc.Format = textureDesc.Format;
+    srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+    srvDesc.Texture2D.MipLevels = 1;
+    renderer->m_pDevice->CreateShaderResourceView(m_texture.Get(), &srvDesc, renderer->m_pCbvSrvHeap->GetCPUDescriptorHandleForHeapStart());
+
+    LoadTextureDataFromFile();
+
+    
 }
 
 

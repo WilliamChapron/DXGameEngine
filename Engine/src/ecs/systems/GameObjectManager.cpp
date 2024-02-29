@@ -42,8 +42,6 @@ void GameObjectManager::Update(Renderer* renderer) {
         gameObject.Update(1.0, renderer); 
     }
 
-
-
     renderer->Postcommandlist();
 
     ID3D12CommandList* ppCommandLists[] = { renderer->m_pCommandList.Get() };
