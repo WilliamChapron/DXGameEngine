@@ -5,8 +5,10 @@ using namespace DirectX;
 
 struct Transform
 {
-    Transform();
     Transform(const XMFLOAT3& pos, const XMFLOAT3& rot, const XMFLOAT3& scale);
+    Transform();
+
+    void Init();
 
 
     // Translate data

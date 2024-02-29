@@ -2,15 +2,10 @@
 #include "../../renderer/Graphics.h"
 #include "../../core/Defines.h"
 
-GameObject::GameObject() : m_transform(), m_vertexBuffer(nullptr), m_indexBuffer(nullptr)
+GameObject::GameObject() : m_vertexBuffer(nullptr), m_indexBuffer(nullptr), m_constantBuffer(nullptr), m_mappedConstantBuffer(nullptr), m_vertexBufferView({}), m_indexBufferView({}), m_cbData()
 {
-
 }
 
-GameObject::GameObject(const XMFLOAT3& position, const XMFLOAT3& rotation, const XMFLOAT3& scale) : m_transform(position, rotation, scale)
-{
-
-}
 
 void GameObject::Update(float deltaTime, Renderer* renderer)
 {
@@ -23,7 +18,7 @@ void GameObject::UpdateTransformation(float deltaTime)
     HRESULT hr;
 
     PRINT("Update TRANSFORM");
-    static float translationOffset = 0.05f;
+    static float translationOffset = 0.0f;
     //translationOffset -= 0.0003f;
 
     static float rotationAngle = 0.03f;
@@ -33,12 +28,12 @@ void GameObject::UpdateTransformation(float deltaTime)
     fScale += 0.01f;
 
 
-    //m_transformData.Translate(translationOffset, translationOffset, 0);
-    m_transformData.Rotate(0, 0, rotationAngle);
-    //m_transformData.Scale(1, fScale, 1);
+    //m_transform.Translate(translationOffset, 0, 0);
+    m_transform.Rotate(0, 0, rotationAngle);
+    //m_transform.Scale(1, fScale, 1);
 
 
-    m_cbData.model = m_transformData.GetTransformMatrix();
+    m_cbData.model = m_transform.GetTransformMatrix();
 
 
 

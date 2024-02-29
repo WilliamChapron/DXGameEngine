@@ -23,7 +23,7 @@ Renderer::Renderer(Window* pWindow) {
     m_pCommandList.Reset();
     m_pFence.Reset();
     m_pRtvHeap.Reset();
-    m_pCbvHeap.Reset();
+    m_pCbvSrvHeap.Reset();
     m_rtvDescriptorSize = 0;
 
     m_vertexShaderBlob.Reset();
@@ -56,7 +56,7 @@ Renderer::~Renderer() {
     m_pixelShaderBlob.Reset(); // Utilisation de Reset() pour libérer l'interface COM
 
     m_pRtvHeap.Reset(); 
-    m_pCbvHeap.Reset();
+    m_pCbvSrvHeap.Reset();
     m_pFence.Reset(); // Utilisation de Reset() pour libérer l'interface COM
     m_pCommandList.Reset(); // Utilisation de Reset() pour libérer l'interface COM
     m_pCommandAllocator.Reset(); // Utilisation de Reset() pour libérer l'interface COM
@@ -221,17 +221,17 @@ void Renderer::CreateDescriptorHeap() {
         rtvHandle.Offset(1, m_rtvDescriptorSize);
     }
 
-    // Create CBV descriptor heap
+    // Create CBV / SRV / UAV descriptor heap
     D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc = {};
     cbvHeapDesc.NumDescriptors = 100;
     cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
     cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 
-    hr = m_pDevice->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&m_pCbvHeap));
+    hr = m_pDevice->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&m_pCbvSrvHeap));
     ASSERT_FAILED(hr);
 
     m_cbvDescriptorSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-    CD3DX12_CPU_DESCRIPTOR_HANDLE cbvHandle(m_pCbvHeap->GetCPUDescriptorHandleForHeapStart());
+    CD3DX12_CPU_DESCRIPTOR_HANDLE cbvHandle(m_pCbvSrvHeap->GetCPUDescriptorHandleForHeapStart());
 }
 
 

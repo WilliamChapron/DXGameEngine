@@ -72,7 +72,7 @@ public:
     // HEAP
     ComPtr<ID3D12DescriptorHeap> m_pRtvHeap; 
     UINT m_rtvDescriptorSize;
-    ComPtr<ID3D12DescriptorHeap> m_pCbvHeap; 
+    ComPtr<ID3D12DescriptorHeap> m_pCbvSrvHeap; 
     UINT m_cbvDescriptorSize;
 
     int m_renderCallNum = 0;

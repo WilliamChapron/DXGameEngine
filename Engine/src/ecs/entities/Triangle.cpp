@@ -12,8 +12,8 @@
 
 
 
-Triangle::Triangle() {
-
+Triangle::Triangle() : GameObject()
+{
 }
 
 Triangle::~Triangle() {
@@ -25,9 +25,9 @@ Triangle::~Triangle() {
 }
 
 
-void Triangle::Initialize(Renderer* renderer, Camera* camera) {
-    m_transformData = Transform();
-    m_cbData.model = m_transformData.GetTransformMatrix();
+void Triangle::Initialize(Renderer* renderer, Camera* camera, const XMFLOAT3& position, const XMFLOAT3& rotation, const XMFLOAT3& scale) {
+    m_transform = Transform(position, rotation, scale);
+    m_cbData.model = m_transform.GetTransformMatrix();
 
     // ** MATRIX
 
@@ -71,66 +71,6 @@ void Triangle::Initialize(Renderer* renderer, Camera* camera) {
     CreateIndexBuffer(indexBufferSize, cubeIndices, m_indexBuffer, m_indexBufferView, renderer);
     CreateVertexBuffer(vertexBufferSize, cubeVertices, m_vertexBuffer, m_vertexBufferView, stride, renderer);
 
-
-
-    //// Index Buffer
-    //CD3DX12_HEAP_PROPERTIES heapPropsIndex(D3D12_HEAP_TYPE_UPLOAD);
-    //CD3DX12_RESOURCE_DESC bufferDescIndex = CD3DX12_RESOURCE_DESC::Buffer(indexBufferSize);
-
-    //hr = renderer->m_pDevice->CreateCommittedResource(
-    //    &heapPropsIndex,
-    //    D3D12_HEAP_FLAG_NONE,
-    //    &bufferDescIndex,
-    //    D3D12_RESOURCE_STATE_GENERIC_READ,
-    //    nullptr,
-    //    IID_PPV_ARGS(&m_indexBuffer)
-    //);
-    //ASSERT_FAILED(hr);
-
-    //UINT8* pIndexDataBegin;
-    //CD3DX12_RANGE readRangeIndex(0, 0);
-
-    //hr = m_indexBuffer->Map(0, &readRangeIndex, reinterpret_cast<void**>(&pIndexDataBegin));
-    //ASSERT_FAILED(hr);
-    //memcpy(pIndexDataBegin, cubeIndices, indexBufferSize);
-    //m_indexBuffer->Unmap(0, nullptr);
-
-    //m_indexBufferView.BufferLocation = m_indexBuffer->GetGPUVirtualAddress();
-    //m_indexBufferView.Format = DXGI_FORMAT_R32_UINT;
-    //m_indexBufferView.SizeInBytes = indexBufferSize;
-
-
-    //
-
-    //// Vertex Buffer * 
-    //CD3DX12_HEAP_PROPERTIES heapProps(D3D12_HEAP_TYPE_UPLOAD);
-    //CD3DX12_RESOURCE_DESC bufferDesc = CD3DX12_RESOURCE_DESC::Buffer(vertexBufferSize);
-
-    //hr = renderer->m_pDevice->CreateCommittedResource(
-    //    &heapProps,
-    //    D3D12_HEAP_FLAG_NONE,
-    //    &bufferDesc,
-    //    D3D12_RESOURCE_STATE_GENERIC_READ,
-    //    nullptr,
-    //    IID_PPV_ARGS(&m_vertexBuffer)
-    //);
-    //ASSERT_FAILED(hr);
-
-    //UINT8* pVertexDataBegin;
-    //CD3DX12_RANGE readRange(0, 0);
-
-
-    //hr = m_vertexBuffer->Map(0, &readRange, reinterpret_cast<void**>(&pVertexDataBegin));
-    //ASSERT_FAILED(hr);
-    //memcpy(pVertexDataBegin, cubeVertices, vertexBufferSize);
-    //m_vertexBuffer->Unmap(0, nullptr);
-
-    //m_vertexBufferView.BufferLocation = m_vertexBuffer->GetGPUVirtualAddress();
-    //m_vertexBufferView.StrideInBytes = sizeof(Vertex);
-    //m_vertexBufferView.SizeInBytes = vertexBufferSize;
-
-
-
     // * Constant Buffer
     CD3DX12_HEAP_PROPERTIES cbHeapProps(D3D12_HEAP_TYPE_UPLOAD);
     CD3DX12_RESOURCE_DESC cbDesc = CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstantBufferData) + 255) & ~255);
@@ -155,7 +95,7 @@ void Triangle::Initialize(Renderer* renderer, Camera* camera) {
     D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc = {};
     cbvDesc.BufferLocation = m_constantBuffer->GetGPUVirtualAddress();
     cbvDesc.SizeInBytes = (sizeof(ConstantBufferData) + 255) & ~255; // Alignement sur 256 octets
-    renderer->m_pDevice->CreateConstantBufferView(&cbvDesc, renderer->m_pCbvHeap->GetCPUDescriptorHandleForHeapStart());
+    renderer->m_pDevice->CreateConstantBufferView(&cbvDesc, renderer->m_pCbvSrvHeap->GetCPUDescriptorHandleForHeapStart());
     // Constant Buffer *
 
     PRINT("Triangle initialization complete");

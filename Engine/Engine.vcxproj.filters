@@ -41,4 +41,7 @@
     <Text Include="res\shader\ShaderTriangle.hlsl" />
     <Text Include="res\shader\Shader.hlsl" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\texture\texture.png" />
+  </ItemGroup>
 </Project>

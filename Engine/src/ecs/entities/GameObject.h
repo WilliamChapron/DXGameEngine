@@ -24,7 +24,7 @@ class GameObject
 {
 public:
     GameObject();
-    GameObject(const XMFLOAT3& position, const XMFLOAT3& rotation, const XMFLOAT3& scale);
+
 
     void Update(float deltaTime, Renderer* renderer);
 
@@ -38,8 +38,6 @@ public:
     const D3D12_INDEX_BUFFER_VIEW& GetIndexBufferView() const { return m_indexBufferView; }
 
 protected:
-
-    Transform m_transformData;
 
     ConstantBufferData m_cbData;
 

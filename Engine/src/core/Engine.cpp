@@ -53,9 +53,13 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
 
 
     m_pTriangle = new Triangle;
-    m_pTriangle->Initialize(m_pRenderer, m_pCamera);
+    m_pTriangle->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
+
+    m_pTriangle2 = new Triangle;
+    m_pTriangle2->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(0.5f, 0.5f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
 
     m_pGameObjectManager->AddObject("Triangle", *m_pTriangle);
+    m_pGameObjectManager->AddObject("Triangleé", *m_pTriangle2);
 
 
 

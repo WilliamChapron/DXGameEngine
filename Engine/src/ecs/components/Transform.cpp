@@ -1,8 +1,21 @@
 #include "Transform.h"
+#include "../../core/Defines.h"
 
-Transform::Transform() : vPosition(0.0f, 0.0f, 0.0f), qRotation(0.0f, 0.0f, 0.0f, 1.0f), vScale(1.0f, 1.0f, 1.0f)
+Transform::Transform() {
+
+}
+
+Transform::Transform(const XMFLOAT3& pos, const XMFLOAT3& rot, const XMFLOAT3& scl) : vPosition(0.0f, 0.0f, 0.0f), qRotation(0.0f, 0.0f, 0.0f, 1.0f), vScale(1.0f, 1.0f, 1.0f)
 {
 
+    Init();
+    Translate(pos.x, pos.y, pos.z);
+    Rotate(rot.x, rot.y, rot.z);
+    Scale(scl.x, scl.y, scl.z);
+    UpdateTransformMatrix();
+}
+
+void Transform::Init() {
     XMMATRIX positionMatrix = XMMatrixIdentity();
     XMStoreFloat4x4(&mPosition, positionMatrix);
 
@@ -19,14 +32,9 @@ Transform::Transform() : vPosition(0.0f, 0.0f, 0.0f), qRotation(0.0f, 0.0f, 0.0f
     XMStoreFloat4x4(&mWorld, worldMatrix);
 
 
-    vForward = XMFLOAT3(0.0f, 0.0f, 1.0f); 
-    vRight = XMFLOAT3(1.0f, 0.0f, 0.0f);   
-    vUp = XMFLOAT3(0.0f, 1.0f, 0.0f);      
-}
-
-Transform::Transform(const XMFLOAT3& pos, const XMFLOAT3& rot, const XMFLOAT3& scl) : vPosition(pos), vScale(scl)
-{
-    UpdateTransformMatrix();
+    vForward = XMFLOAT3(0.0f, 0.0f, 1.0f);
+    vRight = XMFLOAT3(1.0f, 0.0f, 0.0f);
+    vUp = XMFLOAT3(0.0f, 1.0f, 0.0f);
 }
 
 XMFLOAT4X4 Transform::GetTransformMatrix() const
@@ -88,6 +96,9 @@ void Transform::Translate(float offsetX, float offsetY, float offsetZ)
 
     XMMATRIX translationMatrix = XMMatrixTranslation(offsetX, offsetY, offsetZ);
     XMStoreFloat4x4(&mPosition, translationMatrix);
+
+    PRINT("TRNASLATE");
+    PRINT("TRNASLATE");
 
     UpdateTransformMatrix();
 }
