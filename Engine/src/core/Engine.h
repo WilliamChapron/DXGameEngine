@@ -28,6 +28,7 @@ public:
 
     Triangle* m_pTriangle;
     Triangle* m_pTriangle2;
+    Triangle* m_pTriangle3;
     Renderer* m_pRenderer;
     GameObjectManager* m_pGameObjectManager;
     Camera* m_pCamera;
