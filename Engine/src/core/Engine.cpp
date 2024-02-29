@@ -13,7 +13,6 @@
 
 
 #include "../ecs/components/Camera.h"
-
 using namespace DirectX;
 
 
@@ -50,10 +49,11 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
 
     m_pCamera = new Camera();
 
-
+    std::cout << "Camera Init" << std::endl;
 
     m_pTriangle = new Triangle;
     m_pTriangle->Initialize(m_pRenderer, m_pCamera);
+    m_pCamera->UpdateTarget(XMLoadFloat3(&m_pTriangle->GetTransform().vPosition));
 
     m_pGameObjectManager->AddObject("Triangle", *m_pTriangle);
 

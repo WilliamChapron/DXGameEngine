@@ -1,34 +1,46 @@
 #include "Camera.h"
 
+#include "../../include.h"
+using namespace DirectX;
 
-Camera::Camera() {
+
+
+
+Camera::Camera(float fov, float aspectRatio, float nearPlane, float farPlane){
     // Init View Matrix
-    XMFLOAT3 eye(0.0f, 0.0f, -2.0f);    // Position de la caméra
-    XMFLOAT3 at(0.0f, 0.0f, 0.0f);      // Point où la caméra regarde
-    XMFLOAT3 up(0.0f, 1.0f, 0.0f);      // Vecteur "up" (orienté vers le haut)
-    XMMATRIX viewMatrix = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&at), XMLoadFloat3(&up));
-    XMMATRIX transposedViewMatrix = XMMatrixTranspose(viewMatrix);
-    XMStoreFloat4x4(&m_viewMatrix, transposedViewMatrix);
+    m_position = XMVectorSet(0.0f, 0.0f, -5.0f, 1.0f);
+    m_target = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
+    m_up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 
-    // Init Project Matrix
-    float aspectRatio = 16.0f / 9.0f;  
-    float fieldOfView = XM_PIDIV4;  // 45 degrés
-    XMMATRIX projectionMatrix = XMMatrixPerspectiveFovLH(fieldOfView, aspectRatio, 0.1f, 100.0f);
-    XMMATRIX transposedProjectionMatrix = XMMatrixTranspose(projectionMatrix);
-    XMStoreFloat4x4(&m_projectionMatrix, transposedProjectionMatrix);
+    m_viewMatrix = XMMatrixLookAtLH(m_position, m_target, m_up);
+    m_projectionMatrix = XMMatrixPerspectiveFovLH(fov, aspectRatio, nearPlane, farPlane);
 }
 
-Camera::~Camera()
+void Camera::Update(float deltaTime) {
+    // Calculer la matrice de vue
+    m_viewMatrix = XMMatrixLookAtLH(m_position, m_target, m_up);
+}
 
+void Camera::UpdatePosition(XMVECTOR m_newPosition)
 {
+    m_position = m_newPosition;
+}
+
+void Camera::UpdateTarget(XMVECTOR m_newTarget)
+{
+    m_target = m_newTarget;
 }
 
 XMFLOAT4X4 Camera::GetViewMatrix() const
 {
-    return m_viewMatrix;
+    XMFLOAT4X4 matrix;
+    XMStoreFloat4x4(&matrix, m_viewMatrix);
+    return matrix;
 }
 
 XMFLOAT4X4 Camera::GetProjectionMatrix() const
 {
-    return m_projectionMatrix;
+    XMFLOAT4X4 matrix;
+    XMStoreFloat4x4(&matrix, m_projectionMatrix);
+    return matrix;
 }

@@ -6,16 +6,23 @@ using namespace DirectX;
 class Camera
 {
 public:
-    Camera();
-    ~Camera();
+    Camera(float fov = XM_PIDIV4, float aspectRatio = 16.0f / 9.0f, float nearPlane = 0.1f, float farPlane = 100.0f);
+    ~Camera() {};
+
+    void Update(float deltaTime);
+    void UpdatePosition(XMVECTOR m_newPosition);
+    void UpdateTarget(XMVECTOR m_newTarget);
 
     XMFLOAT4X4 GetViewMatrix() const;
     XMFLOAT4X4 GetProjectionMatrix() const;
 
 private:
-    float m_fieldOfView;
-    float m_aspectRatio;
+    DirectX::XMVECTOR m_position;
+    DirectX::XMVECTOR m_target;
+    DirectX::XMVECTOR m_up;
 
-    XMFLOAT4X4 m_viewMatrix;
-    XMFLOAT4X4 m_projectionMatrix;
+    // j'ai utilisé XMMATRIX parce que XMMatrixPerspectiveFovLH 
+    // attends un XMMATRIX et pas un XMFLOAT4X4
+    XMMATRIX m_viewMatrix;
+    XMMATRIX m_projectionMatrix;
 };
