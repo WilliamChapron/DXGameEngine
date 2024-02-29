@@ -2,6 +2,8 @@
 
 #include "../components/Transform.h"
 #include "../../include.h"
+#include <iostream>
+#include <vector>
 
 using namespace DirectX;
 
@@ -57,6 +59,8 @@ protected:
 
     // Texture
     ID3D12Resource* m_textureBuffer;
+    std::vector<UINT8> m_textureBitmap;
+    ID3D12Resource* m_uploadTexture;
     //ID3D12ShaderResourceView* m_textureBufferView
 
 

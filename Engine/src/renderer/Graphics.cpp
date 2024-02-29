@@ -322,21 +322,6 @@ void Renderer::CreatePipelineState() {
         { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 28, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
     };
 
-    
-    //D3D12_RASTERIZER_DESC rasterizerStateDesc {};
-    //rasterizerStateDesc.FillMode = D3D12_FILL_MODE_SOLID;   // Remplissage solide
-    //rasterizerStateDesc.CullMode = D3D12_CULL_MODE_FRONT;    // Désactivation du culling
-    //rasterizerStateDesc.FrontCounterClockwise = TRUE;       // Les triangles sont définis dans le sens inverse des aiguilles d'une montre (orientation des sommets)
-    //rasterizerStateDesc.DepthBias = 0;
-    //rasterizerStateDesc.DepthBiasClamp = 0.0f;
-    //rasterizerStateDesc.SlopeScaledDepthBias = 0;
-    //rasterizerStateDesc.DepthClipEnable = FALSE;             // Activation du test de profondeur
-
-    //rasterizerStateDesc.MultisampleEnable = FALSE;          // Désactivation de l'échantillonnage multiple
-    //rasterizerStateDesc.AntialiasedLineEnable = FALSE;
-
-    //D3D12_BLEND_DESC blendDesc {};
-
     D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc; // a structure to define a pso
     ZeroMemory(&psoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC)); // IMPORTANT ?
     psoDesc.InputLayout = { inputElementDescs, _countof(inputElementDescs) };
@@ -355,9 +340,6 @@ void Renderer::CreatePipelineState() {
 
     hr = m_pDevice->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&m_pPipelineState));
     ASSERT_FAILED(hr);
-
-
-    //D3D12_RESOURCE_DESC pipelineFormat = pPipelineState->GetDevice();
 
 }
 
@@ -460,3 +442,16 @@ void Renderer::Postcommandlist()
 }
 
 
+//D3D12_RASTERIZER_DESC rasterizerStateDesc {};
+//rasterizerStateDesc.FillMode = D3D12_FILL_MODE_SOLID;   // Remplissage solide
+//rasterizerStateDesc.CullMode = D3D12_CULL_MODE_FRONT;    // Désactivation du culling
+//rasterizerStateDesc.FrontCounterClockwise = TRUE;       // Les triangles sont définis dans le sens inverse des aiguilles d'une montre (orientation des sommets)
+//rasterizerStateDesc.DepthBias = 0;
+//rasterizerStateDesc.DepthBiasClamp = 0.0f;
+//rasterizerStateDesc.SlopeScaledDepthBias = 0;
+//rasterizerStateDesc.DepthClipEnable = FALSE;             // Activation du test de profondeur
+
+//rasterizerStateDesc.MultisampleEnable = FALSE;          // Désactivation de l'échantillonnage multiple
+//rasterizerStateDesc.AntialiasedLineEnable = FALSE;
+
+//D3D12_BLEND_DESC blendDesc {};
