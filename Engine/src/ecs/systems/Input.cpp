@@ -1,6 +1,40 @@
 #include "Input.h"
+#include "State.h"
 
-Input::Input(StateMachine* stateMachine) : stateMachine(stateMachine) {
+class Pressed : public State {
+public:
+    virtual void enter() override {};
+    virtual void update() override {};
+    virtual void exit() override {};
+};
+
+class Held : public State {
+public:
+    virtual void enter() override {};
+    virtual void update() override {};
+    virtual void exit() override {};
+};
+
+class Released : public State {
+public:
+    virtual void enter() override {};
+    virtual void update() override {};
+    virtual void exit() override {};
+};
+
+class Inactive : public State {
+public:
+    virtual void enter() override {};
+    virtual void update() override {};
+    virtual void exit() override {};
+};
+
+Input::Input(StateMachine* stateMachine) : m_pStateMachine(stateMachine) {
+    m_pStateMachine->AddState(new Pressed);
+    m_pStateMachine->AddState(new Held);
+    m_pStateMachine->AddState(new Released);
+    m_pStateMachine->AddState(new Inactive);
+
     // Initialisation de l'état des touches clavier
     keyStates.clear();
 }
@@ -12,6 +46,8 @@ void Input::Update() {
     HandleMouseInput();
     // Trouve la position de la souris
     GetMousePosition();
+    // Mise à jour de l'état actuel de la StateMachine
+    m_pStateMachine->UpdateCurrentState();
 }
 
 void Input::HandleKeyboardInput() {

@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <Windows.h>
 #include "StateMachine.h" // Inclure votre StateMachine et State si nécessaire
+#include "State.h" 
 
 class Input {
 public:
@@ -21,7 +22,7 @@ public:
     POINT GetMousePosition() const; 
 
 private:
-    StateMachine* stateMachine; // Pointeur vers la StateMachine
+    StateMachine* m_pStateMachine; // Pointeur vers la StateMachine
 
     // Méthode pour gérer les entrées clavier
     void HandleKeyboardInput();
