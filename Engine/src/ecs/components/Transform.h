@@ -17,6 +17,7 @@ struct Transform
 
     // Rotate data
     XMFLOAT4 qRotation;  // Quaternion 
+    XMFLOAT3 vRotation;  // Vector
     XMFLOAT4X4 mRotation;
 
 

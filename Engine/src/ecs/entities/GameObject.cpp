@@ -2,6 +2,9 @@
 #include "../../renderer/Graphics.h"
 #include "../../core/Defines.h"
 
+#include <iostream>
+#include <iomanip>
+
 GameObject::GameObject() : m_vertexBuffer(nullptr), m_indexBuffer(nullptr), m_constantBuffer(nullptr), m_mappedConstantBuffer(nullptr), m_vertexBufferView({}), m_indexBufferView({}), m_cbData()
 {
 }
@@ -13,24 +16,30 @@ void GameObject::Update(float deltaTime, Renderer* renderer)
     UpdateDrawingOperations(renderer);
 }
 
+void printFloatWithPrecision(float value, int precision) {
+    std::cout << std::fixed << std::setprecision(precision) << value << std::endl;
+}
+
+
 void GameObject::UpdateTransformation(float deltaTime)
 {
     HRESULT hr;
 
     PRINT("Update TRANSFORM");
-    static float translationOffset = 0.0f;
-    //translationOffset -= 0.0003f;
-
-    static float rotationAngle = 0.03f;
-    /*rotationAngle += 0.01;*/
-
-    static float fScale = 0.1f;
-    fScale += 0.01f;
 
 
-    //m_transform.Translate(translationOffset, 0, 0);
-    m_transform.Rotate(0, 0, rotationAngle);
-    //m_transform.Scale(1, fScale, 1);
+    float rotationAngle = 0.03;
+    float rotationOffset = 0.01;
+    //PRINT("Translation offset");
+    //PRINT(m_transform.vPosition.z);
+    float translationOffset = m_transform.vPosition.z + 0.03f;
+    float fScale = m_transform.vScale.z - 0.001f;
+    printFloatWithPrecision(m_transform.vScale.z, 4);
+
+    
+    m_transform.Translate(0, 0, translationOffset);
+    m_transform.Rotate(rotationAngle, 0, 0);
+    //m_transform.Scale(fScale, fScale, fScale);
 
 
     m_cbData.model = m_transform.GetTransformMatrix();

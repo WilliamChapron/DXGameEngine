@@ -12,7 +12,6 @@ Transform::Transform(const XMFLOAT3& pos, const XMFLOAT3& rot, const XMFLOAT3& s
     Translate(pos.x, pos.y, pos.z);
     Rotate(rot.x, rot.y, rot.z);
     Scale(scl.x, scl.y, scl.z);
-    UpdateTransformMatrix();
 }
 
 void Transform::Init() {
@@ -53,6 +52,12 @@ void Transform::UpdateTransformMatrix()
 
 void Transform::Rotate(float pitch, float roll, float yaw)
 {
+
+    // LE FAIRE NE QUATERNION CAR LA ROTATE PEUT ARRIVER A 100 faut que sa s'arette a 180 ou autre
+    vRotation.x += pitch;
+    vRotation.y += roll;
+    vRotation.z += yaw;
+
     XMVECTOR forwardVector = XMLoadFloat3(&vForward);
     XMVECTOR rightVector = XMLoadFloat3(&vRight);
     XMVECTOR upVector = XMLoadFloat3(&vUp);
@@ -87,6 +92,9 @@ void Transform::Rotate(float pitch, float roll, float yaw)
     vForward.z = mRotation._33;
 
     UpdateTransformMatrix();
+
+
+
 }
 
 
@@ -94,18 +102,28 @@ void Transform::Rotate(float pitch, float roll, float yaw)
 void Transform::Translate(float offsetX, float offsetY, float offsetZ)
 {
 
+    vPosition.x = offsetX;
+    vPosition.y = offsetY;
+    vPosition.z = offsetZ;
+
     XMMATRIX translationMatrix = XMMatrixTranslation(offsetX, offsetY, offsetZ);
     XMStoreFloat4x4(&mPosition, translationMatrix);
 
-    PRINT("TRNASLATE");
-    PRINT("TRNASLATE");
-
     UpdateTransformMatrix();
+
+
 }
 
 void Transform::Scale(float scaleX, float scaleY, float scaleZ) {
+
+    vScale.x = scaleX;
+    vScale.y = scaleY;
+    vScale.z = scaleZ;
+
     XMMATRIX scalingMatrix = XMMatrixScaling(scaleX, scaleY, scaleZ);
 
     XMStoreFloat4x4(&mScale, scalingMatrix);
     UpdateTransformMatrix();
+
+
 }
