@@ -286,13 +286,19 @@ void Renderer::CreateRootSignature() {
 
     CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDesc;
 
-    D3D12_STATIC_SAMPLER_DESC sampler = {};
-    sampler = CD3DX12_STATIC_SAMPLER_DESC(
+    CD3DX12_STATIC_SAMPLER_DESC sampler(
         0,
-        D3D12_FILTER_MIN_MAG_MIP_POINT,
+        D3D12_FILTER_MIN_MAG_MIP_POINT, // filter
         D3D12_TEXTURE_ADDRESS_MODE_WRAP,  // addressU
         D3D12_TEXTURE_ADDRESS_MODE_WRAP,  // addressV
-        D3D12_TEXTURE_ADDRESS_MODE_WRAP   // addressW
+        D3D12_TEXTURE_ADDRESS_MODE_WRAP, // addressW
+        0.0f,
+        1,
+        D3D12_COMPARISON_FUNC_ALWAYS,
+        D3D12_STATIC_BORDER_COLOR_TRANSPARENT_BLACK,
+        0.0f,
+        D3D12_FLOAT32_MAX,
+        D3D12_SHADER_VISIBILITY_ALL
     );
 
     rootSignatureDesc.Init(_countof(parameter), parameter, 1, &sampler, rootSignatureFlags);
@@ -366,7 +372,7 @@ void Renderer::WaitForPreviousFrame()
     // Wait until the previous frame is finished.
     if (m_pFence->GetCompletedValue() < m_fenceValue)
     {
-        PRINT("RENTRE DANS PREVIOUS FRAME");
+        //PRINT("RENTRE DANS PREVIOUS FRAME");
         //Check if the GPU has completed all commands associated with the previous fence value
         HANDLE eventHandle = CreateEventEx(nullptr, NULL, false, EVENT_ALL_ACCESS);
 
