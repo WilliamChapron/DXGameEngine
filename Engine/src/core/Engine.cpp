@@ -11,7 +11,7 @@
 
 #include "../ecs/systems/Time.h"
 
-
+#include "../ecs/components/Texture.h"
 #include "../ecs/components/Camera.h"
 
 using namespace DirectX;
@@ -40,30 +40,27 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
     }
 
     m_pWindow = new Window(hInstance, nShowCmd);
-
-
     m_pRenderer = new Renderer(m_pWindow);
-
     m_pRenderer->InitializeDirectX12Instances();
     m_pRenderer->m_pCommandList->Close();
 
-    m_pGameObjectManager = new GameObjectManager();
 
+
+    m_pGameObjectManager = new GameObjectManager();
     m_pCamera = new Camera();
 
+    compiledTexture.push_back(new Texture("1"));
+    compiledTexture[0]->Initialize(m_pRenderer);
 
-
+    // Create Objects
     m_pTriangle = new Triangle;
     m_pTriangle->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
-
     m_pTriangle2 = new Triangle;
     m_pTriangle2->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(0.5f, 0.5f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
-
     m_pGameObjectManager->AddObject("Triangle", *m_pTriangle);
-    m_pGameObjectManager->AddObject("Triangleé", *m_pTriangle2);
+    m_pGameObjectManager->AddObject("Triangle2", *m_pTriangle2);
 
-
-
+    // Drawing
     isRenderable = true;
     Run();
 }

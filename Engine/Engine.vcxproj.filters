@@ -18,6 +18,7 @@
     <ClInclude Include="src\ecs\systems\GameObjectManager.h" />
     <ClInclude Include="src\ecs\systems\Input.h" />
     <ClInclude Include="src\DDSTextureLoader.h" />
+    <ClInclude Include="src\ecs\components\Texture.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\Engine.cpp" />
@@ -38,6 +39,7 @@
     <ClCompile Include="src\ecs\components\Shader.cpp" />
     <ClCompile Include="src\ecs\components\Shader.h.cpp" />
     <ClCompile Include="src\DDSTextureLoader.cpp" />
+    <ClCompile Include="src\ecs\components\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="res\shader\ShaderTriangle.hlsl" />

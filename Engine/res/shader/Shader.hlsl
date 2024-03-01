@@ -39,4 +39,5 @@ VSOutput VSMain(VSInput input)
 float4 PSMain(VSOutput input) : SV_TARGET
 {
     return g_texture.Sample(g_sampler, input.uv);
+    //return g_texture.Sample(g_sampler, float2(0.5, 0.5));
 }

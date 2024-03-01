@@ -41,11 +41,6 @@ void Triangle::Initialize(Renderer* renderer, Camera* camera, const XMFLOAT3& po
 
     // MATRIX **
     HRESULT hr;
-    hr = renderer->m_pCommandAllocator->Reset();
-    ASSERT_FAILED(hr);
-
-    hr = renderer->m_pCommandList->Reset(renderer->m_pCommandAllocator.Get(), nullptr);
-    ASSERT_FAILED(hr);
 
     Vertex cubeVertices[] = {
         { {-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f, 1.0f}, {0.0f, 1.0f} },  // Rouge
@@ -105,44 +100,8 @@ void Triangle::Initialize(Renderer* renderer, Camera* camera, const XMFLOAT3& po
     D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc = {};
     cbvDesc.BufferLocation = m_constantBuffer->GetGPUVirtualAddress();
     cbvDesc.SizeInBytes = (sizeof(ConstantBufferData) + 255) & ~255; // Alignement sur 256 octets
-    renderer->m_pDevice->CreateConstantBufferView(&cbvDesc, renderer->m_pCbvSrvHeap->GetCPUDescriptorHandleForHeapStart());
+   // renderer->m_pDevice->CreateConstantBufferView(&cbvDesc, renderer->m_pCbvSrvHeap->GetCPUDescriptorHandleForHeapStart());
     // Constant Buffer *
-
-
-
-
-
-    hr = CreateDDSTextureFromFile12(renderer->m_pDevice.Get(),
-        renderer->m_pCommandList.Get(),
-        L"res/texture/texture.dds",
-        m_textureBuffer,
-        m_uploadTexture,
-        0,
-        nullptr
-    );
-    ASSERT_FAILED(hr);
-
-
-    // Describe and create a SRV for the texture.
-    D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-    srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-    srvDesc.Format = m_textureBuffer->GetDesc().Format;
-    srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-    srvDesc.Texture2D.MipLevels = m_textureBuffer->GetDesc().MipLevels;
-    renderer->m_pDevice->CreateShaderResourceView(m_textureBuffer.Get(), &srvDesc, renderer->m_pCbvSrvHeap->GetCPUDescriptorHandleForHeapStart());
-
-
-    ID3D12CommandList* ppCommandLists[] = { renderer->m_pCommandList.Get() };
-    renderer->m_pCommandQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
-
-    PRINT("Texture not Loaded");
-
-    renderer->WaitForPreviousFrame();
-
-    //hr = renderer->m_pCommandList->Close();
-    
-
-
 }
 
 

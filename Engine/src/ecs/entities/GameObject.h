@@ -5,6 +5,8 @@
 #include "../components/Transform.h"
 
 
+
+
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
 
@@ -58,10 +60,9 @@ protected:
     Transform m_transform;
 
 
-    // Texture
-    ComPtr<ID3D12Resource> m_textureBuffer;
-    ComPtr<ID3D12Resource> m_uploadTexture;
-    //std::vector<UINT8> m_textureBitmap;
+    //// Texture
+    //ComPtr<ID3D12Resource> m_textureBuffer;
+    //ComPtr<ID3D12Resource> m_uploadTexture;
 
 
 

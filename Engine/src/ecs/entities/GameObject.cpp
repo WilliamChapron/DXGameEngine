@@ -54,8 +54,6 @@ void GameObject::UpdateDrawingOperations(Renderer* renderer)
     // Update constant buffer SRV / Sampler
     
     // Link descriptors heap to command list || EACH FRAME ?
-    ID3D12DescriptorHeap* heaps[] = { renderer->m_pCbvSrvHeap.Get() };
-    renderer->m_pCommandList->SetDescriptorHeaps(_countof(heaps), heaps);
 
     // Link descriptors attach to shader || EACH FRAME ?
 
