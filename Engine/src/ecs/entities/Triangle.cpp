@@ -1,3 +1,5 @@
+
+
 #include "Triangle.h"
 #include "../../renderer/Graphics.h"
 #include "../../core/Defines.h"
@@ -9,6 +11,9 @@
 #include "../components/Camera.h"
 
 #include "../../renderer/Resources.h"
+#include "../../DDSTextureLoader.h"
+
+
 
 
 
@@ -35,16 +40,17 @@ void Triangle::Initialize(Renderer* renderer, Camera* camera, const XMFLOAT3& po
     m_cbData.projection = camera->GetProjectionMatrix();
 
     // MATRIX **
+    HRESULT hr;
 
     Vertex cubeVertices[] = {
-        { {-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f, 1.0f} },  // Rouge
-        { {-0.5f, -0.5f,  0.5f}, {1.0f, 0.0f, 0.0f, 1.0f} },  // Rouge
-        { {-0.5f,  0.5f, -0.5f}, {0.0f, 0.0f, 1.0f, 1.0f} },  // Bleu
-        { {-0.5f,  0.5f,  0.5f}, {0.0f, 0.0f, 1.0f, 1.0f} },  // Bleu
-        { { 0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 0.0f, 1.0f} },  // Jaune
-        { { 0.5f, -0.5f,  0.5f}, {1.0f, 1.0f, 0.0f, 1.0f} },  // Jaune
-        { { 0.5f,  0.5f, -0.5f}, {0.5f, 0.5f, 0.5f, 1.0f} },  // Gris
-        { { 0.5f,  0.5f,  0.5f}, {0.5f, 0.5f, 0.5f, 1.0f} }   // Gris
+        { {-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f, 1.0f}, {0.0f, 1.0f} },  // Rouge
+        { {-0.5f, -0.5f,  0.5f}, {1.0f, 0.0f, 0.0f, 1.0f}, {0.0f, 0.0f} },  // Rouge
+        { {-0.5f,  0.5f, -0.5f}, {0.0f, 0.0f, 1.0f, 1.0f}, {1.0f, 1.0f} },  // Bleu
+        { {-0.5f,  0.5f,  0.5f}, {0.0f, 0.0f, 1.0f, 1.0f}, {1.0f, 0.0f} },  // Bleu
+        { { 0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 0.0f, 1.0f}, {0.0f, 1.0f} },  // Jaune
+        { { 0.5f, -0.5f,  0.5f}, {1.0f, 1.0f, 0.0f, 1.0f}, {0.0f, 0.0f} },  // Jaune
+        { { 0.5f,  0.5f, -0.5f}, {0.5f, 0.5f, 0.5f, 1.0f}, {1.0f, 1.0f} },  // Gris
+        { { 0.5f,  0.5f,  0.5f}, {0.5f, 0.5f, 0.5f, 1.0f}, {1.0f, 0.0f} }   // Gris
     };
 
     UINT cubeIndices[] = {
@@ -66,7 +72,6 @@ void Triangle::Initialize(Renderer* renderer, Camera* camera, const XMFLOAT3& po
     const UINT indexBufferSize = sizeof(cubeIndices);// *sizeof(UINT);
     const UINT stride = sizeof(Vertex);
 
-    HRESULT hr;
 
     CreateIndexBuffer(indexBufferSize, cubeIndices, m_indexBuffer, m_indexBufferView, renderer);
     CreateVertexBuffer(vertexBufferSize, cubeVertices, m_vertexBuffer, m_vertexBufferView, stride, renderer);
@@ -95,10 +100,8 @@ void Triangle::Initialize(Renderer* renderer, Camera* camera, const XMFLOAT3& po
     D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc = {};
     cbvDesc.BufferLocation = m_constantBuffer->GetGPUVirtualAddress();
     cbvDesc.SizeInBytes = (sizeof(ConstantBufferData) + 255) & ~255; // Alignement sur 256 octets
-    renderer->m_pDevice->CreateConstantBufferView(&cbvDesc, renderer->m_pCbvSrvHeap->GetCPUDescriptorHandleForHeapStart());
+   // renderer->m_pDevice->CreateConstantBufferView(&cbvDesc, renderer->m_pCbvSrvHeap->GetCPUDescriptorHandleForHeapStart());
     // Constant Buffer *
-
-    PRINT("Triangle initialization complete");
 }
 
 

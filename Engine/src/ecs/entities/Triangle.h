@@ -1,9 +1,10 @@
+#pragma once
 
-#include "../../include.h"
-#include <d3d12.h>
 
-#include "../components/Transform.h"
 
+
+//#include "../../include.h"
+#include <DirectXMath.h>
 #include "GameObject.h"
 
 class Renderer;

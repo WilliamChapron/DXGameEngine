@@ -4,7 +4,7 @@
 #include "Resources.h"
 #include <iostream>
 #include <vector>
-#include <wrl/client.h>
+
 
 class Window;
 class GameObject;
@@ -73,7 +73,7 @@ public:
     ComPtr<ID3D12DescriptorHeap> m_pRtvHeap; 
     UINT m_rtvDescriptorSize;
     ComPtr<ID3D12DescriptorHeap> m_pCbvSrvHeap; 
-    UINT m_cbvDescriptorSize;
+    UINT m_cbvSrvDescriptorSize;
 
     int m_renderCallNum = 0;
 

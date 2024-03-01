@@ -11,6 +11,7 @@ class Triangle;
 class Window;
 class GameObjectManager;
 class Camera;
+class Texture;
 
 
 class Engine {
@@ -32,6 +33,8 @@ public:
     Renderer* m_pRenderer;
     GameObjectManager* m_pGameObjectManager;
     Camera* m_pCamera;
+
+    std::vector<Texture*> compiledTexture;
 
     bool isRenderable = false;
 

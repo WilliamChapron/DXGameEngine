@@ -25,7 +25,15 @@ void GameObject::UpdateTransformation(float deltaTime)
 {
     HRESULT hr;
 
-    PRINT("Update TRANSFORM");
+    //PRINT("Update TRANSFORM");
+    static float translationOffset = 0.0f;
+    //translationOffset -= 0.0003f;
+
+    static float rotationAngle = 0.03f;
+    /*rotationAngle += 0.01;*/
+
+    static float fScale = 0.1f;
+    fScale += 0.01f;
 
 
     float rotationAngle = 0.03;
@@ -60,11 +68,21 @@ void GameObject::UpdateDrawingOperations(Renderer* renderer)
 {
     HRESULT hr;
 
+    // Update constant buffer SRV / Sampler
+    
+    // Link descriptors heap to command list || EACH FRAME ?
+
+    // Link descriptors attach to shader || EACH FRAME ?
+
+    CD3DX12_GPU_DESCRIPTOR_HANDLE cbvSrvHandle(renderer->m_pCbvSrvHeap.Get()->GetGPUDescriptorHandleForHeapStart());
+    renderer->m_pCommandList->SetGraphicsRootDescriptorTable(0, cbvSrvHandle);
+
+
     // * Update constant buffer 
     D3D12_GPU_VIRTUAL_ADDRESS cbvAddress = m_constantBuffer->GetGPUVirtualAddress();
-    renderer->m_pCommandList->SetGraphicsRootConstantBufferView(0, cbvAddress);
+    renderer->m_pCommandList->SetGraphicsRootConstantBufferView(1, cbvAddress);
     // Update constant buffer * 
-    PRINT("Drawing Op");
+    //PRINT("Drawing Op");
 
     // Record commands.
     renderer->m_pCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

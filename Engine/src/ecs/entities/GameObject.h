@@ -1,9 +1,14 @@
 #pragma once
 
-#include "../components/Transform.h"
+
 #include "../../include.h"
+#include "../components/Transform.h"
+
+
+
 
 using namespace DirectX;
+using Microsoft::WRL::ComPtr;
 
 class Renderer;
 
@@ -12,6 +17,7 @@ struct Vertex
 {
     XMFLOAT3 Pos;
     XMFLOAT4 Color;
+    XMFLOAT2 Uv;
 };
 
 struct ConstantBufferData {
@@ -52,6 +58,12 @@ protected:
     ID3D12Resource* m_indexBuffer;
     D3D12_INDEX_BUFFER_VIEW m_indexBufferView;
     Transform m_transform;
+
+
+    //// Texture
+    //ComPtr<ID3D12Resource> m_textureBuffer;
+    //ComPtr<ID3D12Resource> m_uploadTexture;
+
 
 
 
