@@ -36,7 +36,7 @@
         else std::cout << L"Could not find a description for error " << dhr << L'\n'; \
         __debugbreak();                                 \
     }                                                       \
-    std::cout << "Success" << std::endl;\
+    \
 }
 
 

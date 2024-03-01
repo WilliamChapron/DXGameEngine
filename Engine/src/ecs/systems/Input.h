@@ -2,27 +2,32 @@
 
 #include <unordered_map>
 #include <Windows.h>
-#include "StateMachine.h" // Inclure votre StateMachine et State si nécessaire
-#include "State.h" 
+#include <iostream>
+
+enum class KeyState {
+    Pressed,
+    Held,
+    Released,
+    Inactive
+};
 
 class Input {
 public:
-    Input(StateMachine* stateMachine);
+    Input();
 
     // Met à jour l'état des entrées
     void Update();
 
     // Trouve l'état d'une touche en fonction de sa clé
-    bool GetKeyState(char key) const;
+    KeyState GetKeyState(char key) const;
 
     // Trouve l'état de toutes les touches
-    const std::unordered_map<char, bool>& GetKeyStates() const;
+    const std::unordered_map<char, KeyState>& GetKeyStates() const;
 
     // Trouve la position de la souris
     POINT GetMousePosition() const; 
 
 private:
-    StateMachine* m_pStateMachine; // Pointeur vers la StateMachine
 
     // Méthode pour gérer les entrées clavier
     void HandleKeyboardInput();
@@ -30,6 +35,9 @@ private:
     // Méthode pour gérer les clics de souris
     void HandleMouseInput();
 
+    // Vérifie l'état de la touche spécifiée par sa clé
+    KeyState GetKeyStateHelper(char key) const;
+
     // Stocke l'état des touches clavier
-    std::unordered_map<char, bool> keyStates;
+    std::unordered_map<char, KeyState> keyStates;
 };

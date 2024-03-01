@@ -22,11 +22,11 @@ void GameObject::UpdateTransformation(float deltaTime)
 {
     HRESULT hr;
 
-    PRINT("Update TRANSFORM");
+
     static float translationOffset = 0.05f;
     //translationOffset -= 0.0003f;
 
-    static float rotationAngle = 0.03f;
+    //static float rotationAngle = 0.03f;
     /*rotationAngle += 0.01;*/
 
     static float fScale = 0.1f;
@@ -34,7 +34,7 @@ void GameObject::UpdateTransformation(float deltaTime)
 
 
     //m_transformData.Translate(translationOffset, translationOffset, 0);
-    m_transformData.Rotate(0, 0, rotationAngle);
+    //m_transformData.Rotate(0, 0, rotationAngle);
     //m_transformData.Scale(1, fScale, 1);
 
 
@@ -60,7 +60,7 @@ void GameObject::UpdateDrawingOperations(Renderer* renderer)
     D3D12_GPU_VIRTUAL_ADDRESS cbvAddress = m_constantBuffer->GetGPUVirtualAddress();
     renderer->m_pCommandList->SetGraphicsRootConstantBufferView(0, cbvAddress);
     // Update constant buffer * 
-    PRINT("Drawing Op");
+
 
     // Record commands.
     renderer->m_pCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

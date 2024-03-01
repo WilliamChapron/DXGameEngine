@@ -367,7 +367,6 @@ void Renderer::CreatePipelineState() {
 
 void Renderer::WaitForPreviousFrame()
 {
-    PRINT("Waiting for previous frame...");
 
     // Signal and increment the fence value.
     m_fenceValue++;
@@ -397,7 +396,6 @@ void Renderer::WaitForPreviousFrame()
     //PRINT(m_frameIndex);
     //frameIndex = pSwapChain->GetCurrentBackBufferIndex();
 
-    PRINT("Previous frame completed");
 }
 
 
@@ -407,7 +405,6 @@ void Renderer::WaitForPreviousFrame()
 void Renderer::Precommandlist() {
 
     HRESULT hr;
-    PRINT("Populating command list...");
 
     hr = m_pCommandAllocator->Reset();
     ASSERT_FAILED(hr);
@@ -457,7 +454,7 @@ void Renderer::Postcommandlist()
     hr = m_pCommandList->Close();
     ASSERT_FAILED(hr);
 
-    PRINT("Command list populated");
+
 }
 
 

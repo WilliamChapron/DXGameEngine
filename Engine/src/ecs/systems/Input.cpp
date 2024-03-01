@@ -1,40 +1,8 @@
 #include "Input.h"
 #include "State.h"
 
-class Pressed : public State {
-public:
-    virtual void enter() override {};
-    virtual void update() override {};
-    virtual void exit() override {};
-};
 
-class Held : public State {
-public:
-    virtual void enter() override {};
-    virtual void update() override {};
-    virtual void exit() override {};
-};
-
-class Released : public State {
-public:
-    virtual void enter() override {};
-    virtual void update() override {};
-    virtual void exit() override {};
-};
-
-class Inactive : public State {
-public:
-    virtual void enter() override {};
-    virtual void update() override {};
-    virtual void exit() override {};
-};
-
-Input::Input(StateMachine* stateMachine) : m_pStateMachine(stateMachine) {
-    m_pStateMachine->AddState(new Pressed);
-    m_pStateMachine->AddState(new Held);
-    m_pStateMachine->AddState(new Released);
-    m_pStateMachine->AddState(new Inactive);
-
+Input::Input() {
     // Initialisation de l'état des touches clavier
     keyStates.clear();
 }
@@ -46,42 +14,59 @@ void Input::Update() {
     HandleMouseInput();
     // Trouve la position de la souris
     GetMousePosition();
-    // Mise à jour de l'état actuel de la StateMachine
-    m_pStateMachine->UpdateCurrentState();
 }
 
 void Input::HandleKeyboardInput() {
-    // Efface l'état des touches avant la mise à jour
-    keyStates.clear();
-
-    // Stock l'état de chaque touche dans keyStates
+    // Stocke l'état de chaque touche dans keyStates
     // Gère les touches Z, Q, S, D
-    keyStates['Z'] = GetAsyncKeyState('Z') & 0x8000;
-    keyStates['Q'] = GetAsyncKeyState('Q') & 0x8000;
-    keyStates['S'] = GetAsyncKeyState('S') & 0x8000;
-    keyStates['D'] = GetAsyncKeyState('D') & 0x8000;
+    keyStates['Z'] = GetKeyStateHelper('Z');
+    keyStates['Q'] = GetKeyStateHelper('Q');
+    keyStates['S'] = GetKeyStateHelper('S');
+    keyStates['D'] = GetKeyStateHelper('D');
     // Gère les touches Espace et Shift
-    keyStates[VK_SPACE] = GetAsyncKeyState(VK_SPACE) & 0x8000;
-    keyStates[VK_SHIFT] = GetAsyncKeyState(VK_SHIFT) & 0x8000;
+    keyStates[VK_SPACE] = GetKeyStateHelper(VK_SPACE);
+    keyStates[VK_SHIFT] = GetKeyStateHelper(VK_SHIFT);
     // Gère les touches des flèches directionnelles
-    keyStates[VK_UP] = GetAsyncKeyState(VK_UP) & 0x8000;
-    keyStates[VK_DOWN] = GetAsyncKeyState(VK_DOWN) & 0x8000;
-    keyStates[VK_LEFT] = GetAsyncKeyState(VK_LEFT) & 0x8000;
-    keyStates[VK_RIGHT] = GetAsyncKeyState(VK_RIGHT) & 0x8000;
-
+    keyStates[VK_UP] = GetKeyStateHelper(VK_UP);
+    keyStates[VK_DOWN] = GetKeyStateHelper(VK_DOWN);
+    keyStates[VK_LEFT] = GetKeyStateHelper(VK_LEFT);
+    keyStates[VK_RIGHT] = GetKeyStateHelper(VK_RIGHT);
 }
 
 void Input::HandleMouseInput() {
-
     // Vérifie si le bouton gauche de la souris est enfoncé
-    keyStates[VK_LBUTTON] = GetAsyncKeyState(VK_LBUTTON) & 0x8000;
+    keyStates[VK_LBUTTON] = GetKeyStateHelper(VK_LBUTTON);
 
     // Vérifie si le bouton droit de la souris est enfoncé
-    keyStates[VK_RBUTTON] = GetAsyncKeyState(VK_RBUTTON) & 0x8000;
+    keyStates[VK_RBUTTON] = GetKeyStateHelper(VK_RBUTTON);
 }
 
-// Fonction pour obtenir l'état d'une touche spécifique
-bool Input::GetKeyState(char key) const {
+KeyState Input::GetKeyStateHelper(char key) const {
+    // Récupère l'état actuel de la touche
+    bool isKeyDown = GetAsyncKeyState(key) & 0x8000;
+    // Recherche de l'état précédent de la touche dans keyStates
+    auto it = keyStates.find(key);
+    if (it != keyStates.end()) {
+        KeyState previousState = it->second;
+
+        // Si la touche était enfoncée avant
+        if (previousState == KeyState::Pressed || previousState == KeyState::Held) {
+            // Si la touche est toujours enfoncée
+            if (isKeyDown) {
+                return KeyState::Held; // La touche est maintenue enfoncée
+            }
+            else {
+                return KeyState::Released; // La touche vient d'être relâchée
+            }
+        }
+    }
+
+    // Si la touche est enfoncée pour la première fois ou est inactive
+    return isKeyDown ? KeyState::Pressed : KeyState::Inactive;
+}
+
+
+KeyState Input::GetKeyState(char key) const {
     // Recherche la touche dans le unordered_map keyStates
     auto it = keyStates.find(key);
     // Si la touche est trouvée, retourne son état
@@ -90,11 +75,11 @@ bool Input::GetKeyState(char key) const {
     }
     else {
         // Si la touche n'est pas trouvée, retourne false (non pressée)
-        return false;
+        return KeyState::Inactive;
     }
 }
 
-const std::unordered_map<char, bool>& Input::GetKeyStates() const {
+const std::unordered_map<char, KeyState>& Input::GetKeyStates() const {
     return keyStates;
 }
 

@@ -54,7 +54,7 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
     
     m_pStateMachine = new StateMachine();
 
-    m_pInput = new Input(m_pStateMachine);
+    m_pInput = new Input();
 
 
 
@@ -102,15 +102,26 @@ void Engine::Run() {
         // Affichez la liste des touches et leur état
         std::cout << "Touches pressees : " << std::endl;
         for (const auto& pair : m_pInput->GetKeyStates()) {
-            std::cout << "Touche : " << pair.first << ", Etat : " << (pair.second ? "Pressee" : "Non pressee") << std::endl;
+            std::cout << "Touche : " << pair.first << ", Etat : ";
+            // Utilisez un switch pour gérer les différents états de la touche
+            switch (pair.second) {
+            case KeyState::Pressed:
+                std::cout << "Pressed";
+                break;
+            case KeyState::Held:
+                std::cout << "Held";
+                break;
+            case KeyState::Released:
+                std::cout << "Released";
+                break;
+            case KeyState::Inactive:
+                std::cout << "Inactive";
+                break;
+            }
+            std::cout << std::endl;
         }
-
         // Affichez les coordonnées de la souris
         std::cout << "Position de la souris : X = " << m_pInput->GetMousePosition().x << ", Y = " << m_pInput->GetMousePosition().y << std::endl;
-
-        // Vérifiez également l'état des boutons de la souris
-        std::cout << "Bouton gauche de la souris : " << (m_pInput->GetKeyState(VK_LBUTTON) ? "Enfoncé" : "Non enfoncé") << std::endl;
-        std::cout << "Bouton droit de la souris : " << (m_pInput->GetKeyState(VK_RBUTTON) ? "Enfoncé" : "Non enfoncé") << std::endl;
 
         //-----
 
