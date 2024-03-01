@@ -92,7 +92,6 @@ void Renderer::InitializeDirectX12Instances() {
     CreateRootSignature();
     CreatePipelineState();
 
-    m_pCommandList->Close();
 }
 
 
@@ -374,6 +373,7 @@ void Renderer::WaitForPreviousFrame()
     // Wait until the previous frame is finished.
     if (m_pFence->GetCompletedValue() < m_fenceValue)
     {
+        PRINT("RENTRE DANS PREVIOUS FRAME");
         //Check if the GPU has completed all commands associated with the previous fence value
         HANDLE eventHandle = CreateEventEx(nullptr, NULL, false, EVENT_ALL_ACCESS);
 

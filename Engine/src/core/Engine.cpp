@@ -45,6 +45,7 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
     m_pRenderer = new Renderer(m_pWindow);
 
     m_pRenderer->InitializeDirectX12Instances();
+    m_pRenderer->m_pCommandList->Close();
 
     m_pGameObjectManager = new GameObjectManager();
 
