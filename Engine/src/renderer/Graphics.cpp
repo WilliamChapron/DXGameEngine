@@ -194,6 +194,10 @@ void Renderer::CreateFence() {
 
     // Create fence event
     m_fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
+    if (m_fenceEvent == nullptr)
+    {
+        HRESULT_FROM_WIN32(GetLastError());
+    }
     ASSERT_FAILED(hr);
     PRINT("Fence event success");
 }
@@ -231,7 +235,6 @@ void Renderer::CreateDescriptorHeap() {
     ASSERT_FAILED(hr);
 
     m_cbvSrvDescriptorSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-    //CD3DX12_CPU_DESCRIPTOR_HANDLE cbvHandle(m_pCbvSrvHeap->GetCPUDescriptorHandleForHeapStart());
 }
 
 
@@ -239,9 +242,9 @@ HRESULT CompileShaderFromFile(const wchar_t* filePath, const char* entryPoint, c
 {
     DWORD shaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
 
-#if defined(DEBUG) || defined(_DEBUG)
-    shaderFlags |= D3DCOMPILE_DEBUG;
-#endif
+    #if defined(DEBUG) || defined(_DEBUG)
+        shaderFlags |= D3DCOMPILE_DEBUG;
+    #endif
 
     ID3DBlob* errorBlob = nullptr;
     HRESULT hr = D3DCompileFromFile(filePath, nullptr, nullptr, entryPoint, shaderModel, shaderFlags, 0, blob, &errorBlob);
@@ -302,11 +305,6 @@ void Renderer::CreateRootSignature() {
 
     rootSignatureDesc.Init(_countof(parameter), parameter, 1, &sampler, rootSignatureFlags);
 
-
-
-
-
-
     ID3DBlob* signature = nullptr;
     ID3DBlob* error = nullptr;
     HRESULT hr = D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &signature, &error);
@@ -365,7 +363,7 @@ void Renderer::CreatePipelineState() {
 
 void Renderer::WaitForPreviousFrame()
 {
-    PRINT("Waiting for previous frame...");
+    //PRINT("Waiting for previous frame...");
 
     // Signal and increment the fence value.
     m_fenceValue++;

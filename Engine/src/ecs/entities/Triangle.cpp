@@ -15,46 +15,6 @@
 
 
 
-//static const UINT TextureWidth = 256;
-//static const UINT TextureHeight = 256;
-//static const UINT TexturePixelSize = 4;    // The number of bytes used to represent a pixel in the texture.
-//
-//
-//std::vector<UINT8> GenerateTextureData()
-//{
-//    const UINT rowPitch = TextureWidth * TexturePixelSize;
-//    const UINT cellPitch = rowPitch >> 3;        // The width of a cell in the checkboard texture.
-//    const UINT cellHeight = TextureWidth >> 3;    // The height of a cell in the checkerboard texture.
-//    const UINT textureSize = rowPitch * TextureHeight;
-//
-//    std::vector<UINT8> data(textureSize);
-//    UINT8* pData = &data[0];
-//
-//    for (UINT n = 0; n < textureSize; n += TexturePixelSize)
-//    {
-//        UINT x = n % rowPitch;
-//        UINT y = n / rowPitch;
-//        UINT i = x / cellPitch;
-//        UINT j = y / cellHeight;
-//
-//        if (i % 2 == j % 2)
-//        {
-//            pData[n] = 0x00;        // R
-//            pData[n + 1] = 0x00;    // G
-//            pData[n + 2] = 0x00;    // B
-//            pData[n + 3] = 0xff;    // A
-//        }
-//        else
-//        {
-//            pData[n] = 0xff;        // R
-//            pData[n + 1] = 0xff;    // G
-//            pData[n + 2] = 0xff;    // B
-//            pData[n + 3] = 0xff;    // A
-//        }
-//    }
-//
-//    return data;
-//}
 
 
 Triangle::Triangle() : GameObject()
@@ -71,10 +31,6 @@ Triangle::~Triangle() {
 
 
 void Triangle::Initialize(Renderer* renderer, Camera* camera, const XMFLOAT3& position, const XMFLOAT3& rotation, const XMFLOAT3& scale) {
-
-    HRESULT hr;
-
-
     m_transform = Transform(position, rotation, scale);
     m_cbData.model = m_transform.GetTransformMatrix();
 
@@ -115,6 +71,7 @@ void Triangle::Initialize(Renderer* renderer, Camera* camera, const XMFLOAT3& po
     const UINT indexBufferSize = sizeof(cubeIndices);// *sizeof(UINT);
     const UINT stride = sizeof(Vertex);
 
+    HRESULT hr;
 
     CreateIndexBuffer(indexBufferSize, cubeIndices, m_indexBuffer, m_indexBufferView, renderer);
     CreateVertexBuffer(vertexBufferSize, cubeVertices, m_vertexBuffer, m_vertexBufferView, stride, renderer);
@@ -147,82 +104,45 @@ void Triangle::Initialize(Renderer* renderer, Camera* camera, const XMFLOAT3& po
     // Constant Buffer *
 
 
-    //ComPtr<int> dd;
+
 
     hr = CreateDDSTextureFromFile12(renderer->m_pDevice.Get(),
         renderer->m_pCommandList.Get(),
-        L"chemin/vers/votre/fichier.dds",
+        L"res/texture/texture.dds",
         m_textureBuffer,
         m_uploadTexture,
         0,
         nullptr
     );
     ASSERT_FAILED(hr);
-    //dd.Detach();
-
-    ////// TEXTURE *
-    //// Describe and create a Texture2D.
-    //D3D12_RESOURCE_DESC textureDesc = {};
-    //textureDesc.MipLevels = 1;
-    //textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-    //textureDesc.Width = TextureWidth;
-    //textureDesc.Height = TextureHeight;
-    //textureDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
-    //textureDesc.DepthOrArraySize = 1;
-    //textureDesc.SampleDesc.Count = 1;
-    //textureDesc.SampleDesc.Quality = 0;
-    //textureDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-
-    //CD3DX12_HEAP_PROPERTIES txtHeapProps(D3D12_HEAP_TYPE_DEFAULT);
-
-    //renderer->m_pDevice->CreateCommittedResource(
-    //    &txtHeapProps,
-    //    D3D12_HEAP_FLAG_NONE,
-    //    &textureDesc,
-    //    D3D12_RESOURCE_STATE_COPY_DEST,
-    //    nullptr,
-    //    IID_PPV_ARGS(&m_textureBuffer));
-
-    //const UINT64 uploadBufferSize = GetRequiredIntermediateSize(m_textureBuffer, 0, 1);
-    //// Create the GPU upload buffer.
-
-    //CD3DX12_HEAP_PROPERTIES txtUploadProps(D3D12_HEAP_TYPE_UPLOAD);
-    //CD3DX12_RESOURCE_DESC txtUploadDesc = CD3DX12_RESOURCE_DESC::Buffer(uploadBufferSize);
-
-    //renderer->m_pDevice->CreateCommittedResource(
-    //    &txtUploadProps,
-    //    D3D12_HEAP_FLAG_NONE,
-    //    &txtUploadDesc,
-    //    D3D12_RESOURCE_STATE_GENERIC_READ,
-    //    nullptr,
-    //    IID_PPV_ARGS(&m_uploadTexture));
-
-    //// Copy data to the intermediate upload heap and then schedule a copy 
-    //// from the upload heap to the Texture2D.
-    //m_textureBitmap = GenerateTextureData();
-
-    //D3D12_SUBRESOURCE_DATA textureData = {};
-    //    textureData.pData = m_textureBitmap.data();
-    //    textureData.RowPitch = TextureWidth * TexturePixelSize;
-    //    textureData.SlicePitch = textureData.RowPitch * TextureHeight;
-
-    //UpdateSubresources(renderer->m_pCommandList.Get(), m_textureBuffer, m_uploadTexture, 0, 0, 1, &textureData);
 
 
-    //CD3DX12_RESOURCE_BARRIER transitionBarrier = CD3DX12_RESOURCE_BARRIER::Transition(
-    //    m_textureBuffer,
-    //    D3D12_RESOURCE_STATE_COPY_DEST,
-    //    D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE
-    //);
-    //renderer->m_pCommandList->ResourceBarrier(1, &transitionBarrier);
+    // Describe and create a SRV for the texture.
+    D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+    srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+    srvDesc.Format = m_textureBuffer->GetDesc().Format;
+    srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+    srvDesc.Texture2D.MipLevels = m_textureBuffer->GetDesc().MipLevels;
+    renderer->m_pDevice->CreateShaderResourceView(m_textureBuffer.Get(), &srvDesc, renderer->m_pCbvSrvHeap->GetCPUDescriptorHandleForHeapStart());
 
-    //// Describe and create a SRV for the texture.
-    //D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-    //srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-    //srvDesc.Format = textureDesc.Format;
-    //srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-    //srvDesc.Texture2D.MipLevels = 1;
-    //renderer->m_pDevice->CreateShaderResourceView(m_textureBuffer, &srvDesc, renderer->m_pCbvSrvHeap->GetCPUDescriptorHandleForHeapStart());
+    //hr = renderer->m_pCommandList->Close();
+    ASSERT_FAILED(hr);
+    ID3D12CommandList* ppCommandLists[] = { renderer->m_pCommandList.Get() };
+    renderer->m_pCommandQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
+
+    // Signal and increment the fence value.
+    renderer->m_fenceValue++;
+    hr = renderer->m_pCommandQueue->Signal(renderer->m_pFence.Get(), renderer->m_fenceValue);
+    ASSERT_FAILED(hr);
+
+    PRINT("Texture not Loaded");
+
+    renderer->m_fenceValue = 0;
+
+    renderer->WaitForPreviousFrame();
+    
+
+
 }
 
 
