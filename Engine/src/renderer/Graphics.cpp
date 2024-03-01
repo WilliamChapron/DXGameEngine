@@ -230,7 +230,7 @@ void Renderer::CreateDescriptorHeap() {
     hr = m_pDevice->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&m_pCbvSrvHeap));
     ASSERT_FAILED(hr);
 
-    m_cbvDescriptorSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+    m_cbvSrvDescriptorSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
     //CD3DX12_CPU_DESCRIPTOR_HANDLE cbvHandle(m_pCbvSrvHeap->GetCPUDescriptorHandleForHeapStart());
 }
 
@@ -275,6 +275,7 @@ void Renderer::CreateRootSignature() {
     parameter[1].InitAsConstantBufferView(0); //b0
 
 
+
     D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
         D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT | 
         D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS |
@@ -282,7 +283,24 @@ void Renderer::CreateRootSignature() {
         D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS;
 
     CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDesc;
-    rootSignatureDesc.Init(_countof(parameter), parameter, 0, nullptr, rootSignatureFlags);
+
+    D3D12_STATIC_SAMPLER_DESC sampler = {};
+    sampler.Filter = D3D12_FILTER_MIN_MAG_MIP_POINT;
+    sampler.AddressU = D3D12_TEXTURE_ADDRESS_MODE_BORDER;
+    sampler.AddressV = D3D12_TEXTURE_ADDRESS_MODE_BORDER;
+    sampler.AddressW = D3D12_TEXTURE_ADDRESS_MODE_BORDER;
+    sampler.MipLODBias = 0;
+    sampler.MaxAnisotropy = 0;
+    sampler.ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;
+    sampler.BorderColor = D3D12_STATIC_BORDER_COLOR_TRANSPARENT_BLACK;
+    sampler.MinLOD = 0.0f;
+    sampler.MaxLOD = D3D12_FLOAT32_MAX;
+    sampler.ShaderRegister = 0;
+    sampler.RegisterSpace = 0;
+    sampler.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+
+
+    rootSignatureDesc.Init(_countof(parameter), parameter, 1, &sampler, rootSignatureFlags);
 
 
 
@@ -377,7 +395,6 @@ void Renderer::WaitForPreviousFrame()
     //PRINT(m_frameIndex);
     //frameIndex = pSwapChain->GetCurrentBackBufferIndex();
 
-    PRINT("Previous frame completed");
 }
 
 
@@ -387,7 +404,6 @@ void Renderer::WaitForPreviousFrame()
 void Renderer::Precommandlist() {
 
     HRESULT hr;
-    PRINT("Populating command list...");
 
     hr = m_pCommandAllocator->Reset();
     ASSERT_FAILED(hr);
@@ -404,7 +420,6 @@ void Renderer::Precommandlist() {
         m_pRenderTargets[m_frameIndex].Get(),
         D3D12_RESOURCE_STATE_PRESENT,
         D3D12_RESOURCE_STATE_RENDER_TARGET);
-
     m_pCommandList->ResourceBarrier(1, &transitionBarrier);
 
 
@@ -412,8 +427,6 @@ void Renderer::Precommandlist() {
         m_pRtvHeap->GetCPUDescriptorHandleForHeapStart(),
         m_frameIndex,
         m_rtvDescriptorSize);
-
-
     m_pCommandList->OMSetRenderTargets(1, &rtvHandle, FALSE, nullptr);
 
 
@@ -427,18 +440,15 @@ void Renderer::Postcommandlist()
 
     HRESULT hr;
 
-    // #TODO Don't repeat command to each triangle
     CD3DX12_RESOURCE_BARRIER presentBarrier = CD3DX12_RESOURCE_BARRIER::Transition(
         m_pRenderTargets[m_frameIndex].Get(),
         D3D12_RESOURCE_STATE_RENDER_TARGET,
         D3D12_RESOURCE_STATE_PRESENT);
-
     m_pCommandList->ResourceBarrier(1, &presentBarrier);
 
     hr = m_pCommandList->Close();
     ASSERT_FAILED(hr);
 
-    PRINT("Command list populated");
 }
 
 

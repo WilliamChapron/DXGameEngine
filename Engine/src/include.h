@@ -10,6 +10,7 @@
 #include <D3Dcompiler.h>
 #include <DirectXMath.h>
 #include "../extern/d3dx12.h"
+#include <wrl/client.h>
 
 
 

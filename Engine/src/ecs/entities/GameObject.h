@@ -1,11 +1,12 @@
 #pragma once
 
-#include "../components/Transform.h"
+
 #include "../../include.h"
-#include <iostream>
-#include <vector>
+#include "../components/Transform.h"
+
 
 using namespace DirectX;
+using Microsoft::WRL::ComPtr;
 
 class Renderer;
 
@@ -58,10 +59,10 @@ protected:
 
 
     // Texture
-    ID3D12Resource* m_textureBuffer;
-    std::vector<UINT8> m_textureBitmap;
-    ID3D12Resource* m_uploadTexture;
-    //ID3D12ShaderResourceView* m_textureBufferView
+    ComPtr<ID3D12Resource> m_textureBuffer;
+    ComPtr<ID3D12Resource> m_uploadTexture;
+    //std::vector<UINT8> m_textureBitmap;
+
 
 
 

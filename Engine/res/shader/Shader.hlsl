@@ -5,8 +5,8 @@ cbuffer Data : register(b0)
     float4x4 projection;
 };
 
-Texture2D g_texture : register(t0);
-SamplerState g_sampler : register(s0);
+Texture2D g_texture : register(t0); // Texture bound to t0, register space 0
+SamplerState g_sampler : register(s0); // Sampler bound to s0, register space 0
 
 struct VSInput
 {
