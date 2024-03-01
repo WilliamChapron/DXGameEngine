@@ -10,19 +10,39 @@ public:
     ~Camera() {};
 
     void Update(float deltaTime);
-    void UpdatePosition(XMVECTOR m_newPosition);
-    void UpdateTarget(XMVECTOR m_newTarget);
+    void UpdatePosition(XMFLOAT3 m_newPosition);
+    void UpdatePosition(float x, float y, float z);
+
+
+    void UpdateTarget(XMFLOAT3 m_newTarget);
 
     XMFLOAT4X4 GetViewMatrix() const;
     XMFLOAT4X4 GetProjectionMatrix() const;
 
-private:
-    DirectX::XMVECTOR m_position;
-    DirectX::XMVECTOR m_target;
-    DirectX::XMVECTOR m_up;
+    void Rotate(float pitch, float yaw, float roll);
 
-    // j'ai utilisé XMMATRIX parce que XMMatrixPerspectiveFovLH 
-    // attends un XMMATRIX et pas un XMFLOAT4X4
+
+private:
+
+    // Rotate data
+    XMFLOAT3 qRotation;  // Quaternion 
+    XMFLOAT4X4 mRotation;
+
+    // Direction vector 
+    XMFLOAT3 vForward;
+    XMFLOAT3 vRight;
+    XMFLOAT3 vUp;
+
+
+    DirectX::XMFLOAT3 m_position;
+    DirectX::XMFLOAT3 m_target;
+    DirectX::XMFLOAT3 m_up;
+
     XMMATRIX m_viewMatrix;
     XMMATRIX m_projectionMatrix;
+    XMMATRIX m_transposedViewMatrix;
+    XMMATRIX m_transposedProjectionMatrix;
+
+    XMFLOAT4X4 f_viewMatrix;
+    XMFLOAT4X4 f_projectionMatrix;
 };

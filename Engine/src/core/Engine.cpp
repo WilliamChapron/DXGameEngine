@@ -47,17 +47,15 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
 
     m_pGameObjectManager = new GameObjectManager();
 
+
     m_pCamera = new Camera();
 
     std::cout << "Camera Init" << std::endl;
 
     m_pTriangle = new Triangle;
     m_pTriangle->Initialize(m_pRenderer, m_pCamera);
-    m_pCamera->UpdateTarget(XMLoadFloat3(&m_pTriangle->GetTransform().vPosition));
 
     m_pGameObjectManager->AddObject("Triangle", *m_pTriangle);
-
-
 
     isRenderable = true;
     Run();
@@ -85,9 +83,16 @@ void Engine::Run() {
     //triangles.push_back(*m_pTriangle1);
     //triangles.push_back(*m_pTriangle2);
     // Ajoutez d'autres triangles au besoin
+    float rotation = 0.2f;
 
     while (true) {
+
         time.UpdateTime();
+        //m_pCamera->UpdatePosition(1.0f, -0.01f, 0.f);
+        m_pCamera->Rotate(20.0f, 0.0f, 0.0f);
+        m_pCamera->UpdateTarget(m_pTriangle->GetTransform().vPosition);
+        m_pCamera->Update(time.GetDeltaTime());
+
         m_pWindow->UpdateTitleWithFPS(time.GetFramePerSecond());
 
         if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
@@ -99,7 +104,7 @@ void Engine::Run() {
 
         if (isRenderable) {
             // Appelez la fonction Render de la classe Renderer et passez-lui la liste de triangles
-            m_pGameObjectManager->Update(m_pRenderer);
+            m_pGameObjectManager->Update(m_pRenderer, m_pCamera);
         }
     }
 }

@@ -33,6 +33,6 @@ public:
     //void UpdateObject(std::string name, const GameObject& newObject);
 
     // Méthode de rendu des triangles
-    void Update(Renderer* renderer);
+    void Update(Renderer* renderer, Camera* camera);
 
 };
