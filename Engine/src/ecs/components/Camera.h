@@ -20,19 +20,20 @@ public:
     XMFLOAT4X4 GetProjectionMatrix() const;
 
     void Rotate(float pitch, float yaw, float roll);
+    void RotateAroundTarget(float pitch, float yaw, float roll);
 
 
 private:
+    XMVECTOR currentRotation;
 
     // Rotate data
     XMFLOAT3 qRotation;  // Quaternion 
     XMFLOAT4X4 mRotation;
 
     // Direction vector 
-    XMFLOAT3 vForward;
-    XMFLOAT3 vRight;
-    XMFLOAT3 vUp;
-
+    XMVECTOR forward;
+    XMVECTOR up;
+    XMVECTOR right;
 
     DirectX::XMFLOAT3 m_position;
     DirectX::XMFLOAT3 m_target;

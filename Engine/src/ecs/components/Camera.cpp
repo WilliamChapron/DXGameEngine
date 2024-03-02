@@ -22,6 +22,10 @@ Camera::Camera(float fov, float aspectRatio, float nearPlane, float farPlane){
 
     m_transposedProjectionMatrix = XMMatrixTranspose(m_projectionMatrix);
     XMStoreFloat4x4(&f_projectionMatrix, m_transposedProjectionMatrix);
+
+    // Déclarer un quaternion pour stocker l'orientation actuelle de la caméra
+    currentRotation = XMQuaternionIdentity();
+
 }
 
 void Camera::Update(float deltaTime) {
@@ -66,6 +70,7 @@ XMFLOAT4X4 Camera::GetProjectionMatrix() const
 
 void Camera::Rotate(float pitch, float yaw, float roll)
 {
+
     // Convertir les angles en radians
     pitch = XMConvertToRadians(pitch);
     yaw = XMConvertToRadians(yaw);
@@ -74,16 +79,17 @@ void Camera::Rotate(float pitch, float yaw, float roll)
     // Créer le quaternion de rotation à partir des angles d'Euler
     XMVECTOR rotationQuaternion = XMQuaternionRotationRollPitchYaw(pitch, yaw, roll);
 
-    // Définir la direction de la caméra
-    XMVECTOR forward = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-    XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-    XMVECTOR right = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+    // Accumuler la rotation actuelle avec la nouvelle rotation
+    currentRotation = XMQuaternionMultiply(currentRotation, rotationQuaternion);
+
+    forward = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+    right = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+    up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 
     // Faire pivoter les vecteurs de direction et de haut avec le quaternion de rotation
-    forward = XMVector3Rotate(forward, rotationQuaternion);
-    up = XMVector3Rotate(up, rotationQuaternion);
-    right = XMVector3Rotate(right, rotationQuaternion);
-
+    forward = XMVector3Rotate(forward, currentRotation);
+    up = XMVector3Rotate(up, currentRotation);
+    right = XMVector3Rotate(right, currentRotation);
 
     // Mettre à jour la cible de la caméra en fonction de la direction
     m_target.x = m_position.x + XMVectorGetX(forward);
@@ -94,47 +100,19 @@ void Camera::Rotate(float pitch, float yaw, float roll)
     m_up.x = XMVectorGetX(up);
     m_up.y = XMVectorGetY(up);
     m_up.z = XMVectorGetZ(up);
-
-    // Mettre à jour la matrice de vue
-    m_viewMatrix = XMMatrixLookAtLH(XMLoadFloat3(&m_position), XMLoadFloat3(&m_target), XMLoadFloat3(&m_up));
-    m_transposedViewMatrix = XMMatrixTranspose(m_viewMatrix);
-    XMStoreFloat4x4(&f_viewMatrix, m_transposedViewMatrix);
 }
 
-//// Convertir les angles en radians
-    //pitch = XMConvertToRadians(pitch);
-    //yaw = XMConvertToRadians(yaw);
-    //roll = XMConvertToRadians(roll);
-
-    //XMVECTOR forwardVector = XMLoadFloat3(&vForward);
-    //XMVECTOR rightVector = XMLoadFloat3(&vRight);
-    //XMVECTOR upVector = XMLoadFloat3(&vUp);
 
 
-    //XMVECTOR qRoll = XMQuaternionRotationAxis(forwardVector, roll);
-    //XMVECTOR qPitch = XMQuaternionRotationAxis(rightVector, pitch);
-    //XMVECTOR qYaw = XMQuaternionRotationAxis(upVector, yaw);
-    //XMVECTOR q = XMQuaternionMultiply(qRoll, qPitch);
-    //q = XMQuaternionMultiply(q, qYaw);
 
+void Camera::RotateAroundTarget(float pitch, float yaw, float roll) {
+    pitch = XMConvertToRadians(pitch);
+    yaw = XMConvertToRadians(yaw);
+    roll = XMConvertToRadians(roll);
 
-    ////Ajout rotation à quaternion / Multiplier qRotation stocké a q transform
-    //XMVECTOR rotationQuaternion = XMLoadFloat4(&qRotation);
-    //rotationQuaternion = XMQuaternionMultiply(rotationQuaternion, q);
-    //XMStoreFloat4(&qRotation, rotationQuaternion);
+    XMVECTOR positionRelativeToTarget = XMLoadFloat3(&m_position) - XMLoadFloat3(&m_target);
+    XMVECTOR rotationQuaternion = XMQuaternionRotationRollPitchYaw(pitch, yaw, roll);
+    positionRelativeToTarget = XMVector3Rotate(positionRelativeToTarget, rotationQuaternion);
 
-    ////Convertir le quaternion en une matrice
-    //XMMATRIX rotationMatrix = XMMatrixRotationQuaternion(rotationQuaternion);
-    //XMStoreFloat4x4(&mRotation, rotationMatrix);
-
-    //vRight.x = mRotation._11;
-    //vRight.y = mRotation._12;
-    //vRight.z = mRotation._13;
-
-    //vUp.x = mRotation._21;
-    //vUp.y = mRotation._22;
-    //vUp.z = mRotation._23;
-
-    //vForward.x = mRotation._31;
-    //vForward.y = mRotation._32;
-    //vForward.z = mRotation._33;
+    XMStoreFloat3(&m_position, positionRelativeToTarget + XMLoadFloat3(&m_target));
+}

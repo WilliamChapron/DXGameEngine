@@ -88,9 +88,13 @@ void Engine::Run() {
     while (true) {
 
         time.UpdateTime();
-        //m_pCamera->UpdatePosition(1.0f, -0.01f, 0.f);
-        m_pCamera->Rotate(20.0f, 0.0f, 0.0f);
-        m_pCamera->UpdateTarget(m_pTriangle->GetTransform().vPosition);
+        
+        //CAMERA DEBUG
+        //m_pCamera->UpdatePosition(1.0f, 0.0f, 0.01f);
+        //m_pCamera->Rotate(0.1f, 0.0f, 0.0f);
+        m_pCamera->RotateAroundTarget(1.f, 1.f, 0.0f);
+        //m_pCamera->UpdateTarget(m_pTriangle->GetTransform().vPosition);
+
         m_pCamera->Update(time.GetDeltaTime());
 
         m_pWindow->UpdateTitleWithFPS(time.GetFramePerSecond());
