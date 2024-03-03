@@ -1,5 +1,6 @@
 #include "GameObjectManager.h"
 #include "../../renderer/Graphics.h" // renderer
+#include "../components/Camera.h"
 
 // Constructeur par défaut
 GameObjectManager::GameObjectManager() {}
@@ -30,7 +31,7 @@ void GameObjectManager::RemoveObject(std::string name) {
 //    return matchingObjects;
 //}
 
-void GameObjectManager::Update(Renderer* renderer) {
+void GameObjectManager::Update(Renderer* renderer, Camera* camera) {
     HRESULT hr;
 
 
@@ -39,7 +40,7 @@ void GameObjectManager::Update(Renderer* renderer) {
     
     for (auto& pair : objectMap) {
         GameObject& gameObject = pair.second;
-        gameObject.Update(1.0, renderer); 
+        gameObject.Update(1.0, renderer, camera);
     }
 
 

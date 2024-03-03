@@ -6,6 +6,7 @@
 using namespace DirectX;
 
 class Renderer;
+class Camera;
 
 // Vertex
 struct Vertex
@@ -26,7 +27,7 @@ public:
     GameObject();
     GameObject(const XMFLOAT3& position, const XMFLOAT3& rotation, const XMFLOAT3& scale);
 
-    void Update(float deltaTime, Renderer* renderer);
+    void Update(float deltaTime, Renderer* renderer, Camera* camera);
 
     const Transform& GetTransform() const { return m_transform; }
     const ConstantBufferData& GetConstantBufferData() const { return m_cbData; }
@@ -59,6 +60,6 @@ protected:
 
 private:
     void UpdateTransformation(float deltaTime);
-    void UpdateDrawingOperations(Renderer* renderer);
+    void UpdateDrawingOperations(Renderer* renderer, Camera* camera);
 
 };

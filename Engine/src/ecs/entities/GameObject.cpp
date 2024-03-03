@@ -1,6 +1,7 @@
 #include "GameObject.h"
 #include "../../renderer/Graphics.h"
 #include "../../core/Defines.h"
+#include "../components/Camera.h"
 
 GameObject::GameObject() : m_transform(), m_vertexBuffer(nullptr), m_indexBuffer(nullptr)
 {
@@ -12,21 +13,21 @@ GameObject::GameObject(const XMFLOAT3& position, const XMFLOAT3& rotation, const
 
 }
 
-void GameObject::Update(float deltaTime, Renderer* renderer)
+void GameObject::Update(float deltaTime, Renderer* renderer, Camera* camera)
 {
     UpdateTransformation(deltaTime);
-    UpdateDrawingOperations(renderer);
+    UpdateDrawingOperations(renderer, camera);
 }
 
 void GameObject::UpdateTransformation(float deltaTime)
 {
     HRESULT hr;
 
-
-    static float translationOffset = 0.05f;
+    PRINT("Update TRANSFORM");
+    static float translationOffset = 0.0f;
     //translationOffset -= 0.0003f;
 
-    //static float rotationAngle = 0.03f;
+    static float rotationAngle = 0.001f;
     /*rotationAngle += 0.01;*/
 
     static float fScale = 0.1f;
@@ -52,9 +53,12 @@ void GameObject::UpdateTransformation(float deltaTime)
 
 }
 
-void GameObject::UpdateDrawingOperations(Renderer* renderer)
+void GameObject::UpdateDrawingOperations(Renderer* renderer, Camera* camera)
 {
     HRESULT hr;
+    
+    m_cbData.view = camera->GetViewMatrix();
+    m_cbData.projection = camera->GetProjectionMatrix();
 
     // * Update constant buffer 
     D3D12_GPU_VIRTUAL_ADDRESS cbvAddress = m_constantBuffer->GetGPUVirtualAddress();

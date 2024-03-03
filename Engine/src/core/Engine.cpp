@@ -22,7 +22,7 @@ using namespace DirectX;
 
 
 //XMVECTOR TranslateVector(XMVECTOR vector, float deltaX, float deltaY, float deltaZ) {
-//    // Création de la matrice de translation
+//    // CrÃ©ation de la matrice de translation
 //    XMMATRIX translationMatrix = XMMatrixTranslation(deltaX, deltaY, deltaZ);
 //
 //    // Application de la translation au vecteur
@@ -50,20 +50,18 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
 
     m_pGameObjectManager = new GameObjectManager();
 
-    m_pCamera = new Camera();
     
-    m_pStateMachine = new StateMachine();
 
     m_pInput = new Input();
 
+    m_pCamera = new Camera();
 
+    std::cout << "Camera Init" << std::endl;
 
     m_pTriangle = new Triangle;
     m_pTriangle->Initialize(m_pRenderer, m_pCamera);
 
     m_pGameObjectManager->AddObject("Triangle", *m_pTriangle);
-
-
 
     isRenderable = true;
     Run();
@@ -91,19 +89,31 @@ void Engine::Run() {
     //triangles.push_back(*m_pTriangle1);
     //triangles.push_back(*m_pTriangle2);
     // Ajoutez d'autres triangles au besoin
+    float rotation = 0.2f;
 
     while (true) {
+
         time.UpdateTime();
+        
+        //CAMERA DEBUG
+        m_pCamera->UpdatePosition(0.0f, 0.0f, 0.2f);
+        /*m_pCamera->UpdatePosition(1.0f, 0.0f, 0.01f);
+        m_pCamera->Rotate(0.0f, 0.0f, 0.25f);
+        m_pCamera->RotateAroundTarget(1.f, 1.f, 0.0f);*/
+        m_pCamera->UpdateTarget(m_pTriangle->GetTransform().vPosition);
+
+        m_pCamera->Update(time.GetDeltaTime());
+
         m_pWindow->UpdateTitleWithFPS(time.GetFramePerSecond());
 
         //------ TEST INPUT
         m_pInput->Update();
 
-        // Affichez la liste des touches et leur état
+        // Affichez la liste des touches et leur Ã©tat
         std::cout << "Touches pressees : " << std::endl;
         for (const auto& pair : m_pInput->GetKeyStates()) {
             std::cout << "Touche : " << pair.first << ", Etat : ";
-            // Utilisez un switch pour gérer les différents états de la touche
+            // Utilisez un switch pour gÃ©rer les diffÃ©rents Ã©tats de la touche
             switch (pair.second) {
             case KeyState::Pressed:
                 std::cout << "Pressed";
@@ -120,7 +130,7 @@ void Engine::Run() {
             }
             std::cout << std::endl;
         }
-        // Affichez les coordonnées de la souris
+        // Affichez les coordonnÃ©es de la souris
         std::cout << "Position de la souris : X = " << m_pInput->GetMousePosition().x << ", Y = " << m_pInput->GetMousePosition().y << std::endl;
 
         //------
@@ -134,7 +144,7 @@ void Engine::Run() {
 
         if (isRenderable) {
             // Appelez la fonction Render de la classe Renderer et passez-lui la liste de triangles
-            m_pGameObjectManager->Update(m_pRenderer);
+            m_pGameObjectManager->Update(m_pRenderer, m_pCamera);
         }
     }
 }
