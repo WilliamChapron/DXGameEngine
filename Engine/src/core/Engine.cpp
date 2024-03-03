@@ -90,10 +90,11 @@ void Engine::Run() {
         time.UpdateTime();
         
         //CAMERA DEBUG
-        //m_pCamera->UpdatePosition(1.0f, 0.0f, 0.01f);
-        //m_pCamera->Rotate(0.1f, 0.0f, 0.0f);
-        m_pCamera->RotateAroundTarget(1.f, 1.f, 0.0f);
-        //m_pCamera->UpdateTarget(m_pTriangle->GetTransform().vPosition);
+        m_pCamera->UpdatePosition(0.0f, 0.0f, 0.2f);
+        /*m_pCamera->UpdatePosition(1.0f, 0.0f, 0.01f);
+        m_pCamera->Rotate(0.0f, 0.0f, 0.25f);
+        m_pCamera->RotateAroundTarget(1.f, 1.f, 0.0f);*/
+        m_pCamera->UpdateTarget(m_pTriangle->GetTransform().vPosition);
 
         m_pCamera->Update(time.GetDeltaTime());
 
