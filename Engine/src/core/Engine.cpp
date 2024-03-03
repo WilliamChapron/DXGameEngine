@@ -13,13 +13,16 @@
 
 
 #include "../ecs/components/Camera.h"
+
+#include "../ecs/systems/Input.h"
+
 using namespace DirectX;
 
 
 
 
 //XMVECTOR TranslateVector(XMVECTOR vector, float deltaX, float deltaY, float deltaZ) {
-//    // Cr�ation de la matrice de translation
+//    // Création de la matrice de translation
 //    XMMATRIX translationMatrix = XMMatrixTranslation(deltaX, deltaY, deltaZ);
 //
 //    // Application de la translation au vecteur
@@ -47,6 +50,9 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
 
     m_pGameObjectManager = new GameObjectManager();
 
+    
+
+    m_pInput = new Input();
 
     m_pCamera = new Camera();
 
@@ -99,6 +105,35 @@ void Engine::Run() {
         m_pCamera->Update(time.GetDeltaTime());
 
         m_pWindow->UpdateTitleWithFPS(time.GetFramePerSecond());
+
+        //------ TEST INPUT
+        m_pInput->Update();
+
+        // Affichez la liste des touches et leur état
+        std::cout << "Touches pressees : " << std::endl;
+        for (const auto& pair : m_pInput->GetKeyStates()) {
+            std::cout << "Touche : " << pair.first << ", Etat : ";
+            // Utilisez un switch pour gérer les différents états de la touche
+            switch (pair.second) {
+            case KeyState::Pressed:
+                std::cout << "Pressed";
+                break;
+            case KeyState::Held:
+                std::cout << "Held";
+                break;
+            case KeyState::Released:
+                std::cout << "Released";
+                break;
+            case KeyState::Inactive:
+                std::cout << "Inactive";
+                break;
+            }
+            std::cout << std::endl;
+        }
+        // Affichez les coordonnées de la souris
+        std::cout << "Position de la souris : X = " << m_pInput->GetMousePosition().x << ", Y = " << m_pInput->GetMousePosition().y << std::endl;
+
+        //------
 
         if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
             if (msg.message == WM_QUIT)

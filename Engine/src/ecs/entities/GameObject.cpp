@@ -64,7 +64,7 @@ void GameObject::UpdateDrawingOperations(Renderer* renderer, Camera* camera)
     D3D12_GPU_VIRTUAL_ADDRESS cbvAddress = m_constantBuffer->GetGPUVirtualAddress();
     renderer->m_pCommandList->SetGraphicsRootConstantBufferView(0, cbvAddress);
     // Update constant buffer * 
-    PRINT("Drawing Op");
+
 
     // Record commands.
     renderer->m_pCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

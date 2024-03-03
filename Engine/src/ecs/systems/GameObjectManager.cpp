@@ -34,7 +34,7 @@ void GameObjectManager::RemoveObject(std::string name) {
 void GameObjectManager::Update(Renderer* renderer, Camera* camera) {
     HRESULT hr;
 
-    PRINT("Rendering...");
+
 
     renderer->Precommandlist();
     
@@ -56,5 +56,5 @@ void GameObjectManager::Update(Renderer* renderer, Camera* camera) {
 
     renderer->WaitForPreviousFrame();
 
-    PRINT("Rendering complete");
+
 }
