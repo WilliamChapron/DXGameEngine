@@ -4,7 +4,7 @@
 
 Input::Input() {
     keyStates.clear();
-    // Initialisation de l'état des touches clavier
+    // Initialisation de l'état des touches clavier 
     // Gère les touches Z, Q, S, D
     keyStates['Z'] = KeyState::Inactive;
     keyStates['Q'] = KeyState::Inactive;

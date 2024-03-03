@@ -15,7 +15,7 @@ class Input {
 public:
     Input();
 
-    // Met à jour l'état des entrées
+    // Met à jour l'état des entrées 
     void Update();
 
     // Trouve l'état d'une touche en fonction de sa clé

@@ -96,7 +96,7 @@ void Engine::Run() {
         time.UpdateTime();
         m_pWindow->UpdateTitleWithFPS(time.GetFramePerSecond());
 
-        //----- TEST INPUT
+        //------ TEST INPUT
         m_pInput->Update();
 
         // Affichez la liste des touches et leur état
@@ -123,7 +123,7 @@ void Engine::Run() {
         // Affichez les coordonnées de la souris
         std::cout << "Position de la souris : X = " << m_pInput->GetMousePosition().x << ", Y = " << m_pInput->GetMousePosition().y << std::endl;
 
-        //-----
+        //------
 
         if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
             if (msg.message == WM_QUIT)
