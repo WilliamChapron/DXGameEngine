@@ -4,13 +4,18 @@
 #include "../../include.h"
 #include "../components/Transform.h"
 
-
-
+#include <iostream>
+#include <map>
+#include <list>
+#include <vector>
+#include <unordered_map>
+#include <string>
 
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
 
 class Renderer;
+class Component;
 
 // Vertex
 struct Vertex
@@ -43,6 +48,8 @@ public:
     const D3D12_VERTEX_BUFFER_VIEW& GetVertexBufferView() const { return m_vertexBufferView; }
     const D3D12_INDEX_BUFFER_VIEW& GetIndexBufferView() const { return m_indexBufferView; }
 
+    std::list<Component*> componentsList;
+
 protected:
 
     ConstantBufferData m_cbData;
@@ -58,11 +65,6 @@ protected:
     ID3D12Resource* m_indexBuffer;
     D3D12_INDEX_BUFFER_VIEW m_indexBufferView;
     Transform m_transform;
-
-
-    //// Texture
-    //ComPtr<ID3D12Resource> m_textureBuffer;
-    //ComPtr<ID3D12Resource> m_uploadTexture;
 
 
 

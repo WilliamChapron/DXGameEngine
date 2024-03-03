@@ -1,6 +1,8 @@
 #pragma once
 
 #include "../../include.h"
+#include "./Component.h"
+
 #include <iostream>
 
 
@@ -10,14 +12,14 @@ using Microsoft::WRL::ComPtr;
 
 class Renderer;
 
-class Texture
+class TextureComponent : public Component
 {
 public:
-	Texture(std::string name);
+	TextureComponent(std::string name);
 	void Initialize(Renderer* renderer);
 
 private:
-	std::string name;
+	std::string m_namePath;
 	ComPtr<ID3D12Resource> m_textureBuffer;
 	ComPtr<ID3D12Resource> m_uploadTexture;
 };

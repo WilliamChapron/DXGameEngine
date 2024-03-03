@@ -1,6 +1,6 @@
 
 
-#include "Triangle.h"
+#include "CubeMesh.h"
 #include "../../renderer/Graphics.h"
 #include "../../core/Defines.h"
 #include <stdexcept>
@@ -17,11 +17,11 @@
 
 
 
-Triangle::Triangle() : GameObject()
+CubeMesh::CubeMesh() : GameObject()
 {
 }
 
-Triangle::~Triangle() {
+CubeMesh::~CubeMesh() {
 
     if (m_vertexBuffer != nullptr) {
         m_vertexBuffer->Release();
@@ -30,7 +30,7 @@ Triangle::~Triangle() {
 }
 
 
-void Triangle::Initialize(Renderer* renderer, Camera* camera, const XMFLOAT3& position, const XMFLOAT3& rotation, const XMFLOAT3& scale) {
+void CubeMesh::Initialize(Renderer* renderer, Camera* camera, const XMFLOAT3& position, const XMFLOAT3& rotation, const XMFLOAT3& scale) {
     m_transform = Transform(position, rotation, scale);
     m_cbData.model = m_transform.GetTransformMatrix();
 

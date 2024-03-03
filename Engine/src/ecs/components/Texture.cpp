@@ -2,12 +2,14 @@
 #include "../../renderer/Graphics.h"
 #include "../../core/Defines.h"
 #include "../../DDSTextureLoader.h"
+#include "../../Utils.h"
 
-Texture::Texture(std::string name) : name(name)
+TextureComponent::TextureComponent(std::string name) : Component("Texture"), m_namePath(name)
 {
+
 }
 
-void Texture::Initialize(Renderer* renderer)
+void TextureComponent::Initialize(Renderer* renderer)
 {
     HRESULT hr;
 
@@ -17,10 +19,13 @@ void Texture::Initialize(Renderer* renderer)
     hr = renderer->m_pCommandList->Reset(renderer->m_pCommandAllocator.Get(), nullptr);
     ASSERT_FAILED(hr);
 
+    // Concaténer m_name avec le chemin du fichier
+    std::wstring texturePath = L"res/texture/" + stringToWString(GetName()) + L".dds";
+
     // Create / Upload Ressource With Command List
     hr = CreateDDSTextureFromFile12(renderer->m_pDevice.Get(),
         renderer->m_pCommandList.Get(),
-        L"res/texture/texture.dds",
+        texturePath.c_str(),
         m_textureBuffer,
         m_uploadTexture,
         0,

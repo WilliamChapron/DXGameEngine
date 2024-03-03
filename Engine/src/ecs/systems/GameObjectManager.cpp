@@ -5,30 +5,19 @@
 GameObjectManager::GameObjectManager() {}
 
 // Ajouter un objet au gestionnaire
-void GameObjectManager::AddObject(std::string name, const GameObject& object) {
+void GameObjectManager::AddObject(const std::string& name, GameObject* object) {
     objectMap[name] = object;
-    PRINT("Object added");
-    std::cout << name << std::endl;
+    PRINT("Object added: " << name);
 }
 
 // Supprimer un objet du gestionnaire
-void GameObjectManager::RemoveObject(std::string name) {
-    objectMap.erase(name);
-    PRINT("Object erased");
+void GameObjectManager::RemoveObject(const std::string& name) {
+    auto it = objectMap.find(name);
+    if (it != objectMap.end()) {
+        objectMap.erase(it);
+        PRINT("Object erased: " << name);
+    }
 }
-
-
-//std::vector<GameObject> GameObjectManager::FindObjectsByName(const std::string& name) {
-//    std::vector<GameObject> matchingObjects;
-//
-//    for (auto& pair : objectMap) {
-//        if (pair.first == name) {
-//            matchingObjects.push_back(pair.second);
-//        }
-//    }
-//
-//    return matchingObjects;
-//}
 
 void GameObjectManager::Update(Renderer* renderer) {
     HRESULT hr;
@@ -36,10 +25,10 @@ void GameObjectManager::Update(Renderer* renderer) {
     //PRINT("Rendering...");
 
     renderer->Precommandlist();
-    
+
     for (auto& pair : objectMap) {
-        GameObject& gameObject = pair.second;
-        gameObject.Update(1.0, renderer); 
+        GameObject* gameObject = pair.second;
+        gameObject->Update(1.0, renderer);
     }
 
     renderer->Postcommandlist();

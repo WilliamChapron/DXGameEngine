@@ -8,7 +8,7 @@
     <ClInclude Include="extern\d3dx12.h" />
     <ClInclude Include="src\renderer\Resources.h" />
     <ClInclude Include="src\renderer\Graphics.h" />
-    <ClInclude Include="src\ecs\entities\Triangle.h" />
+    <ClInclude Include="src\ecs\entities\CubeMesh.h" />
     <ClInclude Include="src\ecs\components\Camera.h" />
     <ClInclude Include="src\ecs\components\Transform.h" />
     <ClInclude Include="src\ecs\entities\GameObject.h" />
@@ -19,6 +19,8 @@
     <ClInclude Include="src\ecs\systems\Input.h" />
     <ClInclude Include="src\DDSTextureLoader.h" />
     <ClInclude Include="src\ecs\components\Texture.h" />
+    <ClInclude Include="src\ecs\components\Component.h" />
+    <ClInclude Include="src\ecs\systems\ComponentManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\Engine.cpp" />
@@ -26,7 +28,7 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\renderer\Resources.cpp" />
     <ClCompile Include="src\renderer\Graphics.cpp" />
-    <ClCompile Include="src\ecs\entities\Triangle.cpp" />
+    <ClCompile Include="src\ecs\entities\CubeMesh.cpp" />
     <ClCompile Include="src\ecs\components\Camera.cpp" />
     <ClCompile Include="src\ecs\components\Transform.cpp" />
     <ClCompile Include="src\Utils.h" />
@@ -40,6 +42,8 @@
     <ClCompile Include="src\ecs\components\Shader.h.cpp" />
     <ClCompile Include="src\DDSTextureLoader.cpp" />
     <ClCompile Include="src\ecs\components\Texture.cpp" />
+    <ClCompile Include="src\ecs\components\Component.cpp" />
+    <ClCompile Include="src\ecs\systems\ComponentManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="res\shader\ShaderTriangle.hlsl" />

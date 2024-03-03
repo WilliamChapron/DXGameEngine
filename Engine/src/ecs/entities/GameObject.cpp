@@ -1,6 +1,7 @@
 #include "GameObject.h"
 #include "../../renderer/Graphics.h"
 #include "../../core/Defines.h"
+#include "../../Utils.h"
 
 #include <iostream>
 #include <iomanip>
@@ -15,11 +16,6 @@ void GameObject::Update(float deltaTime, Renderer* renderer)
     UpdateTransformation(deltaTime);
     UpdateDrawingOperations(renderer);
 }
-
-void printFloatWithPrecision(float value, int precision) {
-    std::cout << std::fixed << std::setprecision(precision) << value << std::endl;
-}
-
 
 void GameObject::UpdateTransformation(float deltaTime)
 {
@@ -40,8 +36,8 @@ void GameObject::UpdateTransformation(float deltaTime)
     float rotationOffset = 0.01;
     //PRINT("Translation offset");
     //PRINT(m_transform.vPosition.z);
-    float translationOffset = m_transform.vPosition.z + 0.01f;
-    float fScale = m_transform.vScale.z - 0.001f;
+    float translationOffset = m_transform.GetPosition().z + 0.01f;
+    float fScale = m_transform.GetScale().z - 0.001f;
     //printFloatWithPrecision(m_transform.vScale.z, 4);
 
     

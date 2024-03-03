@@ -7,11 +7,12 @@
 #include <iostream>
 #include "../ecs/systems/StateMachine.h"
 class Renderer;
-class Triangle;
+class CubeMesh;
 class Window;
 class GameObjectManager;
+class ComponentManager;
 class Camera;
-class Texture;
+class TextureComponent;
 
 
 class Engine {
@@ -27,14 +28,15 @@ public:
         return instance;
     }
 
-    Triangle* m_pTriangle;
-    Triangle* m_pTriangle2;
-    Triangle* m_pTriangle3;
+    CubeMesh* m_pTriangle;
+    CubeMesh* m_pTriangle2;
+    CubeMesh* m_pTriangle3;
     Renderer* m_pRenderer;
-    GameObjectManager* m_pGameObjectManager;
+    std::shared_ptr<GameObjectManager> m_pGameObjectManager;
+    ComponentManager* m_pComponentManager;
     Camera* m_pCamera;
 
-    std::vector<Texture*> compiledTexture;
+    std::vector<TextureComponent*> compiledTexture;
 
     bool isRenderable = false;
 

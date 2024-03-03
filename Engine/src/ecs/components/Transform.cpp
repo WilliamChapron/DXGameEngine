@@ -1,35 +1,31 @@
 #include "Transform.h"
 #include "../../core/Defines.h"
 
-Transform::Transform() {
+Transform::Transform() : Component("Transform") {
 
 }
 
-Transform::Transform(const XMFLOAT3& pos, const XMFLOAT3& rot, const XMFLOAT3& scl) : vPosition(0.0f, 0.0f, 0.0f), qRotation(0.0f, 0.0f, 0.0f, 1.0f), vScale(1.0f, 1.0f, 1.0f)
-{
 
+Transform::Transform(const XMFLOAT3& pos, const XMFLOAT3& rot, const XMFLOAT3& scl) : Component("Transform"), vPosition(0.0f, 0.0f, 0.0f), qRotation(0.0f, 0.0f, 0.0f, 1.0f), vScale(1.0f, 1.0f, 1.0f)
+{
     Init();
-    Translate(pos.x, pos.y, pos.z);
+    SetPosition(pos.x, pos.y, pos.z);
     Rotate(rot.x, rot.y, rot.z);
-    Scale(scl.x, scl.y, scl.z);
+    SetScale(scl.x, scl.y, scl.z);
 }
 
 void Transform::Init() {
     XMMATRIX positionMatrix = XMMatrixIdentity();
     XMStoreFloat4x4(&mPosition, positionMatrix);
 
-
     XMMATRIX rotationMatrix = XMMatrixIdentity();
     XMStoreFloat4x4(&mRotation, rotationMatrix);
-
 
     XMMATRIX scaleMatrix = XMMatrixIdentity();
     XMStoreFloat4x4(&mScale, scaleMatrix);
 
-
     XMMATRIX worldMatrix = XMMatrixIdentity();
     XMStoreFloat4x4(&mWorld, worldMatrix);
-
 
     vForward = XMFLOAT3(0.0f, 0.0f, 1.0f);
     vRight = XMFLOAT3(1.0f, 0.0f, 0.0f);
@@ -39,6 +35,15 @@ void Transform::Init() {
 XMFLOAT4X4 Transform::GetTransformMatrix() const
 {
     return mWorld;
+}
+
+XMFLOAT3 Transform::GetPosition() const
+{
+    return vPosition;
+}
+
+XMFLOAT3 Transform::GetScale() const {
+    return vScale;
 }
 
 void Transform::UpdateTransformMatrix()
@@ -52,8 +57,6 @@ void Transform::UpdateTransformMatrix()
 
 void Transform::Rotate(float pitch, float roll, float yaw)
 {
-
-    // LE FAIRE NE QUATERNION CAR LA ROTATE PEUT ARRIVER A 100 faut que sa s'arette a 180 ou autre
     vRotation.x += pitch;
     vRotation.y += roll;
     vRotation.z += yaw;
@@ -62,23 +65,19 @@ void Transform::Rotate(float pitch, float roll, float yaw)
     XMVECTOR rightVector = XMLoadFloat3(&vRight);
     XMVECTOR upVector = XMLoadFloat3(&vUp);
 
-
     XMVECTOR qRoll = XMQuaternionRotationAxis(forwardVector, roll);
     XMVECTOR qPitch = XMQuaternionRotationAxis(rightVector, pitch);
     XMVECTOR qYaw = XMQuaternionRotationAxis(upVector, yaw);
     XMVECTOR q = XMQuaternionMultiply(qRoll, qPitch);
     q = XMQuaternionMultiply(q, qYaw);
 
-    //Ajout rotation à quaternion / Multiplier qRotation stocké a q transform
     XMVECTOR rotationQuaternion = XMLoadFloat4(&qRotation);
     rotationQuaternion = XMQuaternionMultiply(rotationQuaternion, q);
     XMStoreFloat4(&qRotation, rotationQuaternion);
 
-    //Convertir le quaternion en une matrice
     XMMATRIX rotationMatrix = XMMatrixRotationQuaternion(rotationQuaternion);
     XMStoreFloat4x4(&mRotation, rotationMatrix);
 
-    //Mise à jour des axes
     vRight.x = mRotation._11;
     vRight.y = mRotation._12;
     vRight.z = mRotation._13;
@@ -92,29 +91,37 @@ void Transform::Rotate(float pitch, float roll, float yaw)
     vForward.z = mRotation._33;
 
     UpdateTransformMatrix();
-
-
-
 }
 
+// #TODO add function SET ROTATIO / GET CURRENT ROTATION 
 
-
-void Transform::Translate(float offsetX, float offsetY, float offsetZ)
+void Transform::SetPosition(float offsetX, float offsetY, float offsetZ)
 {
-
     vPosition.x = offsetX;
     vPosition.y = offsetY;
     vPosition.z = offsetZ;
 
+    // SET , no matter the old position
     XMMATRIX translationMatrix = XMMatrixTranslation(offsetX, offsetY, offsetZ);
     XMStoreFloat4x4(&mPosition, translationMatrix);
 
     UpdateTransformMatrix();
-
-
 }
 
-void Transform::Scale(float scaleX, float scaleY, float scaleZ) {
+void Transform::Translate(float offsetX, float offsetY, float offsetZ)
+{
+    vPosition.x += offsetX;
+    vPosition.y += offsetY;
+    vPosition.z += offsetZ;
+
+    // Old pos + Offset
+    XMMATRIX translationMatrix = XMMatrixTranslation(vPosition.x + offsetX, vPosition.y + offsetY, vPosition.z + offsetZ);
+    XMStoreFloat4x4(&mPosition, translationMatrix);
+
+    UpdateTransformMatrix();
+}
+
+void Transform::SetScale(float scaleX, float scaleY, float scaleZ) {
 
     vScale.x = scaleX;
     vScale.y = scaleY;
@@ -124,6 +131,4 @@ void Transform::Scale(float scaleX, float scaleY, float scaleZ) {
 
     XMStoreFloat4x4(&mScale, scalingMatrix);
     UpdateTransformMatrix();
-
-
 }

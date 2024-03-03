@@ -1,31 +1,30 @@
 #include "Engine.h"
-#include "../ecs/entities/Triangle.h"
+#include "../ecs/entities/CubeMesh.h"
 #include "../include.h"   
 #include "../renderer/Graphics.h"   
 #include "Defines.h"   
 #include "Window.h"  
+
+// System
 #include "../ecs/systems/GameObjectManager.h"  
+#include "../ecs/systems/ComponentManager.h"  
 
-#include "../Utils.h"
+
+
+// Component
 #include "../ecs/components/Transform.h"
-
-#include "../ecs/systems/Time.h"
-
 #include "../ecs/components/Texture.h"
 #include "../ecs/components/Camera.h"
 
+
+// Miscellaneous
+#include "../ecs/systems/Time.h"
+#include "../Utils.h"
+
+
+
+
 using namespace DirectX;
-
-
-
-
-//XMVECTOR TranslateVector(XMVECTOR vector, float deltaX, float deltaY, float deltaZ) {
-//    // Cr�ation de la matrice de translation
-//    XMMATRIX translationMatrix = XMMatrixTranslation(deltaX, deltaY, deltaZ);
-//
-//    // Application de la translation au vecteur
-//    return XMVector3Transform(vector, translationMatrix);
-//}
 
 
 void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
@@ -46,25 +45,43 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
 
 
 
-    m_pGameObjectManager = new GameObjectManager();
-    m_pCamera = new Camera();
+    m_pGameObjectManager = std::make_shared<GameObjectManager>();
+    m_pComponentManager = new ComponentManager(m_pGameObjectManager);
 
-    compiledTexture.push_back(new Texture("1"));
+
+
+    m_pCamera = new Camera(); // #TODO Shared ptr camera to each object
+
+    compiledTexture.push_back(new TextureComponent("texture"));
+
+
     compiledTexture[0]->Initialize(m_pRenderer);
 
+    //compiledTexture.push_back(new Texture("texture2"));
+    //compiledTexture[1]->Initialize(m_pRenderer);
+
+    //compiledTexture.push_back(new Texture("2"));
+    //compiledTexture[1]->Initialize(m_pRenderer);
+
     // Create Objects
-    m_pTriangle = new Triangle;
-    m_pTriangle->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(-0.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
+    m_pTriangle = new CubeMesh;
+    m_pTriangle2 = new CubeMesh;
 
-    m_pTriangle2 = new Triangle;
-    m_pTriangle2->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(0.0f, 5.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
+    m_pTriangle->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(0.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
+    m_pTriangle2->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
 
-    m_pTriangle3 = new Triangle;
-    m_pTriangle3->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(0.7f, -2.5f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
 
-    m_pGameObjectManager->AddObject("Triangle", *m_pTriangle);
-    m_pGameObjectManager->AddObject("Triangle2", *m_pTriangle2);
-    m_pGameObjectManager->AddObject("Triangle3", *m_pTriangle3);
+
+    //m_pTriangle3 = new Triangle;
+    //m_pTriangle3->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(0.7f, -2.5f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
+
+    m_pGameObjectManager->AddObject("Triangle", m_pTriangle);
+    m_pGameObjectManager->AddObject("Triangle2", m_pTriangle2);
+
+    // Add component after object
+
+    m_pComponentManager->AddComponent(m_pTriangle2, compiledTexture[0]);
+    //m_pGameObjectManager->AddObject("Triangle3", *m_pTriangle3);
 
 
 
