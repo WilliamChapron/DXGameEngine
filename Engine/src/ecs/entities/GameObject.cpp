@@ -36,17 +36,17 @@ void GameObject::UpdateTransformation(float deltaTime)
     //fScale += 0.01f;
 
 
-    float rotationAngle = 0.003;
+    float rotationAngle = 0.03;
     float rotationOffset = 0.01;
     //PRINT("Translation offset");
     //PRINT(m_transform.vPosition.z);
-    float translationOffset = m_transform.vPosition.z + 0.08f;
+    float translationOffset = m_transform.vPosition.z + 0.01f;
     float fScale = m_transform.vScale.z - 0.001f;
     //printFloatWithPrecision(m_transform.vScale.z, 4);
 
     
-    m_transform.Translate(m_transform.vPosition.x, m_transform.vPosition.y, translationOffset);
-    m_transform.Rotate(rotationAngle, 0, rotationAngle);
+    //m_transform.Translate(m_transform.vPosition.x, m_transform.vPosition.y, translationOffset);
+    m_transform.Rotate(0, 0, rotationAngle);
     //m_transform.Scale(fScale, fScale, fScale);
 
 

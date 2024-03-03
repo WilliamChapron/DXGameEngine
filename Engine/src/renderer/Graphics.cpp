@@ -33,8 +33,6 @@ Renderer::Renderer(Window* pWindow) {
         m_pRenderTargets[i].Reset();
     }
 
-
-
     m_pPipelineState.Reset();
     m_pRootSignature.Reset();
 
@@ -49,11 +47,11 @@ Renderer::~Renderer() {
     }
 
 
-    m_pPipelineState.Reset(); // Utilisation de Reset() pour libérer l'interface COM
-    m_pRootSignature.Reset(); // Utilisation de Reset() pour libérer l'interface COM
+    m_pPipelineState.Reset(); 
+    m_pRootSignature.Reset(); 
 
-    m_vertexShaderBlob.Reset(); // Utilisation de Reset() pour libérer l'interface COM
-    m_pixelShaderBlob.Reset(); // Utilisation de Reset() pour libérer l'interface COM
+    m_vertexShaderBlob.Reset(); 
+    m_pixelShaderBlob.Reset(); 
 
     m_pRtvHeap.Reset(); 
     m_pCbvSrvHeap.Reset();
@@ -247,6 +245,7 @@ HRESULT CompileShaderFromFile(const wchar_t* filePath, const char* entryPoint, c
 
     ID3DBlob* errorBlob = nullptr;
     HRESULT hr = D3DCompileFromFile(filePath, nullptr, nullptr, entryPoint, shaderModel, shaderFlags, 0, blob, &errorBlob);
+    ASSERT_FAILED(hr);
 
     if (FAILED(hr))
     {
@@ -259,8 +258,7 @@ HRESULT CompileShaderFromFile(const wchar_t* filePath, const char* entryPoint, c
         return hr;
     }
 
-    if (errorBlob)
-        errorBlob->Release();
+    if (errorBlob) errorBlob->Release();
 
     PRINT("Shader compilation successful");
 
