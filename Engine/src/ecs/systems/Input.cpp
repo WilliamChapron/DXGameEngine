@@ -3,8 +3,25 @@
 
 
 Input::Input() {
-    // Initialisation de l'état des touches clavier
     keyStates.clear();
+    // Initialisation de l'état des touches clavier
+    // Gère les touches Z, Q, S, D
+    keyStates['Z'] = KeyState::Inactive;
+    keyStates['Q'] = KeyState::Inactive;
+    keyStates['S'] = KeyState::Inactive;
+    keyStates['D'] = KeyState::Inactive;
+    // Gère les touches Espace et Shift
+    keyStates[VK_SPACE] = KeyState::Inactive;
+    keyStates[VK_SHIFT] = KeyState::Inactive;
+    // Gère les touches des flèches directionnelles
+    keyStates[VK_UP] = KeyState::Inactive;
+    keyStates[VK_DOWN] = KeyState::Inactive;
+    keyStates[VK_LEFT] = KeyState::Inactive;
+    keyStates[VK_RIGHT] = KeyState::Inactive;
+    // Gère le bouton gauche de la souris
+    keyStates[VK_LBUTTON] = KeyState::Inactive;
+    // Gère le bouton droit de la souris
+    keyStates[VK_RBUTTON] = KeyState::Inactive;
 }
 
 void Input::Update() {
@@ -45,24 +62,31 @@ KeyState Input::GetKeyStateHelper(char key) const {
     // Récupère l'état actuel de la touche
     bool isKeyDown = GetAsyncKeyState(key) & 0x8000;
     // Recherche de l'état précédent de la touche dans keyStates
-    auto it = keyStates.find(key);
-    if (it != keyStates.end()) {
-        KeyState previousState = it->second;
+    auto search = keyStates.find(key);
+    KeyState previousState = search->second;
 
+    // Si la touche est enfoncée 
+    if (isKeyDown) {
         // Si la touche était enfoncée avant
         if (previousState == KeyState::Pressed || previousState == KeyState::Held) {
-            // Si la touche est toujours enfoncée
-            if (isKeyDown) {
-                return KeyState::Held; // La touche est maintenue enfoncée
-            }
-            else {
-                return KeyState::Released; // La touche vient d'être relâchée
-            }
+            return KeyState::Held;
+        }
+        // Si la touche n'était pas enfoncée avant
+        else {
+            return KeyState::Pressed;
         }
     }
-
-    // Si la touche est enfoncée pour la première fois ou est inactive
-    return isKeyDown ? KeyState::Pressed : KeyState::Inactive;
+    // Si la touche n'est pas enfoncée 
+    else {
+        // Si la touche était enfoncée avant
+        if (previousState == KeyState::Pressed || previousState == KeyState::Held) {
+            return KeyState::Released;
+        }
+        // Si la touche n'était pas enfoncée avant
+        else {
+            return KeyState::Inactive;
+        }
+    }
 }
 
 
