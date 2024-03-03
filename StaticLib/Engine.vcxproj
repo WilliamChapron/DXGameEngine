@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{6766712a-a3e7-40c1-ab00-94c17a1ac9e9}</ProjectGuid>
-    <RootNamespace>Game</RootNamespace>
+    <ProjectGuid>{5d9a462a-62f5-4b86-94a3-87c193b390f5}</ProjectGuid>
+    <RootNamespace>Engine</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -70,6 +70,14 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\um;C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\shared;$(ProjectDir)\directxmath.2024.1.1.1\packages\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\um;C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\shared;$(ProjectDir)\directxmath.2024.1.1.1\packages\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -104,11 +112,11 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\DXGameEngine\StaticLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;d3dcompiler.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -119,34 +127,70 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\DXGameEngine\StaticLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;d3dcompiler.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
+    <ClInclude Include="src\DDSTextureLoader.h" />
+    <ClInclude Include="extern\d3dx12.h" />
+    <ClInclude Include="src\ecs\entities\GameObject.h" />
+    <ClInclude Include="src\core\Defines.h" />
+    <ClInclude Include="src\core\Engine.h" />
+    <ClInclude Include="src\core\Window.h" />
+    <ClInclude Include="src\ecs\systems\GameObjectManager.h" />
+    <ClInclude Include="src\include.h" />
+    <ClInclude Include="src\ecs\systems\Input.h" />
+    <ClInclude Include="src\ecs\components\Transform.h" />
+    <ClInclude Include="src\ecs\components\Camera.h" />
+    <ClInclude Include="src\renderer\Graphics.h" />
+    <ClInclude Include="src\renderer\Resources.h" />
+    <ClInclude Include="src\ecs\systems\State.h" />
+    <ClInclude Include="src\ecs\systems\StateMachine.h" />
+    <ClInclude Include="src\ecs\systems\Time.h" />
+    <ClInclude Include="src\ecs\entities\Triangle.h" />
+    <ClInclude Include="src\ecs\components\Texture.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <ClCompile Include="src\DDSTextureLoader.cpp" />
+    <ClCompile Include="src\ecs\components\Shader.cpp" />
+    <ClCompile Include="src\ecs\components\Shader.h.cpp" />
+    <ClCompile Include="src\ecs\entities\GameObject.cpp" />
+    <ClCompile Include="src\core\Engine.cpp" />
+    <ClCompile Include="src\core\Window.cpp" />
+    <ClCompile Include="src\ecs\systems\GameObjectManager.cpp" />
+    <ClCompile Include="src\ecs\systems\Input.cpp" />
+    <ClCompile Include="src\ecs\components\Transform.cpp" />
+    <ClCompile Include="src\ecs\components\Camera.cpp" />
+    <ClCompile Include="src\renderer\Graphics.cpp" />
+    <ClCompile Include="src\renderer\Resources.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\ecs\systems\StateMachine.cpp" />
+    <ClCompile Include="src\ecs\systems\Time.cpp" />
+    <ClCompile Include="src\ecs\entities\Triangle.cpp" />
+    <ClCompile Include="src\Utils.cpp" />
+    <ClCompile Include="src\Utils.h" />
+    <ClCompile Include="src\ecs\components\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\StaticLib\StaticLib.vcxproj">
-      <Project>{20c0eaad-d795-4c69-8d79-196c2972fd83}</Project>
-    </ProjectReference>
+    <Text Include="res\shader\ShaderTriangle.hlsl">
+      <FileType>Document</FileType>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="res\shader\Shader.hlsl">
+      <FileType>Document</FileType>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\texture\texture.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="..\packages\directxmath.2024.1.1.1\build\native\directxmath.targets" Condition="Exists('..\packages\directxmath.2024.1.1.1\build\native\directxmath.targets')" />
   </ImportGroup>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>Ce projet fait référence à des packages NuGet qui sont manquants sur cet ordinateur. Utilisez l'option de restauration des packages NuGet pour les télécharger. Pour plus d'informations, consultez http://go.microsoft.com/fwlink/?LinkID=322105. Le fichier manquant est : {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\directxmath.2024.1.1.1\build\native\directxmath.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\directxmath.2024.1.1.1\build\native\directxmath.targets'))" />
-  </Target>
 </Project>
