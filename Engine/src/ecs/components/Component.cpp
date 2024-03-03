@@ -1,6 +1,6 @@
 #include "Component.h"
 
-Component::Component(std::string componentName) : m_name(componentName) {
+Component::Component(std::string componentName, ComponentType componentType) : m_name(componentName), m_type(componentType) {
 
 }
 

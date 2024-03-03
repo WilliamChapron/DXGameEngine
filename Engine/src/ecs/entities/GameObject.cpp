@@ -32,21 +32,21 @@ void GameObject::UpdateTransformation(float deltaTime)
     //fScale += 0.01f;
 
 
-    float rotationAngle = 0.03;
-    float rotationOffset = 0.01;
-    //PRINT("Translation offset");
-    //PRINT(m_transform.vPosition.z);
-    float translationOffset = m_transform.GetPosition().z + 0.01f;
-    float fScale = m_transform.GetScale().z - 0.001f;
-    //printFloatWithPrecision(m_transform.vScale.z, 4);
+    //float rotationAngle = 0.03;
+    //float rotationOffset = 0.01;
+    ////PRINT("Translation offset");
+    ////PRINT(m_transform.vPosition.z);
+    //float translationOffset = m_transform.GetPosition().z + 0.01f;
+    //float fScale = m_transform.GetScale().z - 0.001f;
+    ////printFloatWithPrecision(m_transform.vScale.z, 4);
 
-    
-    //m_transform.Translate(m_transform.vPosition.x, m_transform.vPosition.y, translationOffset);
-    m_transform.Rotate(0, 0, rotationAngle);
-    //m_transform.Scale(fScale, fScale, fScale);
+    //
+    ////m_transform.Translate(m_transform.vPosition.x, m_transform.vPosition.y, translationOffset);
+    //m_transform.Rotate(0, 0, rotationAngle);
+    ////m_transform.Scale(fScale, fScale, fScale);
 
 
-    m_cbData.model = m_transform.GetTransformMatrix();
+    //m_cbData.model = m_transform.GetTransformMatrix();
 
     // Map 
     hr = m_constantBuffer->Map(0, nullptr, reinterpret_cast<void**>(&m_mappedConstantBuffer));

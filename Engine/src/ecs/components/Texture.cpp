@@ -4,7 +4,7 @@
 #include "../../DDSTextureLoader.h"
 #include "../../Utils.h"
 
-TextureComponent::TextureComponent(std::string name) : Component("Texture"), m_namePath(name)
+TextureComponent::TextureComponent(std::string name) : Component("Texture", ComponentType::Texture), m_namePath(name)
 {
 
 }

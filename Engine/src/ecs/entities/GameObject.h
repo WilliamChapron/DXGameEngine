@@ -39,7 +39,7 @@ public:
 
     void Update(float deltaTime, Renderer* renderer);
 
-    const Transform& GetTransform() const { return m_transform; }
+    //const Transform& GetTransform() const { return m_transform; }
     const ConstantBufferData& GetConstantBufferData() const { return m_cbData; }
 
  
@@ -64,7 +64,7 @@ protected:
 
     ID3D12Resource* m_indexBuffer;
     D3D12_INDEX_BUFFER_VIEW m_indexBufferView;
-    Transform m_transform;
+    //Transform m_transform;
 
 
 

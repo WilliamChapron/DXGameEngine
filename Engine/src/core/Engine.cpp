@@ -52,7 +52,7 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
 
     m_pCamera = new Camera(); // #TODO Shared ptr camera to each object
 
-    compiledTexture.push_back(new TextureComponent("texture"));
+    compiledTexture.push_back(new TextureComponent("texture1"));
 
 
     compiledTexture[0]->Initialize(m_pRenderer);
