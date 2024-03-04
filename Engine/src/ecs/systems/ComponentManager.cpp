@@ -1,10 +1,11 @@
 #include "ComponentManager.h"
 #include "GameObjectManager.h"
+#include "../../renderer/Graphics.h"
 #include "../../core/Defines.h"
 #include <unordered_map>
 
 // Pass Instance of GameObjectManager to Work with alive entity
-ComponentManager::ComponentManager(std::shared_ptr<GameObjectManager>& gameObjectManager) : m_pGameObjectManager(gameObjectManager)
+ComponentManager::ComponentManager(std::shared_ptr<GameObjectManager>& gameObjectManager, Renderer* renderer) : m_pGameObjectManager(gameObjectManager), m_pRenderer(renderer)
 {
     //PRINT(m_pGameObjectManager.use_count());
 }
@@ -43,14 +44,11 @@ void ComponentManager::AddComponent(GameObject& gameObject, Component* addCompon
     }
 }
 
-void UpdateComponents(GameObject& gameObject) {
+void ComponentManager::UpdateComponents(GameObject& gameObject) {
 
-    // Parcourir la liste des composants et les mettre à jour si nécessaire
     for (Component* component : gameObject.componentsList) {
-        // Vérifier si le composant doit être mis à jour
         if (component->ShouldUpdate()) {
-            // Mettre à jour le composant
-            component->Update();
+            component->Update(m_pRenderer);
         }
     }
 }

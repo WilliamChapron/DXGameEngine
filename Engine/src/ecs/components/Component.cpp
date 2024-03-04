@@ -8,10 +8,10 @@ Component::~Component() {
 
 }
 
-void Component::Initialize() {
+void Component::Initialize(Renderer* renderer) {
 
 }
 
-void Component::Update()
+void Component::Update(Renderer* renderer)
 {
 }

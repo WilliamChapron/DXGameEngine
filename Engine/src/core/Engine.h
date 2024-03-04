@@ -36,7 +36,7 @@ public:
     ComponentManager* m_pComponentManager;
     Camera* m_pCamera;
 
-    std::vector<TextureComponent*> compiledTexture;
+    //std::vector<TextureComponent*> compiledTexture;
 
     bool isRenderable = false;
 

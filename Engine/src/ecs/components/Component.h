@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+class Renderer;
+
 enum class ComponentType {
     Shader,
     Mesh,
@@ -32,8 +34,8 @@ public:
         return m_allowMultipleInstances;
     }
 
-    virtual void Initialize();
-    virtual void Update();
+    virtual void Initialize(Renderer* renderer);
+    virtual void Update(Renderer* renderer);
 
 private:
     std::string m_name;

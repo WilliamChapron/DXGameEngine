@@ -58,6 +58,6 @@ void TextureComponent::Initialize(Renderer* renderer)
     //PRINT(m_uploadTexture.Get());
 }
 
-void TextureComponent::Update() {
+void TextureComponent::Update(Renderer* renderer) {
     PRINT("Update Texture");
 }
