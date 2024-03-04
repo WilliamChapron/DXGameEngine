@@ -134,6 +134,11 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\StaticLib\StaticLib.vcxproj">
+      <Project>{20c0eaad-d795-4c69-8d79-196c2972fd83}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\packages\directxmath.2024.1.1.1\build\native\directxmath.targets" Condition="Exists('..\packages\directxmath.2024.1.1.1\build\native\directxmath.targets')" />

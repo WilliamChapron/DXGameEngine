@@ -2,7 +2,6 @@
 #include "../../renderer/Graphics.h"
 #include "../../core/Defines.h"
 #include "../../Utils.h"
-#include "../components/Camera.h"
 
 #include "../components/Component.h"  
 #include "../systems/ComponentManager.h"  
@@ -27,15 +26,15 @@ void GameObject::Update(float deltaTime, Renderer* renderer)
 
 
 
-    //PRINT("Update TRANSFORM");
-//static float translationOffset = 0.0f;
-////translationOffset -= 0.0003f;
+        //PRINT("Update TRANSFORM");
+    //static float translationOffset = 0.0f;
+    ////translationOffset -= 0.0003f;
 
-//static float rotationAngle = 0.03f;
-///*rotationAngle += 0.01;*/
+    //static float rotationAngle = 0.03f;
+    ///*rotationAngle += 0.01;*/
 
-//static float fScale = 0.1f;
-//fScale += 0.01f;
+    //static float fScale = 0.1f;
+    //fScale += 0.01f;
 
 
     float rotationAngle = 0.03;
@@ -70,21 +69,12 @@ void GameObject::Update(float deltaTime, Renderer* renderer)
     CD3DX12_GPU_DESCRIPTOR_HANDLE cbvSrvHandle(renderer->m_pCbvSrvHeap.Get()->GetGPUDescriptorHandleForHeapStart());
     renderer->m_pCommandList->SetGraphicsRootDescriptorTable(0, cbvSrvHandle);
 
-}
-
-void GameObject::UpdateDrawingOperations(Renderer* renderer, Camera* camera)
-{
-    HRESULT hr;
-    
-    m_cbData.view = camera->GetViewMatrix();
-    m_cbData.projection = camera->GetProjectionMatrix();
 
     // * Update constant buffer 
     D3D12_GPU_VIRTUAL_ADDRESS cbvAddress = m_constantBuffer->GetGPUVirtualAddress();
     renderer->m_pCommandList->SetGraphicsRootConstantBufferView(1, cbvAddress);
     // Update constant buffer * 
     //PRINT("Drawing Op");
-
 
     // Record commands.
     renderer->m_pCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

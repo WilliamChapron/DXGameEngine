@@ -43,7 +43,7 @@ Renderer::Renderer(Window* pWindow) {
 
 Renderer::~Renderer() {
     for (int i = 0; i < m_FRAME_COUNT; ++i) {
-        m_pRenderTargets[i].Reset(); // Utilisation de Reset() pour libï¿½rer l'interface COM
+        m_pRenderTargets[i].Reset(); // Utilisation de Reset() pour libérer l'interface COM
     }
 
 
@@ -55,14 +55,14 @@ Renderer::~Renderer() {
 
     m_pRtvHeap.Reset(); 
     m_pCbvSrvHeap.Reset();
-    m_pFence.Reset(); // Utilisation de Reset() pour libï¿½rer l'interface COM
-    m_pCommandList.Reset(); // Utilisation de Reset() pour libï¿½rer l'interface COM
-    m_pCommandAllocator.Reset(); // Utilisation de Reset() pour libï¿½rer l'interface COM
-    m_pCommandQueue.Reset(); // Utilisation de Reset() pour libï¿½rer l'interface COM
-    m_pSwapChain.Reset(); // Utilisation de Reset() pour libï¿½rer l'interface COM
-    m_pDevice.Reset(); // Utilisation de Reset() pour libï¿½rer l'interface COM
-    m_pAdapter.Reset(); // Utilisation de Reset() pour libï¿½rer l'interface COM
-    m_pFactory.Reset(); // Utilisation de Reset() pour libï¿½rer l'interface COM
+    m_pFence.Reset(); // Utilisation de Reset() pour libérer l'interface COM
+    m_pCommandList.Reset(); // Utilisation de Reset() pour libérer l'interface COM
+    m_pCommandAllocator.Reset(); // Utilisation de Reset() pour libérer l'interface COM
+    m_pCommandQueue.Reset(); // Utilisation de Reset() pour libérer l'interface COM
+    m_pSwapChain.Reset(); // Utilisation de Reset() pour libérer l'interface COM
+    m_pDevice.Reset(); // Utilisation de Reset() pour libérer l'interface COM
+    m_pAdapter.Reset(); // Utilisation de Reset() pour libérer l'interface COM
+    m_pFactory.Reset(); // Utilisation de Reset() pour libérer l'interface COM
 }
 
 void Renderer::InitializeDirectX12Instances() {
@@ -150,7 +150,7 @@ void Renderer::CreateDevice() {
         ASSERT_FAILED(hr);
         if (SUCCEEDED(hr)) {
             adapterFound = true;
-            break;  // Sortir de la boucle une fois que l'adaptateur est trouvï¿½
+            break;  // Sortir de la boucle une fois que l'adaptateur est trouvé
         }
 
         adapterIndex++;
@@ -320,7 +320,7 @@ void Renderer::CreatePipelineState() {
     #else
         UINT compileFlags = 0;
     #endif
-    // Charger les shaders spï¿½cifiques au Triangle
+    // Charger les shaders spécifiques au Triangle
     HRESULT hr = CompileShaderFromFile(L"res/shader/Shader.hlsl", "VSMain", "vs_5_0", &m_vertexShaderBlob);
     ASSERT_FAILED(hr);
     hr = CompileShaderFromFile(L"res/shader/Shader.hlsl", "PSMain", "ps_5_0", &m_pixelShaderBlob);
@@ -359,6 +359,7 @@ void Renderer::CreatePipelineState() {
 
 void Renderer::WaitForPreviousFrame()
 {
+    //PRINT("Waiting for previous frame...");
 
     // Signal and increment the fence value.
     m_fenceValue++;
@@ -450,14 +451,14 @@ void Renderer::Postcommandlist()
 
 //D3D12_RASTERIZER_DESC rasterizerStateDesc {};
 //rasterizerStateDesc.FillMode = D3D12_FILL_MODE_SOLID;   // Remplissage solide
-//rasterizerStateDesc.CullMode = D3D12_CULL_MODE_FRONT;    // Dï¿½sactivation du culling
-//rasterizerStateDesc.FrontCounterClockwise = TRUE;       // Les triangles sont dï¿½finis dans le sens inverse des aiguilles d'une montre (orientation des sommets)
+//rasterizerStateDesc.CullMode = D3D12_CULL_MODE_FRONT;    // Désactivation du culling
+//rasterizerStateDesc.FrontCounterClockwise = TRUE;       // Les triangles sont définis dans le sens inverse des aiguilles d'une montre (orientation des sommets)
 //rasterizerStateDesc.DepthBias = 0;
 //rasterizerStateDesc.DepthBiasClamp = 0.0f;
 //rasterizerStateDesc.SlopeScaledDepthBias = 0;
 //rasterizerStateDesc.DepthClipEnable = FALSE;             // Activation du test de profondeur
 
-//rasterizerStateDesc.MultisampleEnable = FALSE;          // Dï¿½sactivation de l'ï¿½chantillonnage multiple
+//rasterizerStateDesc.MultisampleEnable = FALSE;          // Désactivation de l'échantillonnage multiple
 //rasterizerStateDesc.AntialiasedLineEnable = FALSE;
 
 //D3D12_BLEND_DESC blendDesc {};

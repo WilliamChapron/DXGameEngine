@@ -16,7 +16,6 @@ using Microsoft::WRL::ComPtr;
 
 class Renderer;
 class Component;
-class Camera;
 
 // Vertex
 struct Vertex
@@ -71,6 +70,6 @@ protected:
 
 private:
     void UpdateTransformation(float deltaTime);
-    void UpdateDrawingOperations(Renderer* renderer, Camera* camera);
+    void UpdateDrawingOperations(Renderer* renderer);
 
 };
