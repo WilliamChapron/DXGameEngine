@@ -18,3 +18,5 @@ void StateMachine::UpdateCurrentState() {
     if (currentState)
         currentState->update();
 }
+
+

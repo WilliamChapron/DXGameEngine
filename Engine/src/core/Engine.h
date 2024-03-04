@@ -6,6 +6,7 @@
 #include <Windows.h>
 #include <iostream>
 #include "../ecs/systems/StateMachine.h"
+
 class Renderer;
 class CubeMesh;
 class Window;
@@ -13,6 +14,7 @@ class GameObjectManager;
 class ComponentManager;
 class Camera;
 class TextureComponent;
+class Input;
 
 
 class Engine {
@@ -35,6 +37,8 @@ public:
     std::shared_ptr<GameObjectManager> m_pGameObjectManager;
     ComponentManager* m_pComponentManager;
     Camera* m_pCamera;
+    StateMachine* m_pStateMachine;
+    Input* m_pInput;
 
     //std::vector<TextureComponent*> compiledTexture;
 
@@ -43,7 +47,6 @@ public:
 private:
     
     Engine() = default;
-    StateMachine* stateMachine;
 
     Window* m_pWindow = nullptr;
     HINSTANCE m_hInstance;

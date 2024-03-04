@@ -1,8 +1,9 @@
 #include "GameObjectManager.h"
 #include "../../renderer/Graphics.h" // renderer
+#include "../components/Camera.h"
 
-// Constructeur par défaut
-GameObjectManager::GameObjectManager() {}
+// Constructeur par dï¿½faut
+GameObjectManager::GameObjectManager(Camera* camera) : m_pCamera(camera){}
 
 // Ajouter un objet au gestionnaire
 void GameObjectManager::AddObject(const std::string& name, GameObject* object) {

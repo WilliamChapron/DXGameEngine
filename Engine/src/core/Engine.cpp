@@ -23,6 +23,7 @@
 
 
 
+#include "../ecs/systems/Input.h"
 
 using namespace DirectX;
 
@@ -43,14 +44,19 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
     m_pRenderer->InitializeDirectX12Instances();
     m_pRenderer->m_pCommandList->Close();
 
+    m_pInput = new Input();
+    m_pCamera = new Camera();
+    std::cout << "Camera Init" << std::endl;
+
+    m_pGameObjectManager = std::make_shared<GameObjectManager>(m_pCamera);
 
 
-    m_pGameObjectManager = std::make_shared<GameObjectManager>();
+
     m_pComponentManager = new ComponentManager(m_pGameObjectManager, m_pRenderer);
 
 
 
-    m_pCamera = new Camera(); // #TODO Shared ptr camera to each object
+
 
     //compiledTexture.push_back(new TextureComponent("texture"));
     //compiledTexture[0]->Initialize(m_pRenderer);
@@ -110,10 +116,51 @@ void Engine::Run() {
     //triangles.push_back(*m_pTriangle1);
     //triangles.push_back(*m_pTriangle2);
     // Ajoutez d'autres triangles au besoin
+    float rotation = 0.2f;
 
     while (true) {
+
         time.UpdateTime();
+        
+        //CAMERA DEBUG
+        m_pCamera->UpdatePosition(0.0f, 0.0f, 0.2f);
+        /*m_pCamera->UpdatePosition(1.0f, 0.0f, 0.01f);
+        m_pCamera->Rotate(0.0f, 0.0f, 0.25f);
+        m_pCamera->RotateAroundTarget(1.f, 1.f, 0.0f);*/
+        //m_pCamera->UpdateTarget(m_pTriangle->GetTransform().vPosition);
+
+        m_pCamera->Update(time.GetDeltaTime());
+
         m_pWindow->UpdateTitleWithFPS(time.GetFramePerSecond());
+
+        //------ TEST INPUT
+        m_pInput->Update();
+
+        // Affichez la liste des touches et leur état
+        std::cout << "Touches pressees : " << std::endl;
+        for (const auto& pair : m_pInput->GetKeyStates()) {
+            std::cout << "Touche : " << pair.first << ", Etat : ";
+            // Utilisez un switch pour gérer les différents états de la touche
+            switch (pair.second) {
+            case KeyState::Pressed:
+                std::cout << "Pressed";
+                break;
+            case KeyState::Held:
+                std::cout << "Held";
+                break;
+            case KeyState::Released:
+                std::cout << "Released";
+                break;
+            case KeyState::Inactive:
+                std::cout << "Inactive";
+                break;
+            }
+            std::cout << std::endl;
+        }
+        // Affichez les coordonnées de la souris
+        std::cout << "Position de la souris : X = " << m_pInput->GetMousePosition().x << ", Y = " << m_pInput->GetMousePosition().y << std::endl;
+
+        //------
 
         if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
             if (msg.message == WM_QUIT)
