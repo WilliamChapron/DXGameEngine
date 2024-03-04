@@ -13,6 +13,7 @@ class GameObjectManager;
 class ComponentManager;
 class Camera;
 class TextureComponent;
+class Input;
 
 
 class Engine {
@@ -35,6 +36,7 @@ public:
     std::shared_ptr<GameObjectManager> m_pGameObjectManager;
     ComponentManager* m_pComponentManager;
     Camera* m_pCamera;
+    Input* m_pInput;
 
     //std::vector<TextureComponent*> compiledTexture;
 

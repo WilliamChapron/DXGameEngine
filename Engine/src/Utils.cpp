@@ -1,6 +1,4 @@
 #include "Utils.h"
-#include <iostream>
-#include <iomanip>
 
 void PrintMatrix(const DirectX::XMFLOAT4X4& matrix)
 {
@@ -24,6 +22,5 @@ void printFloatWithPrecision(float value, int precision) {
 }
 
 std::wstring stringToWString(const std::string& narrowString) {
-    // Conversion en chaîne de caractères large
     return std::wstring(narrowString.begin(), narrowString.end());
 }

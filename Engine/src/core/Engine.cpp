@@ -20,6 +20,7 @@
 // Miscellaneous
 #include "../ecs/systems/Time.h"
 #include "../Utils.h"
+#include "../ecs/systems/Input.h"
 
 
 
@@ -43,14 +44,16 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
     m_pRenderer->InitializeDirectX12Instances();
     m_pRenderer->m_pCommandList->Close();
 
+    m_pInput = new Input();
+
+    m_pCamera = new Camera(); // #TODO Shared ptr camera to each object
 
 
-    m_pGameObjectManager = std::make_shared<GameObjectManager>();
+
+    m_pGameObjectManager = std::make_shared<GameObjectManager>(m_pCamera);
     m_pComponentManager = new ComponentManager(m_pGameObjectManager, m_pRenderer);
 
 
-
-    m_pCamera = new Camera(); // #TODO Shared ptr camera to each object
 
     //compiledTexture.push_back(new TextureComponent("texture"));
     //compiledTexture[0]->Initialize(m_pRenderer);
@@ -97,7 +100,7 @@ void Engine::Cleanup() {
 
 void Engine::Run() {
     std::cout << "Main Loop Started" << std::endl;
-
+    
     Time time;
 
     MSG msg;
@@ -112,8 +115,43 @@ void Engine::Run() {
     // Ajoutez d'autres triangles au besoin
 
     while (true) {
+
         time.UpdateTime();
+
+        //CAMERA DEBUG
+        //m_pCamera->UpdatePosition(0.0f, 0.0f, 0.2f);
+        //m_pCamera->Rotate(0.0f, 0.0f, 0.25f);
+        m_pCamera->RotateAroundTarget(0.f, .0f, 0.f);
+        m_pCamera->UpdateTarget(XMFLOAT3(0.0f, 0.0f, 0.0f));
+
+        m_pCamera->Update(time.GetDeltaTime());
+
         m_pWindow->UpdateTitleWithFPS(time.GetFramePerSecond());
+
+        //------ TEST INPUT
+        m_pInput->Update();
+        // Affichez la liste des touches et leur état
+        std::cout << "Touches pressees : " << std::endl;
+        for (const auto& pair : m_pInput->GetKeyStates()) {
+            std::cout << "Touche : " << pair.first << ", Etat : ";
+            // Utilisez un switch pour gérer les différents états de la touche
+            switch (pair.second) {
+            case KeyState::Pressed:
+                std::cout << "Pressed";
+                break;
+            case KeyState::Held:
+                std::cout << "Held";
+                break;
+            case KeyState::Released:
+                std::cout << "Released";
+                break;
+            case KeyState::Inactive:
+                std::cout << "Inactive";
+                break;
+            }
+            std::cout << std::endl;
+        }
+
 
         if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
             if (msg.message == WM_QUIT)

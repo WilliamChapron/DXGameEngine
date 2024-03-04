@@ -7,6 +7,8 @@
 #include "../systems/ComponentManager.h"  
 
 #include "../../core/Engine.h"  
+#include "../components/Camera.h"
+
 
 #include <iostream>
 #include <iomanip>
@@ -16,25 +18,17 @@ GameObject::GameObject() : m_vertexBuffer(nullptr), m_indexBuffer(nullptr), m_co
 }
 
 
-void GameObject::Update(float deltaTime, Renderer* renderer)
+void GameObject::Update(float deltaTime, Renderer* renderer, Camera* camera)
 {
     HRESULT hr;
 
     Engine& e = Engine::GetInstance();
     Component* component = e.m_pComponentManager->GetComponentByType(*this, ComponentType::Transform);
     Transform* transformComponent = dynamic_cast<Transform*>(component);
+    
+    m_cbData.view = camera->GetViewMatrix();
+    m_cbData.projection = camera->GetProjectionMatrix();
 
-
-
-        //PRINT("Update TRANSFORM");
-    //static float translationOffset = 0.0f;
-    ////translationOffset -= 0.0003f;
-
-    //static float rotationAngle = 0.03f;
-    ///*rotationAngle += 0.01;*/
-
-    //static float fScale = 0.1f;
-    //fScale += 0.01f;
 
 
     float rotationAngle = 0.03;
@@ -82,6 +76,8 @@ void GameObject::Update(float deltaTime, Renderer* renderer)
     renderer->m_pCommandList->IASetIndexBuffer(&m_indexBufferView);
 
     renderer->m_pCommandList->DrawIndexedInstanced(36, 1, 0, 0, 0);
+
+
 }
 
 

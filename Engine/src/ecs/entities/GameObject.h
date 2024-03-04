@@ -16,6 +16,7 @@ using Microsoft::WRL::ComPtr;
 
 class Renderer;
 class Component;
+class Camera;
 
 // Vertex
 struct Vertex
@@ -37,7 +38,7 @@ public:
     GameObject();
 
 
-    void Update(float deltaTime, Renderer* renderer);
+    void Update(float deltaTime, Renderer* renderer, Camera* camera);
 
     //const Transform& GetTransform() const { return m_transform; }
     const ConstantBufferData& GetConstantBufferData() const { return m_cbData; }
