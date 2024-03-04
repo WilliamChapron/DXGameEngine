@@ -12,6 +12,7 @@ public:
     //Transform();
 
     void Init();
+    void Update();
 
     // Getter
     XMFLOAT4X4 GetTransformMatrix() const;

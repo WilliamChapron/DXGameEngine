@@ -4,7 +4,7 @@
 #include "../../DDSTextureLoader.h"
 #include "../../Utils.h"
 
-TextureComponent::TextureComponent(std::string name) : Component("Texture", ComponentType::Texture), m_namePath(name)
+TextureComponent::TextureComponent(std::string name) : Component(name, ComponentType::Texture, false)
 {
 
 }
@@ -54,8 +54,10 @@ void TextureComponent::Initialize(Renderer* renderer)
     // Wait Fence / #THINK Init Value can Impact ??
     renderer->WaitForPreviousFrame();
 
-    PRINT(m_textureBuffer.Get());
-    PRINT(m_uploadTexture.Get());
+    //PRINT(m_textureBuffer.Get());
+    //PRINT(m_uploadTexture.Get());
+}
 
-
+void TextureComponent::Update() {
+    PRINT("Update Texture");
 }

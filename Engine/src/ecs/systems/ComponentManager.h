@@ -20,9 +20,12 @@ public:
     ComponentManager(std::shared_ptr<GameObjectManager>& gameObjectManager);
 
     // Actions to add, remove, ... on a game object
-    void AddComponent(GameObject* gameObject, Component* component);
+    void AddComponent(GameObject& gameObject, Component* component);
     //void RemoveComponent(GameObject gameObject, Component& component);
     //void RemoveAllComponents(GameObject& gameObject);
+    void UpdateComponents(GameObject& gameObject);
+
+    Component* GetComponentByType(GameObject& gameObject, ComponentType componentType);
 
 
 private:

@@ -9,9 +9,15 @@
 #include <DirectXColors.h>
 
 #include "../components/Camera.h"
+#include "../components/Texture.h"
+#include "../components/Transform.h"
+
+#include "../systems/ComponentManager.h"
 
 #include "../../renderer/Resources.h"
 #include "../../DDSTextureLoader.h"
+
+#include "../components/Component.h"  
 
 
 
@@ -30,9 +36,23 @@ CubeMesh::~CubeMesh() {
 }
 
 
-void CubeMesh::Initialize(Renderer* renderer, Camera* camera, const XMFLOAT3& position, const XMFLOAT3& rotation, const XMFLOAT3& scale) {
-    m_transform = Transform(position, rotation, scale);
-    m_cbData.model = m_transform.GetTransformMatrix();
+void CubeMesh::Initialize(Renderer* renderer, Camera* camera, ComponentManager* componentManager,  const XMFLOAT3& position, const XMFLOAT3& rotation, const XMFLOAT3& scale) {
+    //m_transform = Transform(position, rotation, scale);
+    //m_cbData.model = m_transform.GetTransformMatrix();
+
+    
+
+    Transform* defaultTransform = new Transform(position, rotation, scale);
+    TextureComponent* defaultTexture = new TextureComponent("texture");
+    defaultTexture->Initialize(renderer);
+
+    componentManager->AddComponent(*this, defaultTransform);
+    componentManager->AddComponent(*this, defaultTexture);
+    
+    //defaultTransform->Update();
+
+
+    m_cbData.model = defaultTransform->GetTransformMatrix();
 
     // ** MATRIX
 

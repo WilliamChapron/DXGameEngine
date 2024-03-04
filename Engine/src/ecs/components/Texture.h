@@ -17,6 +17,7 @@ class TextureComponent : public Component
 public:
 	TextureComponent(std::string name);
 	void Initialize(Renderer* renderer);
+	void Update();
 
 private:
 	std::string m_namePath;

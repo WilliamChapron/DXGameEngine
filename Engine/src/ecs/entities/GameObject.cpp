@@ -3,6 +3,11 @@
 #include "../../core/Defines.h"
 #include "../../Utils.h"
 
+#include "../components/Component.h"  
+#include "../systems/ComponentManager.h"  
+
+#include "../../core/Engine.h"  
+
 #include <iostream>
 #include <iomanip>
 
@@ -13,15 +18,15 @@ GameObject::GameObject() : m_vertexBuffer(nullptr), m_indexBuffer(nullptr), m_co
 
 void GameObject::Update(float deltaTime, Renderer* renderer)
 {
-    UpdateTransformation(deltaTime);
-    UpdateDrawingOperations(renderer);
-}
-
-void GameObject::UpdateTransformation(float deltaTime)
-{
     HRESULT hr;
 
-    ////PRINT("Update TRANSFORM");
+    Engine& e = Engine::GetInstance();
+    Component* component = e.m_pComponentManager->GetComponentByType(*this, ComponentType::Transform);
+    Transform* transformComponent = dynamic_cast<Transform*>(component);
+
+
+
+        //PRINT("Update TRANSFORM");
     //static float translationOffset = 0.0f;
     ////translationOffset -= 0.0003f;
 
@@ -32,21 +37,21 @@ void GameObject::UpdateTransformation(float deltaTime)
     //fScale += 0.01f;
 
 
-    //float rotationAngle = 0.03;
-    //float rotationOffset = 0.01;
-    ////PRINT("Translation offset");
-    ////PRINT(m_transform.vPosition.z);
-    //float translationOffset = m_transform.GetPosition().z + 0.01f;
-    //float fScale = m_transform.GetScale().z - 0.001f;
-    ////printFloatWithPrecision(m_transform.vScale.z, 4);
-
-    //
-    ////m_transform.Translate(m_transform.vPosition.x, m_transform.vPosition.y, translationOffset);
-    //m_transform.Rotate(0, 0, rotationAngle);
-    ////m_transform.Scale(fScale, fScale, fScale);
+    float rotationAngle = 0.03;
+    float rotationOffset = 0.01;
+    //PRINT("Translation offset");
+    //PRINT(m_transform.vPosition.z);
+    float translationOffset = transformComponent->GetPosition().z + 0.01f;
+    float fScale = transformComponent->GetScale().z - 0.001f;
+    //printFloatWithPrecision(m_transform.vScale.z, 4);
 
 
-    //m_cbData.model = m_transform.GetTransformMatrix();
+    //m_transform.Translate(m_transform.vPosition.x, m_transform.vPosition.y, translationOffset);
+    transformComponent->Rotate(0, 0, rotationAngle);
+    //m_transform.Scale(fScale, fScale, fScale);
+
+
+    m_cbData.model = transformComponent->GetTransformMatrix();
 
     // Map 
     hr = m_constantBuffer->Map(0, nullptr, reinterpret_cast<void**>(&m_mappedConstantBuffer));
@@ -55,15 +60,8 @@ void GameObject::UpdateTransformation(float deltaTime)
     m_constantBuffer->Unmap(0, nullptr);
 
 
-
-}
-
-void GameObject::UpdateDrawingOperations(Renderer* renderer)
-{
-    HRESULT hr;
-
     // Update constant buffer SRV / Sampler
-    
+
     // Link descriptors heap to command list || EACH FRAME ?
 
     // Link descriptors attach to shader || EACH FRAME ?
@@ -85,3 +83,5 @@ void GameObject::UpdateDrawingOperations(Renderer* renderer)
 
     renderer->m_pCommandList->DrawIndexedInstanced(36, 1, 0, 0, 0);
 }
+
+
