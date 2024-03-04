@@ -1,5 +1,5 @@
 #include "Engine.h"
-#include "../ecs/entities/CubeMesh.h"
+#include "../ecs/entities/GameObject.h"
 #include "../include.h"   
 #include "../renderer/Graphics.h"   
 #include "Defines.h"   
@@ -53,43 +53,24 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
     m_pGameObjectManager = std::make_shared<GameObjectManager>(m_pCamera);
     m_pComponentManager = new ComponentManager(m_pGameObjectManager, m_pRenderer);
 
-
-
-    //compiledTexture.push_back(new TextureComponent("texture"));
-    //compiledTexture[0]->Initialize(m_pRenderer);
-
-    //compiledTexture.push_back(new Texture("texture2"));
-    //compiledTexture[1]->Initialize(m_pRenderer);
-
-    //compiledTexture.push_back(new Texture("2"));
-    //compiledTexture[1]->Initialize(m_pRenderer);
-
     // Create Objects
-    m_pTriangle = new CubeMesh;
-    m_pTriangle2 = new CubeMesh;
+ //   m_pTriangle = new GameObject;
+    //m_pTriangle2 = new GameObject;
 
-    m_pTriangle->Initialize(m_pRenderer, m_pCamera, m_pComponentManager, XMFLOAT3(0.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
-    m_pTriangle2->Initialize(m_pRenderer, m_pCamera, m_pComponentManager, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
+//    m_pTriangle->Initialize(m_pRenderer, m_pCamera, m_pComponentManager, XMFLOAT3(0.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
+    //m_pTriangle2->Initialize(m_pRenderer, m_pCamera, m_pComponentManager, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
 
 
-
-    //m_pTriangle3 = new Triangle;
-    //m_pTriangle3->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(0.7f, -2.5f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
-
-    m_pGameObjectManager->AddObject("Triangle", m_pTriangle);
-    m_pGameObjectManager->AddObject("Triangle2", m_pTriangle2);
-
-    // Add component after object
-
-    //m_pComponentManager->AddComponent(m_pTriangle2, compiledTexture[0]);
-    //m_pGameObjectManager->AddObject("Triangle3", *m_pTriangle3);
-
+ //   m_pGameObjectManager->AddObject("Triangle", m_pTriangle);
+    //m_pGameObjectManager->AddObject("Triangle2", m_pTriangle2);
 
 
     // Drawing
-    isRenderable = true;
+    SetEngineRenderable(true);
     Run();
 }
+
+
 
 void Engine::Cleanup() {
     if (m_pConsole) {
@@ -121,8 +102,9 @@ void Engine::Run() {
         //CAMERA DEBUG
         //m_pCamera->UpdatePosition(0.0f, 0.0f, 0.2f);
         //m_pCamera->Rotate(0.0f, 0.0f, 0.25f);
-        m_pCamera->RotateAroundTarget(0.f, .0f, 0.f);
-        m_pCamera->UpdateTarget(XMFLOAT3(0.0f, 0.0f, 0.0f));
+        //m_pCamera->RotateAroundTarget(0.f, .0f, 0.f);
+        //m_pCamera->UpdateTarget(XMFLOAT3(0.0f, 0.0f, 0.0f));
+        //m_pCamera->Rotate(m_pInput->GetMousePosition().x, m_pInput->GetMousePosition().y, 0.f);
 
         m_pCamera->Update(time.GetDeltaTime());
 
@@ -153,6 +135,8 @@ void Engine::Run() {
         }
 
 
+
+
         if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
             if (msg.message == WM_QUIT)
                 break;
@@ -160,14 +144,11 @@ void Engine::Run() {
             DispatchMessage(&msg);
         }
 
-        if (isRenderable) {
+        if (GetIsRenderable()) {
             // Appelez la fonction Render de la classe Renderer et passez-lui la liste de triangles
             m_pGameObjectManager->Update(m_pRenderer);
         }
     }
 }
 
-void Engine::Update() {
-    // static instance
 
-}

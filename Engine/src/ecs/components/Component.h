@@ -41,5 +41,6 @@ private:
     std::string m_name;
     ComponentType m_type;
     bool m_hasChanged; // Update if true
+    bool m_needUpdate;
     bool m_allowMultipleInstances; // Restrict creation with same name if true
 };

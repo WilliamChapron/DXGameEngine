@@ -4,6 +4,8 @@
 #include "../../include.h"
 #include "../components/Transform.h"
 
+#include "../systems/ComponentManager.h"
+
 #include <iostream>
 #include <map>
 #include <list>
@@ -37,7 +39,7 @@ class GameObject
 public:
     GameObject();
 
-
+    void Initialize(Renderer* renderer, Camera* camera, ComponentManager* componentManager, const XMFLOAT3& position, const XMFLOAT3& rotation, const XMFLOAT3& scale);
     void Update(float deltaTime, Renderer* renderer, Camera* camera);
 
     //const Transform& GetTransform() const { return m_transform; }
@@ -70,7 +72,5 @@ protected:
 
 
 private:
-    void UpdateTransformation(float deltaTime);
-    void UpdateDrawingOperations(Renderer* renderer);
 
 };

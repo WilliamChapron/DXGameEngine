@@ -321,9 +321,9 @@ void Renderer::CreatePipelineState() {
         UINT compileFlags = 0;
     #endif
     // Charger les shaders spécifiques au Triangle
-    HRESULT hr = CompileShaderFromFile(L"res/shader/Shader.hlsl", "VSMain", "vs_5_0", &m_vertexShaderBlob);
+    HRESULT hr = CompileShaderFromFile(L"../Engine/res/shader/Shader.hlsl", "VSMain", "vs_5_0", &m_vertexShaderBlob);
     ASSERT_FAILED(hr);
-    hr = CompileShaderFromFile(L"res/shader/Shader.hlsl", "PSMain", "ps_5_0", &m_pixelShaderBlob);
+    hr = CompileShaderFromFile(L"../Engine/res/shader/Shader.hlsl", "PSMain", "ps_5_0", &m_pixelShaderBlob);
     ASSERT_FAILED(hr);
     PRINT("Shaders loaded successfully");
 

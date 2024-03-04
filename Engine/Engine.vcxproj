@@ -40,7 +40,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -137,6 +137,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\ecs\components\Mesh.h" />
     <ClInclude Include="src\ecs\systems\ComponentManager.h" />
     <ClInclude Include="src\ecs\components\Component.h" />
     <ClInclude Include="src\DDSTextureLoader.h" />
@@ -155,15 +156,15 @@
     <ClInclude Include="src\ecs\systems\State.h" />
     <ClInclude Include="src\ecs\systems\StateMachine.h" />
     <ClInclude Include="src\ecs\systems\Time.h" />
-    <ClInclude Include="src\ecs\entities\CubeMesh.h" />
     <ClInclude Include="src\ecs\components\Texture.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\ecs\components\Mesh.cpp" />
     <ClCompile Include="src\ecs\systems\ComponentManager.cpp" />
     <ClCompile Include="src\ecs\components\Component.cpp" />
     <ClCompile Include="src\DDSTextureLoader.cpp" />
     <ClCompile Include="src\ecs\components\Shader.cpp" />
-    <ClCompile Include="src\ecs\components\Shader.h.cpp" />
+    <ClCompile Include="src\ecs\components\Shader.h" />
     <ClCompile Include="src\ecs\entities\GameObject.cpp" />
     <ClCompile Include="src\core\Engine.cpp" />
     <ClCompile Include="src\core\Window.cpp" />
@@ -176,7 +177,6 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ecs\systems\StateMachine.cpp" />
     <ClCompile Include="src\ecs\systems\Time.cpp" />
-    <ClCompile Include="src\ecs\entities\CubeMesh.cpp" />
     <ClCompile Include="src\Utils.cpp" />
     <ClCompile Include="src\Utils.h" />
     <ClCompile Include="src\ecs\components\Texture.cpp" />

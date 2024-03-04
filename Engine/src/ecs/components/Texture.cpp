@@ -20,7 +20,7 @@ void TextureComponent::Initialize(Renderer* renderer)
     ASSERT_FAILED(hr);
 
     // Concaténer m_name avec le chemin du fichier
-    std::wstring texturePath = L"res/texture/" + stringToWString(GetName()) + L".dds";
+    std::wstring texturePath = L"../Engine/res/texture/" +stringToWString(GetName()) + L".dds";
 
     // Create / Upload Ressource With Command List
     hr = CreateDDSTextureFromFile12(renderer->m_pDevice.Get(),

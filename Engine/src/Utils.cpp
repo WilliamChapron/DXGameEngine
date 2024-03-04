@@ -22,5 +22,7 @@ void printFloatWithPrecision(float value, int precision) {
 }
 
 std::wstring stringToWString(const std::string& narrowString) {
+    //std::wstring s = narrowString;
     return std::wstring(narrowString.begin(), narrowString.end());
+    //return L"";
 }
