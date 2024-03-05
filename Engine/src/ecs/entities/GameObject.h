@@ -13,20 +13,14 @@
 #include <unordered_map>
 #include <string>
 
+#include "../systems/ComponentManager.h"
+
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
 
 class Renderer;
 class Component;
 class Camera;
-
-// Vertex
-struct Vertex
-{
-    XMFLOAT3 Pos;
-    XMFLOAT4 Color;
-    XMFLOAT2 Uv;
-};
 
 struct ConstantBufferData {
     XMFLOAT4X4 model;
@@ -37,40 +31,22 @@ struct ConstantBufferData {
 class GameObject
 {
 public:
-    GameObject();
+    GameObject(ComponentManager* componentManager);
 
-    void Initialize(Renderer* renderer, Camera* camera, ComponentManager* componentManager, const XMFLOAT3& position, const XMFLOAT3& rotation, const XMFLOAT3& scale);
-    void Update(float deltaTime, Renderer* renderer, Camera* camera);
+    void Initialize(Renderer* renderer, Camera* camera, const XMFLOAT3& position, const XMFLOAT3& rotation, const XMFLOAT3& scale);
+    void Update(Renderer* renderer, Camera* camera);
 
     //const Transform& GetTransform() const { return m_transform; }
     const ConstantBufferData& GetConstantBufferData() const { return m_cbData; }
 
 
-    ID3D12Resource* GetConstantBuffer() const { return m_constantBuffer; }
-    ID3D12Resource* GetIndexBuffer() const { return m_indexBuffer; }
-    const D3D12_VERTEX_BUFFER_VIEW& GetVertexBufferView() const { return m_vertexBufferView; }
-    const D3D12_INDEX_BUFFER_VIEW& GetIndexBufferView() const { return m_indexBufferView; }
-
     std::list<Component*> componentsList;
 
 protected:
+    
+private:
 
     ConstantBufferData m_cbData;
 
-    ID3D12Resource* m_constantBuffer;
-    UINT8* m_mappedConstantBuffer;
-
-    // Vertex buffer
-    ID3D12Resource* m_vertexBuffer;
-    D3D12_VERTEX_BUFFER_VIEW m_vertexBufferView;
-
-    ID3D12Resource* m_indexBuffer;
-    D3D12_INDEX_BUFFER_VIEW m_indexBufferView;
-    //Transform m_transform;
-
-
-
-
-private:
-
+    ComponentManager* m_pComponentManager;
 };

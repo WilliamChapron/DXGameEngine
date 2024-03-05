@@ -51,19 +51,18 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
 
 
     m_pGameObjectManager = std::make_shared<GameObjectManager>(m_pCamera);
-    m_pComponentManager = new ComponentManager(m_pGameObjectManager, m_pRenderer);
+    m_pComponentManager = new ComponentManager(m_pGameObjectManager, m_pRenderer, m_pCamera);
 
-     //Create Objects
-    m_pTriangle = new GameObject;
-    m_pTriangle2 = new GameObject;
+    //Create Objects
+    m_pCube = new GameObject(m_pComponentManager);
+    //m_pCube2 = new GameObject;
 
-    m_pTriangle->Initialize(m_pRenderer, m_pCamera, m_pComponentManager, XMFLOAT3(0.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
-    m_pTriangle2->Initialize(m_pRenderer, m_pCamera, m_pComponentManager, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
+    m_pCube->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(0.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
+    //m_pCube2->Initialize(m_pRenderer, m_pCamera, m_pComponentManager, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
 
 
-    m_pGameObjectManager->AddObject("Triangle", m_pTriangle);
-    m_pGameObjectManager->AddObject("Triangle2", m_pTriangle2);
-
+    m_pGameObjectManager->AddObject("Cube", m_pCube);
+    //m_pGameObjectManager->AddObject("Cube2", m_pCube2);
 
     // Drawing
     SetEngineRenderable(true);
@@ -88,12 +87,12 @@ void Engine::Run() {
     ZeroMemory(&msg, sizeof(MSG));
 
 
-    std::vector<GameObject> triangles;
+    std::vector<GameObject> Cubes;
 
 
-    //triangles.push_back(*m_pTriangle1);
-    //triangles.push_back(*m_pTriangle2);
-    // Ajoutez d'autres triangles au besoin
+    //Cubes.push_back(*m_pCube1);
+    //Cubes.push_back(*m_pCube2);
+    // Ajoutez d'autres Cubes au besoin
 
     while (true) {
 
@@ -102,8 +101,8 @@ void Engine::Run() {
         //CAMERA DEBUG
         //m_pCamera->UpdatePosition(0.0f, 0.0f, 0.2f);
         //m_pCamera->Rotate(0.0f, 0.0f, 0.25f);
-        //m_pCamera->RotateAroundTarget(0.f, .0f, 0.f);
-        //m_pCamera->UpdateTarget(XMFLOAT3(0.0f, 0.0f, 0.0f));
+        m_pCamera->RotateAroundTarget(0.f, .0f, 0.2f);
+        m_pCamera->UpdateTarget(XMFLOAT3(0.0f, 0.0f, 0.0f));
         //m_pCamera->Rotate(m_pInput->GetMousePosition().x, m_pInput->GetMousePosition().y, 0.f);
 
         m_pCamera->Update(time.GetDeltaTime());
@@ -112,6 +111,7 @@ void Engine::Run() {
 
         //------ TEST INPUT
         m_pInput->Update();
+
         // Affichez la liste des touches et leur �tat
         std::cout << "Touches pressees : " << std::endl;
         for (const auto& pair : m_pInput->GetKeyStates()) {
@@ -145,8 +145,8 @@ void Engine::Run() {
         }
 
         if (GetIsRenderable()) {
-            // Appelez la fonction Render de la classe Renderer et passez-lui la liste de triangles
-            m_pGameObjectManager->Update(m_pRenderer);
+            // Appelez la fonction Render de la classe Renderer et passez-lui la liste de Cubes
+            m_pGameObjectManager->Update(m_pRenderer, m_pCamera);
         }
     }
 }
