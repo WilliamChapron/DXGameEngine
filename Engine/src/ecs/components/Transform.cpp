@@ -50,6 +50,11 @@ XMFLOAT3 Transform::GetScale() const {
     return vScale;
 }
 
+XMFLOAT3 Transform::GetRotation() const {
+    return vRotation;
+}
+
+
 void Transform::UpdateTransformMatrix()
 {
     XMMATRIX transformMatrix = XMLoadFloat4x4(&mScale) * XMLoadFloat4x4(&mRotation) * XMLoadFloat4x4(&mPosition);
@@ -59,15 +64,34 @@ void Transform::UpdateTransformMatrix()
     XMStoreFloat4x4(&mWorld, transformMatrix);
 }
 
+XMFLOAT3 Transform::QuaternionToEulerAngles(const XMFLOAT4& quaternion)
+{
+    XMFLOAT3 euler;
+
+    // Convertissez le quaternion en une matrice de rotation
+    XMMATRIX rotationMatrix = XMMatrixRotationQuaternion(XMLoadFloat4(&quaternion));
+
+    // Extrait les angles d'Euler de la matrice de rotation
+    euler.y = asinf(rotationMatrix.m[2][0]); // Pitch
+    euler.x = atan2f(rotationMatrix.m[2][1], rotationMatrix.m[2][2]); // Roll
+    euler.z = atan2f(mRotationMatrix[1][0], rotationMatrix.m[0][0]); // Yaw
+
+    // Convertissez les angles d'Euler de radians à degrés
+    euler.x = XMConvertToDegrees(euler.x);
+    euler.y = XMConvertToDegrees(euler.y);
+    euler.z = XMConvertToDegrees(euler.z);
+
+    return euler;
+}
+
 void Transform::Rotate(float pitch, float roll, float yaw)
 {
-    vRotation.x += pitch;
-    vRotation.y += roll;
-    vRotation.z += yaw;
+
 
     XMVECTOR forwardVector = XMLoadFloat3(&vForward);
     XMVECTOR rightVector = XMLoadFloat3(&vRight);
     XMVECTOR upVector = XMLoadFloat3(&vUp);
+
 
     XMVECTOR qRoll = XMQuaternionRotationAxis(forwardVector, roll);
     XMVECTOR qPitch = XMQuaternionRotationAxis(rightVector, pitch);
@@ -93,6 +117,13 @@ void Transform::Rotate(float pitch, float roll, float yaw)
     vForward.x = mRotation._31;
     vForward.y = mRotation._32;
     vForward.z = mRotation._33;
+
+
+    XMFLOAT3 euler = QuaternionToEulerAngles(qRotation);
+    vRotation.x = euler.x;
+    vRotation.y = euler.y;
+    vRotation.z = euler.z;
+
 
     UpdateTransformMatrix();
 }

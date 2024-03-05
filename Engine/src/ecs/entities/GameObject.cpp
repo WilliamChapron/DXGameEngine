@@ -150,6 +150,7 @@ void GameObject::Update(float deltaTime, Renderer* renderer, Camera* camera)
 
     //m_transform.Translate(m_transform.vPosition.x, m_transform.vPosition.y, translationOffset);
     transformComponent->Rotate(0, 0, rotationAngle);
+    printFloatWithPrecision(transformComponent->GetRotation().z,1);
     //m_transform.Scale(fScale, fScale, fScale);
 
 

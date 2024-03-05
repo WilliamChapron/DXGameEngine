@@ -18,6 +18,9 @@ public:
     XMFLOAT4X4 GetTransformMatrix() const;
     XMFLOAT3 GetPosition() const;
     XMFLOAT3 GetScale() const;
+    XMFLOAT3 GetRotation() const;
+
+    XMFLOAT3 QuaternionToEulerAngles(const XMFLOAT4& quaternion);
 
     // Update them between each other
     void UpdateTransformMatrix();
