@@ -29,7 +29,7 @@
 #include <iostream>
 #include <iomanip>
 
-GameObject::GameObject() : m_vertexBuffer(nullptr), m_indexBuffer(nullptr), m_constantBuffer(nullptr), m_mappedConstantBuffer(nullptr), m_vertexBufferView({}), m_indexBufferView({}), m_cbData()
+GameObject::GameObject() : m_cbData()
 {
 }
 
@@ -40,96 +40,39 @@ void GameObject::Initialize(Renderer* renderer, Camera* camera, ComponentManager
 
 
     Transform* defaultTransform = new Transform(position, rotation, scale);
-    TextureComponent* defaultTexture = new TextureComponent("texture");
-    //MeshComponent* defaultMesh = new MeshComponent("Mesh");
-    //defaultMesh->Initialize(renderer);
+
+    // Matrices
+    m_cbData.model = defaultTransform->GetTransformMatrix();
+    m_cbData.view = camera->GetViewMatrix();
+    m_cbData.projection = camera->GetProjectionMatrix();
+
+
+    // Initialisation des meshes, textures et shader
+    MeshComponent* defaultMesh = new MeshComponent("Mesh", &m_cbData);
+    PRINT("Mesh import");
+    TextureComponent* defaultTexture = new TextureComponent("Texture");
+    //ShaderComponent* defaultShader = new ShaderComponent("Shader");
+
+    defaultMesh->Initialize(renderer);
+    PRINT("Mesh Init ok");
     defaultTexture->Initialize(renderer);
+    //defaultShader->Initialize(renderer);
 
 
     componentManager->AddComponent(*this, defaultTransform);
+    componentManager->AddComponent(*this, defaultMesh);
     componentManager->AddComponent(*this, defaultTexture);
-    //componentManager->AddComponent(*this, defaultMesh);
+    //componentManager->AddComponent(*this, defaultShader);
 
     //defaultTransform->Update();
 
 
-    m_cbData.model = defaultTransform->GetTransformMatrix();
 
-    // ** MATRIX
-
-    m_cbData.view = camera->GetViewMatrix();
-    m_cbData.projection = camera->GetProjectionMatrix();
-
-    // MATRIX **
-    HRESULT hr;
-
-    Vertex cubeVertices[] = {
-        { {-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f, 1.0f}, {0.0f, 1.0f} },
-        { {-0.5f, -0.5f,  0.5f}, {1.0f, 0.0f, 0.0f, 1.0f}, {0.0f, 0.0f} },
-        { {-0.5f,  0.5f, -0.5f}, {0.0f, 0.0f, 1.0f, 1.0f}, {1.0f, 1.0f} },
-        { {-0.5f,  0.5f,  0.5f}, {0.0f, 0.0f, 1.0f, 1.0f}, {1.0f, 0.0f} },
-        { { 0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 0.0f, 1.0f}, {0.0f, 1.0f} },
-        { { 0.5f, -0.5f,  0.5f}, {1.0f, 1.0f, 0.0f, 1.0f}, {0.0f, 0.0f} },
-        { { 0.5f,  0.5f, -0.5f}, {0.5f, 0.5f, 0.5f, 1.0f}, {1.0f, 1.0f} },
-        { { 0.5f,  0.5f,  0.5f}, {0.5f, 0.5f, 0.5f, 1.0f}, {1.0f, 0.0f} }
-    };
-
-    UINT cubeIndices[] = {
-        0, 1, 2,
-        2, 1, 3,
-        4, 6, 5,
-        6, 7, 5,
-        0, 2, 4,
-        2, 6, 4,
-        1, 5, 3,
-        3, 5, 7,
-        2, 3, 6,
-        3, 7, 6,
-        0, 4, 1,
-        1, 4, 5
-    };
-
-    const UINT vertexBufferSize = sizeof(cubeVertices);// *sizeof(Vertex);
-    const UINT indexBufferSize = sizeof(cubeIndices);// *sizeof(UINT);
-    const UINT stride = sizeof(Vertex);
-
-
-    CreateIndexBuffer(indexBufferSize, cubeIndices, m_indexBuffer, m_indexBufferView, renderer);
-    CreateVertexBuffer(vertexBufferSize, cubeVertices, m_vertexBuffer, m_vertexBufferView, stride, renderer);
-
-    // * Constant Buffer
-    CD3DX12_HEAP_PROPERTIES cbHeapProps(D3D12_HEAP_TYPE_UPLOAD);
-    CD3DX12_RESOURCE_DESC cbDesc = CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstantBufferData) + 255) & ~255);
-
-    hr = renderer->m_pDevice->CreateCommittedResource(
-        &cbHeapProps,
-        D3D12_HEAP_FLAG_NONE,
-        &cbDesc,
-        D3D12_RESOURCE_STATE_GENERIC_READ,
-        nullptr,
-        IID_PPV_ARGS(&m_constantBuffer)
-    );
-    ASSERT_FAILED(hr);
-
-    hr = m_constantBuffer->Map(0, nullptr, reinterpret_cast<void**>(&m_mappedConstantBuffer));
-    ASSERT_FAILED(hr);
-
-    memcpy(m_mappedConstantBuffer, &m_cbData, sizeof(ConstantBufferData));
-    m_constantBuffer->Unmap(0, nullptr);
-
-
-    //D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc = {};
-    //cbvDesc.BufferLocation = m_constantBuffer->GetGPUVirtualAddress();
-    //cbvDesc.SizeInBytes = (sizeof(ConstantBufferData) + 255) & ~255; // Alignement sur 256 octets
-   // renderer->m_pDevice->CreateConstantBufferView(&cbvDesc, renderer->m_pCbvSrvHeap->GetCPUDescriptorHandleForHeapStart());
-    // Constant Buffer *
 }
 
 
 void GameObject::Update(float deltaTime, Renderer* renderer, Camera* camera)
 {
-    HRESULT hr;
-
     Engine& e = Engine::GetInstance();
     Component* component = e.m_pComponentManager->GetComponentByType(*this, ComponentType::Transform);
     Transform* transformComponent = dynamic_cast<Transform*>(component);
@@ -154,37 +97,7 @@ void GameObject::Update(float deltaTime, Renderer* renderer, Camera* camera)
 
 
     m_cbData.model = transformComponent->GetTransformMatrix();
-
-    // Map 
-    hr = m_constantBuffer->Map(0, nullptr, reinterpret_cast<void**>(&m_mappedConstantBuffer));
-    ASSERT_FAILED(hr);
-    memcpy(m_mappedConstantBuffer, &m_cbData, sizeof(ConstantBufferData));
-    m_constantBuffer->Unmap(0, nullptr);
-
-
-    // Update constant buffer SRV / Sampler
-
-    // Link descriptors heap to command list || EACH FRAME ?
-
-    // Link descriptors attach to shader || EACH FRAME ?
-
-    CD3DX12_GPU_DESCRIPTOR_HANDLE cbvSrvHandle(renderer->m_pCbvSrvHeap.Get()->GetGPUDescriptorHandleForHeapStart());
-    renderer->m_pCommandList->SetGraphicsRootDescriptorTable(0, cbvSrvHandle);
-
-
-    // * Update constant buffer 
-    D3D12_GPU_VIRTUAL_ADDRESS cbvAddress = m_constantBuffer->GetGPUVirtualAddress();
-    renderer->m_pCommandList->SetGraphicsRootConstantBufferView(1, cbvAddress);
-    // Update constant buffer * 
-    //PRINT("Drawing Op");
-
-    // Record commands.
-    renderer->m_pCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    renderer->m_pCommandList->IASetVertexBuffers(0, 1, &m_vertexBufferView);
-    renderer->m_pCommandList->IASetIndexBuffer(&m_indexBufferView);
-
-    renderer->m_pCommandList->DrawIndexedInstanced(36, 1, 0, 0, 0);
-
-
+    
+	componentManager->UpdateComponents(*this);
 }
 

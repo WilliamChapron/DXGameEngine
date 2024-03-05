@@ -45,7 +45,7 @@ void ComponentManager::AddComponent(GameObject& gameObject, Component* addCompon
 }
 
 void ComponentManager::UpdateComponents(GameObject& gameObject) {
-
+    for (int i = 0, i < m_pGameObjectManager->GetAliveObjects())
     for (Component* component : gameObject.componentsList) {
         if (component->ShouldUpdate()) {
             component->Update(m_pRenderer);

@@ -54,15 +54,15 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
     m_pComponentManager = new ComponentManager(m_pGameObjectManager, m_pRenderer);
 
      //Create Objects
-    m_pTriangle = new GameObject;
-    m_pTriangle2 = new GameObject;
+    m_pCube = new GameObject;
+    m_pCube2 = new GameObject;
 
-    m_pTriangle->Initialize(m_pRenderer, m_pCamera, m_pComponentManager, XMFLOAT3(0.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
-    m_pTriangle2->Initialize(m_pRenderer, m_pCamera, m_pComponentManager, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
+    m_pCube->Initialize(m_pRenderer, m_pCamera, m_pComponentManager, XMFLOAT3(0.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
+    m_pCube2->Initialize(m_pRenderer, m_pCamera, m_pComponentManager, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
 
 
-    m_pGameObjectManager->AddObject("Triangle", m_pTriangle);
-    m_pGameObjectManager->AddObject("Triangle2", m_pTriangle2);
+    m_pGameObjectManager->AddObject("Cube", m_pCube);
+    m_pGameObjectManager->AddObject("Cube2", m_pCube2);
 
 
     // Drawing
@@ -88,12 +88,12 @@ void Engine::Run() {
     ZeroMemory(&msg, sizeof(MSG));
 
 
-    std::vector<GameObject> triangles;
+    std::vector<GameObject> Cubes;
 
 
-    //triangles.push_back(*m_pTriangle1);
-    //triangles.push_back(*m_pTriangle2);
-    // Ajoutez d'autres triangles au besoin
+    //Cubes.push_back(*m_pCube1);
+    //Cubes.push_back(*m_pCube2);
+    // Ajoutez d'autres Cubes au besoin
 
     while (true) {
 
@@ -145,7 +145,7 @@ void Engine::Run() {
         }
 
         if (GetIsRenderable()) {
-            // Appelez la fonction Render de la classe Renderer et passez-lui la liste de triangles
+            // Appelez la fonction Render de la classe Renderer et passez-lui la liste de Cubes
             m_pGameObjectManager->Update(m_pRenderer);
         }
     }
