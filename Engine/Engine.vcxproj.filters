@@ -38,7 +38,7 @@
     <ClCompile Include="src\ecs\systems\GameObjectManager.cpp" />
     <ClCompile Include="src\ecs\systems\Input.cpp" />
     <ClCompile Include="src\ecs\components\Shader.cpp" />
-    <ClCompile Include="src\ecs\components\Shader.h.cpp" />
+    <ClCompile Include="src\ecs\components\Shader.h" />
     <ClCompile Include="src\DDSTextureLoader.cpp" />
     <ClCompile Include="src\ecs\components\Texture.cpp" />
     <ClCompile Include="src\ecs\components\Component.cpp" />

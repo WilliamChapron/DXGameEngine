@@ -20,6 +20,7 @@ using Microsoft::WRL::ComPtr;
 
 class Renderer;
 class Component;
+class ComponentManager;
 class Camera;
 
 struct ConstantBufferData {
@@ -40,7 +41,18 @@ public:
     const ConstantBufferData& GetConstantBufferData() const { return m_cbData; }
 
 
+    ID3D12Resource* GetConstantBuffer() const { return m_constantBuffer; }
+    ID3D12Resource* GetIndexBuffer() const { return m_indexBuffer; }
+
+
+    template <typename T>
+    T* GetComponent(ComponentType type);
+
+    const D3D12_VERTEX_BUFFER_VIEW& GetVertexBufferView() const { return m_vertexBufferView; }
+    const D3D12_INDEX_BUFFER_VIEW& GetIndexBufferView() const { return m_indexBufferView; }
+
     std::list<Component*> componentsList;
+
 
 protected:
     
@@ -48,5 +60,17 @@ private:
 
     ConstantBufferData m_cbData;
 
+    ID3D12Resource* m_constantBuffer;
+    UINT8* m_mappedConstantBuffer;
+
+    // Vertex buffer
+    ID3D12Resource* m_vertexBuffer;
+    D3D12_VERTEX_BUFFER_VIEW m_vertexBufferView;
+
+    ID3D12Resource* m_indexBuffer;
+    D3D12_INDEX_BUFFER_VIEW m_indexBufferView;
+
     ComponentManager* m_pComponentManager;
+    //Transform m_transform;
+
 };
