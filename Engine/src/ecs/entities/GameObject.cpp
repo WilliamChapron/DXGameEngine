@@ -61,7 +61,7 @@ T* GameObject::GetComponent(ComponentType type) {
 
 
 
-void GameObject::Update(float deltaTime, Renderer* renderer, Camera* camera)
+void GameObject::Update(Renderer* renderer, Camera* camera)
 {
 //---------- William
     HRESULT hr;
@@ -90,22 +90,16 @@ void GameObject::Update(float deltaTime, Renderer* renderer, Camera* camera)
 //----------
     Engine& e = Engine::GetInstance();  // Obtention de l'instance du moteur
     Component* component = e.m_pComponentManager->GetComponentByType(*this, ComponentType::Transform);  // Obtention du composant Transform de l'objet
-    Transform* transformComponent = dynamic_cast<Transform*>(component);  // Conversion du composant en type Transform
 
 
     // Mise à jour des matrices de vue et de projection de la caméra
-    m_cbData.view = camera->GetViewMatrix();  // Obtention de la matrice de vue de la caméra
-    m_cbData.projection = camera->GetProjectionMatrix();  // Obtention de la matrice de projection de la caméra
+    //m_cbData.view = camera->GetViewMatrix();  // Obtention de la matrice de vue de la caméra
+    //m_cbData.projection = camera->GetProjectionMatrix();  // Obtention de la matrice de projection de la caméra
 
     std::cout << "Update GameObject" << std::endl;  // Affichage de "Update" dans la console
 
-    float rotationAngle = 0.03;  // Définition de l'angle de rotation
-    float rotationOffset = 0.01;  // Définition du décalage de rotation
-    float translationOffset = transformComponent->GetPosition().z + 0.01f;  // Définition du décalage de translation
-    float fScale = transformComponent->GetScale().z - 0.001f;  // Définition de l'échelle de transformation
 
-    transformComponent->Rotate(0, 0, rotationAngle);  // Rotation du composant Transform
-    m_cbData.model = transformComponent->GetTransformMatrix();  // Mise à jour de la matrice de transformation du GameObject
+    //m_cbData.model = transformComponent->GetTransformMatrix();  // Mise à jour de la matrice de transformation du GameObject
 
     m_pComponentManager->UpdateComponents(this);  // Mise à jour des composants du GameObject
 }

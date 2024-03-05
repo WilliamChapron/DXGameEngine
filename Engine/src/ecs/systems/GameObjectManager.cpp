@@ -76,7 +76,7 @@ void GameObjectManager::Update(Renderer* renderer, Camera* _m_pCamera) {
     for (auto& pair : objectMap) {
         GameObject* gameObject = pair.second;
       
-        gameObject->Update(1.0, renderer, m_pCamera);
+        gameObject->Update(renderer, m_pCamera);
 
         // try collide = object on which we test collide
         for (auto& tryCollide : objectMap) {

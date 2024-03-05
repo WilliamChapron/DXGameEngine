@@ -109,7 +109,7 @@ void Engine::Run() {
 
         m_pWindow->UpdateTitleWithFPS(time.GetFramePerSecond());
 
-        m_pTriangle2->GetComponent<Transform>(ComponentType::Transform)->Translate(0.005,0.005,0.0);
+        //m_pTriangle2->GetComponent<Transform>(ComponentType::Transform)->Translate(0.005,0.005,0.0);
         //PRINT(m_pTriangle2->GetComponent<Transform>(ComponentType::Transform)->GetPosition().x);
 
         //------ TEST INPUT
