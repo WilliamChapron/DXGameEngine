@@ -76,13 +76,15 @@ void MeshComponent::Initialize(Renderer* renderer)
 void MeshComponent::Update(Renderer* renderer) {
 
 	HRESULT hr;
+	//ConstantBufferData tmp = *m_cbData;
 
 	// Mappage du tampon de constantes pour la mise à jour des données
 	hr = m_constantBuffer->Map(0, nullptr, reinterpret_cast<void**>(&m_mappedConstantBuffer));
 	ASSERT_FAILED(hr);
+	//m_cbData->model
 
 	// Copie des données des constantes mises à jour
-	memcpy(m_mappedConstantBuffer, &m_cbData, sizeof(ConstantBufferData));
+	memcpy(m_mappedConstantBuffer, m_cbData, sizeof(ConstantBufferData));
 	m_constantBuffer->Unmap(0, nullptr);
 
 	// Configuration du descripteur de table de racine pour le tampon de constantes

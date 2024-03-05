@@ -52,6 +52,7 @@ void GameObject::UpdateTransformation(float deltaTime)
 
     m_cbData.model = m_transform.GetTransformMatrix();
 
+
     // Map 
     hr = m_constantBuffer->Map(0, nullptr, reinterpret_cast<void**>(&m_mappedConstantBuffer));
     ASSERT_FAILED(hr);

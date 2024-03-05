@@ -58,6 +58,10 @@ void GameObject::Update(Renderer* renderer, Camera* camera)
     Component* component = e.m_pComponentManager->GetComponentByType(*this, ComponentType::Transform);  // Obtention du composant Transform de l'objet
     Transform* transformComponent = dynamic_cast<Transform*>(component);  // Conversion du composant en type Transform
 
+    // Mise à jour des matrices de vue et de projection de la caméra
+    m_cbData.view = camera->GetViewMatrix();  // Obtention de la matrice de vue de la caméra
+    m_cbData.projection = camera->GetProjectionMatrix();  // Obtention de la matrice de projection de la caméra
+
     std::cout << "Update GameObject" << std::endl;  // Affichage de "Update" dans la console
 
     float rotationAngle = 0.03;  // Définition de l'angle de rotation
@@ -69,7 +73,4 @@ void GameObject::Update(Renderer* renderer, Camera* camera)
     m_cbData.model = transformComponent->GetTransformMatrix();  // Mise à jour de la matrice de transformation du GameObject
 
     m_pComponentManager->UpdateComponents(this);  // Mise à jour des composants du GameObject
-
-    m_cbData.view = camera->GetViewMatrix();  // Obtention de la matrice de vue de la caméra
-    m_cbData.projection = camera->GetProjectionMatrix();  // Obtention de la matrice de projection de la caméra
 }
