@@ -111,28 +111,28 @@ void Engine::Run() {
         m_pWindow->UpdateTitleWithFPS(time.GetFramePerSecond());
 
         //------ TEST INPUT
-        m_pInput->Update();
-        // Affichez la liste des touches et leur �tat
-        std::cout << "Touches pressees : " << std::endl;
-        for (const auto& pair : m_pInput->GetKeyStates()) {
-            std::cout << "Touche : " << pair.first << ", Etat : ";
-            // Utilisez un switch pour g�rer les diff�rents �tats de la touche
-            switch (pair.second) {
-            case KeyState::Pressed:
-                std::cout << "Pressed";
-                break;
-            case KeyState::Held:
-                std::cout << "Held";
-                break;
-            case KeyState::Released:
-                std::cout << "Released";
-                break;
-            case KeyState::Inactive:
-                std::cout << "Inactive";
-                break;
-            }
-            std::cout << std::endl;
-        }
+        //m_pInput->Update();
+        //// Affichez la liste des touches et leur �tat
+        //std::cout << "Touches pressees : " << std::endl;
+        //for (const auto& pair : m_pInput->GetKeyStates()) {
+        //    std::cout << "Touche : " << pair.first << ", Etat : ";
+        //    // Utilisez un switch pour g�rer les diff�rents �tats de la touche
+        //    switch (pair.second) {
+        //    case KeyState::Pressed:
+        //        std::cout << "Pressed";
+        //        break;
+        //    case KeyState::Held:
+        //        std::cout << "Held";
+        //        break;
+        //    case KeyState::Released:
+        //        std::cout << "Released";
+        //        break;
+        //    case KeyState::Inactive:
+        //        std::cout << "Inactive";
+        //        break;
+        //    }
+        //    std::cout << std::endl;
+        //}
 
 
 
