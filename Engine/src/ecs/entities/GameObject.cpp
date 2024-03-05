@@ -9,15 +9,10 @@
 #include "../../core/Engine.h"  
 #include "../components/Camera.h"
 
-
-#include "../../renderer/Graphics.h"
-#include "../../core/Defines.h"
 #include <stdexcept>
 
-#include "../../Utils.h"
 #include <DirectXColors.h>
 
-#include "../components/Camera.h"
 #include "../components/Texture.h"
 #include "../components/Transform.h"
 #include "../components/Mesh.h"
@@ -29,80 +24,52 @@
 #include <iostream>
 #include <iomanip>
 
-GameObject::GameObject(ComponentManager* componentManager) : m_cbData() , m_pComponentManager(componentManager)
+
+GameObject::GameObject(ComponentManager* componentManager) : m_cbData(), m_pComponentManager(componentManager)
 {
 }
 
-void GameObject::Initialize(Renderer* renderer, Camera* camera, const XMFLOAT3& position, const XMFLOAT3& rotation, const XMFLOAT3& scale)  {
-    //m_transform = Transform(position, rotation, scale);
-    //m_cbData.model = m_transform.GetTransformMatrix();
+void GameObject::Initialize(Renderer* renderer, Camera* camera, const XMFLOAT3& position, const XMFLOAT3& rotation, const XMFLOAT3& scale) {
+    // Initialisation de l'objet GameObject avec un gestionnaire de composants
+    Transform* defaultTransform = new Transform(position, rotation, scale);  // Création d'un objet Transform par défaut
 
+    // Mise à jour des matrices de transformation du GameObject
+    m_cbData.model = defaultTransform->GetTransformMatrix();  // Obtention de la matrice de transformation du GameObject
+    m_cbData.view = camera->GetViewMatrix();  // Obtention de la matrice de vue de la caméra
+    m_cbData.projection = camera->GetProjectionMatrix();  // Obtention de la matrice de projection de la caméra
 
+    // Initialisation des composants Mesh, Texture et Shader par défaut
+    MeshComponent* defaultMesh = new MeshComponent("Mesh", &m_cbData);  // Création d'un composant Mesh par défaut
+    TextureComponent* defaultTexture = new TextureComponent("Texture");  // Création d'un composant Texture par défaut
 
-    Transform* defaultTransform = new Transform(position, rotation, scale);
+    // Initialisation des composants Mesh et Texture
+    defaultMesh->Initialize(renderer);  // Initialisation du composant Mesh
+    defaultTexture->Initialize(renderer);  // Initialisation du composant Texture
 
-    // Matrices
-    m_cbData.model = defaultTransform->GetTransformMatrix();
-    m_cbData.view = camera->GetViewMatrix();
-    m_cbData.projection = camera->GetProjectionMatrix();
-
-
-    // Initialisation des meshes, textures et shader
-    MeshComponent* defaultMesh = new MeshComponent("Mesh", &m_cbData);
-    PRINT("Mesh import");
-    TextureComponent* defaultTexture = new TextureComponent("Texture");
-    //ShaderComponent* defaultShader = new ShaderComponent("Shader");
-
-    defaultMesh->Initialize(renderer);
-    PRINT("Mesh Init ok");
-    defaultTexture->Initialize(renderer);
-    //defaultShader->Initialize(renderer);
-
-
-    m_pComponentManager->AddComponent(*this, defaultTransform);
-    m_pComponentManager->AddComponent(*this, defaultMesh);
-    m_pComponentManager->AddComponent(*this, defaultTexture);
-    //componentManager->AddComponent(*this, defaultShader);
-
-    //defaultTransform->Update();
-
-
-
+    // Ajout des composants au gestionnaire de composants
+    m_pComponentManager->AddComponent(*this, defaultTransform);  // Ajout du composant Transform au gestionnaire
+    m_pComponentManager->AddComponent(*this, defaultMesh);  // Ajout du composant Mesh au gestionnaire
+    m_pComponentManager->AddComponent(*this, defaultTexture);  // Ajout du composant Texture au gestionnaire
 }
-
 
 void GameObject::Update(Renderer* renderer, Camera* camera)
 {
-    Engine& e = Engine::GetInstance();
-    Component* component = e.m_pComponentManager->GetComponentByType(*this, ComponentType::Transform);
-    Transform* transformComponent = dynamic_cast<Transform*>(component);
+    Engine& e = Engine::GetInstance();  // Obtention de l'instance du moteur
+    Component* component = e.m_pComponentManager->GetComponentByType(*this, ComponentType::Transform);  // Obtention du composant Transform de l'objet
+    Transform* transformComponent = dynamic_cast<Transform*>(component);  // Conversion du composant en type Transform
 
-    std::cout << "Update" << std::endl;
+    std::cout << "Update GameObject" << std::endl;  // Affichage de "Update" dans la console
 
+    float rotationAngle = 0.03;  // Définition de l'angle de rotation
+    float rotationOffset = 0.01;  // Définition du décalage de rotation
+    float translationOffset = transformComponent->GetPosition().z + 0.01f;  // Définition du décalage de translation
+    float fScale = transformComponent->GetScale().z - 0.001f;  // Définition de l'échelle de transformation
 
-    float rotationAngle = 0.03;
-    float rotationOffset = 0.01;
-    //PRINT("Translation offset");
-    //PRINT(m_transform.vPosition.z);
-    float translationOffset = transformComponent->GetPosition().z + 0.01f;
-    float fScale = transformComponent->GetScale().z - 0.001f;
-    //printFloatWithPrecision(m_transform.vScale.z, 4);
+    transformComponent->Rotate(0, 0, rotationAngle);  // Rotation du composant Transform
+    m_cbData.model = transformComponent->GetTransformMatrix();  // Mise à jour de la matrice de transformation du GameObject
 
+    m_pComponentManager->UpdateComponents(this);  // Mise à jour des composants du GameObject
 
-    //m_transform.Translate(m_transform.vPosition.x, m_transform.vPosition.y, translationOffset);
-    transformComponent->Rotate(0, 0, rotationAngle);
-    //m_transform.Scale(fScale, fScale, fScale);
-
-
-    m_cbData.model = transformComponent->GetTransformMatrix();
-
-    m_pComponentManager->UpdateComponents(this);
-
-
-    m_cbData.view = camera->GetViewMatrix();
-    m_cbData.projection = camera->GetProjectionMatrix();
-
-
-
+    m_cbData.view = camera->GetViewMatrix();  // Obtention de la matrice de vue de la caméra
+    m_cbData.projection = camera->GetProjectionMatrix();  // Obtention de la matrice de projection de la caméra
 }
-
