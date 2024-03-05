@@ -3,9 +3,9 @@
 #include "../../renderer/Graphics.h"
 #include "../../core/Defines.h"
 #include <unordered_map>
-
+#include "../components/Camera.h"
 // Pass Instance of GameObjectManager to Work with alive entity
-ComponentManager::ComponentManager(std::shared_ptr<GameObjectManager>& gameObjectManager, Renderer* renderer) : m_pGameObjectManager(gameObjectManager), m_pRenderer(renderer)
+ComponentManager::ComponentManager(std::shared_ptr<GameObjectManager>& gameObjectManager, Renderer* renderer, Camera* camera) : m_pGameObjectManager(gameObjectManager), m_pRenderer(renderer), m_pCamera(camera)
 {
     //PRINT(m_pGameObjectManager.use_count());
 }
@@ -44,12 +44,11 @@ void ComponentManager::AddComponent(GameObject& gameObject, Component* addCompon
     }
 }
 
-void ComponentManager::UpdateComponents(GameObject& gameObject) {
-    for (int i = 0, i < m_pGameObjectManager->GetAliveObjects())
-    for (Component* component : gameObject.componentsList) {
-        if (component->ShouldUpdate()) {
-            component->Update(m_pRenderer);
-        }
+void ComponentManager::UpdateComponents(GameObject* gameObject) {
+    for (const auto& pair : gameObject->componentsList)
+    {
+        std::cout << pair->GetName() << " UPDATE !" << std::endl;
+        pair->Update(m_pRenderer);
     }
 }
 

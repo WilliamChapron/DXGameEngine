@@ -31,10 +31,10 @@ struct ConstantBufferData {
 class GameObject
 {
 public:
-    GameObject();
+    GameObject(ComponentManager* componentManager);
 
-    void Initialize(Renderer* renderer, Camera* camera, ComponentManager* componentManager, const XMFLOAT3& position, const XMFLOAT3& rotation, const XMFLOAT3& scale);
-    void Update(float deltaTime, Renderer* renderer, Camera* camera);
+    void Initialize(Renderer* renderer, Camera* camera, const XMFLOAT3& position, const XMFLOAT3& rotation, const XMFLOAT3& scale);
+    void Update(Renderer* renderer, Camera* camera);
 
     //const Transform& GetTransform() const { return m_transform; }
     const ConstantBufferData& GetConstantBufferData() const { return m_cbData; }
@@ -43,10 +43,10 @@ public:
     std::list<Component*> componentsList;
 
 protected:
-    ComponentManager* componentManager;
     
-    ConstantBufferData m_cbData;
-
 private:
 
+    ConstantBufferData m_cbData;
+
+    ComponentManager* m_pComponentManager;
 };

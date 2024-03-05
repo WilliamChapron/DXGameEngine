@@ -83,12 +83,6 @@ void MeshComponent::Update(Renderer* renderer) {
 	m_constantBuffer->Unmap(0, nullptr);
 
 
-	// Update constant buffer SRV / Sampler
-
-	// Link descriptors heap to command list || EACH FRAME ?
-
-	// Link descriptors attach to shader || EACH FRAME ?
-
 	CD3DX12_GPU_DESCRIPTOR_HANDLE cbvSrvHandle(renderer->m_pCbvSrvHeap.Get()->GetGPUDescriptorHandleForHeapStart());
 	renderer->m_pCommandList->SetGraphicsRootDescriptorTable(0, cbvSrvHandle);
 
@@ -96,8 +90,6 @@ void MeshComponent::Update(Renderer* renderer) {
 	// * Update constant buffer 
 	D3D12_GPU_VIRTUAL_ADDRESS cbvAddress = m_constantBuffer->GetGPUVirtualAddress();
 	renderer->m_pCommandList->SetGraphicsRootConstantBufferView(1, cbvAddress);
-	// Update constant buffer * 
-	//PRINT("Drawing Op");
 
 	// Record commands.
 	renderer->m_pCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

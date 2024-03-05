@@ -19,7 +19,7 @@ void GameObjectManager::RemoveObject(const std::string& name) {
     }
 }
 
-void GameObjectManager::Update(Renderer* renderer) {
+void GameObjectManager::Update(Renderer* renderer, Camera* _m_pCamera) {
     HRESULT hr;
 
     //PRINT("Rendering...");
@@ -28,7 +28,7 @@ void GameObjectManager::Update(Renderer* renderer) {
 
     for (auto& pair : objectMap) {
         GameObject* gameObject = pair.second;
-        gameObject->Update(1.0, renderer, m_pCamera);
+        gameObject->Update(renderer, _m_pCamera);
     }
 
     renderer->Postcommandlist();
@@ -41,6 +41,5 @@ void GameObjectManager::Update(Renderer* renderer) {
     ASSERT_FAILED(hr);
 
     renderer->WaitForPreviousFrame();
-
     //PRINT("Rendering complete");
 }

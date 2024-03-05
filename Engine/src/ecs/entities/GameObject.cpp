@@ -29,11 +29,11 @@
 #include <iostream>
 #include <iomanip>
 
-GameObject::GameObject() : m_cbData()
+GameObject::GameObject(ComponentManager* componentManager) : m_cbData() , m_pComponentManager(componentManager)
 {
 }
 
-void GameObject::Initialize(Renderer* renderer, Camera* camera, ComponentManager* componentManager, const XMFLOAT3& position, const XMFLOAT3& rotation, const XMFLOAT3& scale) {
+void GameObject::Initialize(Renderer* renderer, Camera* camera, const XMFLOAT3& position, const XMFLOAT3& rotation, const XMFLOAT3& scale)  {
     //m_transform = Transform(position, rotation, scale);
     //m_cbData.model = m_transform.GetTransformMatrix();
 
@@ -59,9 +59,9 @@ void GameObject::Initialize(Renderer* renderer, Camera* camera, ComponentManager
     //defaultShader->Initialize(renderer);
 
 
-    componentManager->AddComponent(*this, defaultTransform);
-    componentManager->AddComponent(*this, defaultMesh);
-    componentManager->AddComponent(*this, defaultTexture);
+    m_pComponentManager->AddComponent(*this, defaultTransform);
+    m_pComponentManager->AddComponent(*this, defaultMesh);
+    m_pComponentManager->AddComponent(*this, defaultTexture);
     //componentManager->AddComponent(*this, defaultShader);
 
     //defaultTransform->Update();
@@ -71,15 +71,13 @@ void GameObject::Initialize(Renderer* renderer, Camera* camera, ComponentManager
 }
 
 
-void GameObject::Update(float deltaTime, Renderer* renderer, Camera* camera)
+void GameObject::Update(Renderer* renderer, Camera* camera)
 {
     Engine& e = Engine::GetInstance();
     Component* component = e.m_pComponentManager->GetComponentByType(*this, ComponentType::Transform);
     Transform* transformComponent = dynamic_cast<Transform*>(component);
 
-    m_cbData.view = camera->GetViewMatrix();
-    m_cbData.projection = camera->GetProjectionMatrix();
-
+    std::cout << "Update" << std::endl;
 
 
     float rotationAngle = 0.03;
@@ -97,7 +95,14 @@ void GameObject::Update(float deltaTime, Renderer* renderer, Camera* camera)
 
 
     m_cbData.model = transformComponent->GetTransformMatrix();
-    
-	componentManager->UpdateComponents(*this);
+
+    m_pComponentManager->UpdateComponents(this);
+
+
+    m_cbData.view = camera->GetViewMatrix();
+    m_cbData.projection = camera->GetProjectionMatrix();
+
+
+
 }
 
