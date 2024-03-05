@@ -23,7 +23,7 @@ Renderer::Renderer(Window* pWindow) {
     m_pCommandList.Reset();
     m_pFence.Reset();
     m_pRtvHeap.Reset();
-    m_pCbvHeap.Reset();
+    m_pCbvSrvHeap.Reset();
     m_rtvDescriptorSize = 0;
 
     m_vertexShaderBlob.Reset();
@@ -32,8 +32,6 @@ Renderer::Renderer(Window* pWindow) {
     for (int i = 0; i < m_FRAME_COUNT; ++i) {
         m_pRenderTargets[i].Reset();
     }
-
-
 
     m_pPipelineState.Reset();
     m_pRootSignature.Reset();
@@ -49,14 +47,14 @@ Renderer::~Renderer() {
     }
 
 
-    m_pPipelineState.Reset(); // Utilisation de Reset() pour libérer l'interface COM
-    m_pRootSignature.Reset(); // Utilisation de Reset() pour libérer l'interface COM
+    m_pPipelineState.Reset(); 
+    m_pRootSignature.Reset(); 
 
-    m_vertexShaderBlob.Reset(); // Utilisation de Reset() pour libérer l'interface COM
-    m_pixelShaderBlob.Reset(); // Utilisation de Reset() pour libérer l'interface COM
+    m_vertexShaderBlob.Reset(); 
+    m_pixelShaderBlob.Reset(); 
 
     m_pRtvHeap.Reset(); 
-    m_pCbvHeap.Reset();
+    m_pCbvSrvHeap.Reset();
     m_pFence.Reset(); // Utilisation de Reset() pour libérer l'interface COM
     m_pCommandList.Reset(); // Utilisation de Reset() pour libérer l'interface COM
     m_pCommandAllocator.Reset(); // Utilisation de Reset() pour libérer l'interface COM
@@ -92,7 +90,6 @@ void Renderer::InitializeDirectX12Instances() {
     CreateRootSignature();
     CreatePipelineState();
 
-    m_pCommandList->Close();
 }
 
 
@@ -194,6 +191,10 @@ void Renderer::CreateFence() {
 
     // Create fence event
     m_fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
+    if (m_fenceEvent == nullptr)
+    {
+        HRESULT_FROM_WIN32(GetLastError());
+    }
     ASSERT_FAILED(hr);
     PRINT("Fence event success");
 }
@@ -221,17 +222,16 @@ void Renderer::CreateDescriptorHeap() {
         rtvHandle.Offset(1, m_rtvDescriptorSize);
     }
 
-    // Create CBV descriptor heap
+    // Create CBV / SRV / UAV descriptor heap
     D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc = {};
     cbvHeapDesc.NumDescriptors = 100;
     cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
     cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 
-    hr = m_pDevice->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&m_pCbvHeap));
+    hr = m_pDevice->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&m_pCbvSrvHeap));
     ASSERT_FAILED(hr);
 
-    m_cbvDescriptorSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-    CD3DX12_CPU_DESCRIPTOR_HANDLE cbvHandle(m_pCbvHeap->GetCPUDescriptorHandleForHeapStart());
+    m_cbvSrvDescriptorSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 }
 
 
@@ -239,12 +239,13 @@ HRESULT CompileShaderFromFile(const wchar_t* filePath, const char* entryPoint, c
 {
     DWORD shaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
 
-#if defined(DEBUG) || defined(_DEBUG)
-    shaderFlags |= D3DCOMPILE_DEBUG;
-#endif
+    #if defined(DEBUG) || defined(_DEBUG)
+        shaderFlags |= D3DCOMPILE_DEBUG;
+    #endif
 
     ID3DBlob* errorBlob = nullptr;
     HRESULT hr = D3DCompileFromFile(filePath, nullptr, nullptr, entryPoint, shaderModel, shaderFlags, 0, blob, &errorBlob);
+    ASSERT_FAILED(hr);
 
     if (FAILED(hr))
     {
@@ -257,8 +258,7 @@ HRESULT CompileShaderFromFile(const wchar_t* filePath, const char* entryPoint, c
         return hr;
     }
 
-    if (errorBlob)
-        errorBlob->Release();
+    if (errorBlob) errorBlob->Release();
 
     PRINT("Shader compilation successful");
 
@@ -267,16 +267,14 @@ HRESULT CompileShaderFromFile(const wchar_t* filePath, const char* entryPoint, c
 
 void Renderer::CreateRootSignature() {
 
-   // CD3DX12_DESCRIPTOR_RANGE range[2];
-    CD3DX12_ROOT_PARAMETER parameter[1];
+    CD3DX12_DESCRIPTOR_RANGE range;
+    range.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+        
+    CD3DX12_ROOT_PARAMETER parameter[2];
+    parameter[0].InitAsDescriptorTable(1, &range, D3D12_SHADER_VISIBILITY_ALL);
+    parameter[1].InitAsConstantBufferView(0); //b0
 
- //   range[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
- //   range[1].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 1);
-    parameter[0].InitAsConstantBufferView(0);
-    //parameter[1].InitAsConstantBufferView(1);
 
-   // InitAsDescriptorTable(_countof(range), range, D3D12_SHADER_VISIBILITY_ALL);
-  //  parameter[0].InitAsDescriptorTable(_countof(range), range, D3D12_SHADER_VISIBILITY_ALL);
 
     D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
         D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT | 
@@ -285,12 +283,23 @@ void Renderer::CreateRootSignature() {
         D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS;
 
     CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDesc;
-    rootSignatureDesc.Init(_countof(parameter), parameter, 0, nullptr, rootSignatureFlags);
 
+    CD3DX12_STATIC_SAMPLER_DESC sampler(
+        0,
+        D3D12_FILTER_MIN_MAG_MIP_POINT, // filter
+        D3D12_TEXTURE_ADDRESS_MODE_WRAP,  // addressU
+        D3D12_TEXTURE_ADDRESS_MODE_WRAP,  // addressV
+        D3D12_TEXTURE_ADDRESS_MODE_WRAP, // addressW
+        0.0f,
+        1,
+        D3D12_COMPARISON_FUNC_ALWAYS,
+        D3D12_STATIC_BORDER_COLOR_TRANSPARENT_BLACK,
+        0.0f,
+        D3D12_FLOAT32_MAX,
+        D3D12_SHADER_VISIBILITY_ALL
+    );
 
-
-
-
+    rootSignatureDesc.Init(_countof(parameter), parameter, 1, &sampler, rootSignatureFlags);
 
     ID3DBlob* signature = nullptr;
     ID3DBlob* error = nullptr;
@@ -321,23 +330,9 @@ void Renderer::CreatePipelineState() {
     D3D12_INPUT_ELEMENT_DESC inputElementDescs[] =
     {
         { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-        { "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
+        { "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+        { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 28, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
     };
-
-    
-    //D3D12_RASTERIZER_DESC rasterizerStateDesc {};
-    //rasterizerStateDesc.FillMode = D3D12_FILL_MODE_SOLID;   // Remplissage solide
-    //rasterizerStateDesc.CullMode = D3D12_CULL_MODE_FRONT;    // Désactivation du culling
-    //rasterizerStateDesc.FrontCounterClockwise = TRUE;       // Les triangles sont définis dans le sens inverse des aiguilles d'une montre (orientation des sommets)
-    //rasterizerStateDesc.DepthBias = 0;
-    //rasterizerStateDesc.DepthBiasClamp = 0.0f;
-    //rasterizerStateDesc.SlopeScaledDepthBias = 0;
-    //rasterizerStateDesc.DepthClipEnable = FALSE;             // Activation du test de profondeur
-
-    //rasterizerStateDesc.MultisampleEnable = FALSE;          // Désactivation de l'échantillonnage multiple
-    //rasterizerStateDesc.AntialiasedLineEnable = FALSE;
-
-    //D3D12_BLEND_DESC blendDesc {};
 
     D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc; // a structure to define a pso
     ZeroMemory(&psoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC)); // IMPORTANT ?
@@ -358,16 +353,13 @@ void Renderer::CreatePipelineState() {
     hr = m_pDevice->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&m_pPipelineState));
     ASSERT_FAILED(hr);
 
-
-    //D3D12_RESOURCE_DESC pipelineFormat = pPipelineState->GetDevice();
-
 }
 
 
 
 void Renderer::WaitForPreviousFrame()
 {
-    PRINT("Waiting for previous frame...");
+    //PRINT("Waiting for previous frame...");
 
     // Signal and increment the fence value.
     m_fenceValue++;
@@ -378,6 +370,7 @@ void Renderer::WaitForPreviousFrame()
     // Wait until the previous frame is finished.
     if (m_pFence->GetCompletedValue() < m_fenceValue)
     {
+        //PRINT("RENTRE DANS PREVIOUS FRAME");
         //Check if the GPU has completed all commands associated with the previous fence value
         HANDLE eventHandle = CreateEventEx(nullptr, NULL, false, EVENT_ALL_ACCESS);
 
@@ -393,11 +386,7 @@ void Renderer::WaitForPreviousFrame()
     }
 
 
-    //PRINT("frameIndex");
-    //PRINT(m_frameIndex);
-    //frameIndex = pSwapChain->GetCurrentBackBufferIndex();
 
-    PRINT("Previous frame completed");
 }
 
 
@@ -407,36 +396,38 @@ void Renderer::WaitForPreviousFrame()
 void Renderer::Precommandlist() {
 
     HRESULT hr;
-    PRINT("Populating command list...");
 
     hr = m_pCommandAllocator->Reset();
     ASSERT_FAILED(hr);
 
-    hr = m_pCommandList->Reset(m_pCommandAllocator.Get(), m_pPipelineState.Get());
+    hr = m_pCommandList->Reset(m_pCommandAllocator.Get(), nullptr);
     ASSERT_FAILED(hr);
-
-    m_pCommandList->SetGraphicsRootSignature(m_pRootSignature.Get());
-    m_pCommandList->RSSetViewports(1, m_pViewport);
-    m_pCommandList->RSSetScissorRects(1, m_pScissorRect);
 
     CD3DX12_RESOURCE_BARRIER transitionBarrier = CD3DX12_RESOURCE_BARRIER::Transition(
         m_pRenderTargets[m_frameIndex].Get(),
         D3D12_RESOURCE_STATE_PRESENT,
         D3D12_RESOURCE_STATE_RENDER_TARGET);
-
     m_pCommandList->ResourceBarrier(1, &transitionBarrier);
+
+    ID3D12DescriptorHeap* heaps[] = { m_pCbvSrvHeap.Get() };
+    m_pCommandList->SetDescriptorHeaps(_countof(heaps), heaps);
+
+    m_pCommandList->RSSetViewports(1, m_pViewport);
+    m_pCommandList->RSSetScissorRects(1, m_pScissorRect);
+
+    m_pCommandList->SetGraphicsRootSignature(m_pRootSignature.Get());
+    m_pCommandList->SetPipelineState(m_pPipelineState.Get());
+
 
 
     CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(
         m_pRtvHeap->GetCPUDescriptorHandleForHeapStart(),
         m_frameIndex,
         m_rtvDescriptorSize);
-
-
     m_pCommandList->OMSetRenderTargets(1, &rtvHandle, FALSE, nullptr);
 
 
-    const float clearColor[] = { 0.8f, 0.8f, 0.1f, 1.0f };
+    const float clearColor[] = { 0.18f, 0.18f, 0.18f, 0.0f };
     m_pCommandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
 
 }
@@ -446,18 +437,28 @@ void Renderer::Postcommandlist()
 
     HRESULT hr;
 
-    // #TODO Don't repeat command to each triangle
     CD3DX12_RESOURCE_BARRIER presentBarrier = CD3DX12_RESOURCE_BARRIER::Transition(
         m_pRenderTargets[m_frameIndex].Get(),
         D3D12_RESOURCE_STATE_RENDER_TARGET,
         D3D12_RESOURCE_STATE_PRESENT);
-
     m_pCommandList->ResourceBarrier(1, &presentBarrier);
 
     hr = m_pCommandList->Close();
     ASSERT_FAILED(hr);
 
-    PRINT("Command list populated");
 }
 
 
+//D3D12_RASTERIZER_DESC rasterizerStateDesc {};
+//rasterizerStateDesc.FillMode = D3D12_FILL_MODE_SOLID;   // Remplissage solide
+//rasterizerStateDesc.CullMode = D3D12_CULL_MODE_FRONT;    // Désactivation du culling
+//rasterizerStateDesc.FrontCounterClockwise = TRUE;       // Les triangles sont définis dans le sens inverse des aiguilles d'une montre (orientation des sommets)
+//rasterizerStateDesc.DepthBias = 0;
+//rasterizerStateDesc.DepthBiasClamp = 0.0f;
+//rasterizerStateDesc.SlopeScaledDepthBias = 0;
+//rasterizerStateDesc.DepthClipEnable = FALSE;             // Activation du test de profondeur
+
+//rasterizerStateDesc.MultisampleEnable = FALSE;          // Désactivation de l'échantillonnage multiple
+//rasterizerStateDesc.AntialiasedLineEnable = FALSE;
+
+//D3D12_BLEND_DESC blendDesc {};

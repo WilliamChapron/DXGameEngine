@@ -137,6 +137,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\ecs\components\Mesh.h" />
+    <ClInclude Include="src\ecs\systems\ComponentManager.h" />
+    <ClInclude Include="src\ecs\components\Component.h" />
+    <ClInclude Include="src\DDSTextureLoader.h" />
     <ClInclude Include="extern\d3dx12.h" />
     <ClInclude Include="src\ecs\entities\GameObject.h" />
     <ClInclude Include="src\core\Defines.h" />
@@ -152,9 +156,13 @@
     <ClInclude Include="src\ecs\systems\State.h" />
     <ClInclude Include="src\ecs\systems\StateMachine.h" />
     <ClInclude Include="src\ecs\systems\Time.h" />
-    <ClInclude Include="src\ecs\entities\Triangle.h" />
+    <ClInclude Include="src\ecs\components\Texture.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\ecs\components\Mesh.cpp" />
+    <ClCompile Include="src\ecs\systems\ComponentManager.cpp" />
+    <ClCompile Include="src\ecs\components\Component.cpp" />
+    <ClCompile Include="src\DDSTextureLoader.cpp" />
     <ClCompile Include="src\ecs\components\Shader.cpp" />
     <ClCompile Include="src\ecs\components\Shader.h.cpp" />
     <ClCompile Include="src\ecs\entities\GameObject.cpp" />
@@ -169,9 +177,9 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ecs\systems\StateMachine.cpp" />
     <ClCompile Include="src\ecs\systems\Time.cpp" />
-    <ClCompile Include="src\ecs\entities\Triangle.cpp" />
     <ClCompile Include="src\Utils.cpp" />
     <ClCompile Include="src\Utils.h" />
+    <ClCompile Include="src\ecs\components\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="res\shader\ShaderTriangle.hlsl">
@@ -182,6 +190,9 @@
     <Text Include="res\shader\Shader.hlsl">
       <FileType>Document</FileType>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\texture\texture.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

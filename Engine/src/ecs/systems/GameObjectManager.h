@@ -2,37 +2,28 @@
 
 #include "../../include.h"
 #include "../../core/Defines.h"
+#include "../entities/GameObject.h"
 #include <vector>
 #include <unordered_map>
 #include <string>
-#include "../entities/GameObject.h"
-
-using namespace std;
 
 class Renderer;
-class GameObject;
+class Camera;
 
-
-// Classe GameObject
 class GameObjectManager {
-private:
-
-    std::unordered_map<std::string, GameObject> objectMap; // Map des objets avec leurs indices
-
-
 public:
-    GameObjectManager();
+    GameObjectManager(Camera* camera);
 
-    // Ajouter un triangle au gestionnaire
-    void AddObject(std::string name, const GameObject& objects);
-
-    // Supprimer un triangle du gestionnaire
-    void RemoveObject(std::string name);
-
-    // Mettre à jour un triangle existant
-    //void UpdateObject(std::string name, const GameObject& newObject);
-
-    // Méthode de rendu des triangles
+    void AddObject(const std::string& name, GameObject* object);
+    void RemoveObject(const std::string& name);
     void Update(Renderer* renderer);
 
+    inline const std::unordered_map<std::string, GameObject*>& GetAliveObjects() const {
+        return objectMap;
+    }
+
+private:
+    Camera* m_pCamera;
+
+    std::unordered_map<std::string, GameObject*> objectMap;
 };

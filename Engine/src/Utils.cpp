@@ -17,3 +17,13 @@ void PrintMatrix(const DirectX::XMFLOAT4X4& matrix)
 
     std::cout << std::endl;
 }
+
+
+void printFloatWithPrecision(float value, int precision) {
+    std::cout << std::fixed << std::setprecision(precision) << value << std::endl;
+}
+
+std::wstring stringToWString(const std::string& narrowString) {
+    // Conversion en chaîne de caractères large
+    return std::wstring(narrowString.begin(), narrowString.end());
+}
