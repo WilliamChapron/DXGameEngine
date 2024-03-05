@@ -54,15 +54,15 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
     m_pComponentManager = new ComponentManager(m_pGameObjectManager, m_pRenderer);
 
      //Create Objects
-    m_pCube = new GameObject;
-    m_pCube2 = new GameObject;
+    m_pCube = new GameObject(m_pRenderer, m_pCamera, m_pComponentManager);
+    //m_pCube2 = new GameObject;
 
-    m_pCube->Initialize(m_pRenderer, m_pCamera, m_pComponentManager, XMFLOAT3(0.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
-    m_pCube2->Initialize(m_pRenderer, m_pCamera, m_pComponentManager, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
+    m_pCube->Initialize(XMFLOAT3(0.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
+    //m_pCube2->Initialize(m_pRenderer, m_pCamera, m_pComponentManager, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
 
 
     m_pGameObjectManager->AddObject("Cube", m_pCube);
-    m_pGameObjectManager->AddObject("Cube2", m_pCube2);
+    //m_pGameObjectManager->AddObject("Cube2", m_pCube2);
 
 
     // Drawing

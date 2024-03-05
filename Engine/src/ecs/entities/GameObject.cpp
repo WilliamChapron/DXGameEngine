@@ -29,12 +29,22 @@
 #include <iostream>
 #include <iomanip>
 
-GameObject::GameObject() : m_vertexBuffer(nullptr), m_indexBuffer(nullptr), m_constantBuffer(nullptr), m_mappedConstantBuffer(nullptr), m_vertexBufferView({}), m_indexBufferView({}), m_cbData()
+GameObject::GameObject(Renderer* renderer, Camera* camera, ComponentManager* componentManager) : m_cbData(), m_pRenderer(renderer), m_pCamera(camera), m_pComponentManager(componentManager) { }
+
+void GameObject::Initialize(const XMFLOAT3& position, const XMFLOAT3& rotation, const XMFLOAT3& scale) 
 {
-}
+    Transform* defaultTransform = new Transform(position, rotation, scale);
+    m_pComponentManager->AddComponent(*this, defaultTransform);
+    
+    m_cbData.model = defaultTransform->GetTransformMatrix();
+    m_cbData.view = m_pCamera->GetViewMatrix();
+    m_cbData.projection = m_pCamera->GetProjectionMatrix();
 
-void GameObject::Initialize(Renderer* renderer, Camera* camera, ComponentManager* componentManager, const XMFLOAT3& position, const XMFLOAT3& rotation, const XMFLOAT3& scale) {
+    MeshComponent* defaultMesh = new MeshComponent("Mesh");
+    defaultMesh->Initialize(m_pRenderer);
 
+    m_pComponentManager->AddComponent(*this, defaultTransform);
+    m_pComponentManager->AddComponent(*this, defaultMesh);
 }
 
 

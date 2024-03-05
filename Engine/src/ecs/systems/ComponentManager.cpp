@@ -17,16 +17,6 @@ ComponentManager::ComponentManager(std::shared_ptr<GameObjectManager>& gameObjec
 void ComponentManager::AddComponent(GameObject& gameObject, Component* addComponent) {
     std::unordered_map<std::string, GameObject*> aliveObjects = m_pGameObjectManager->GetAliveObjects();
 
-    // let's check if object is in game object manager
-    //auto it = std::find_if(aliveObjects.begin(), aliveObjects.end(), [gameObject](const auto& pair) {
-    //    return pair.second == gameObject;
-    //});
-
-    //if (it == aliveObjects.end()) {
-    //    PRINT("Game object not in game object manager ");
-    //    return;
-    //}
-
     // Check if the component is already in the object
     for (const Component* component : gameObject.componentsList) {
         if (component->GetName() == addComponent->GetName()) {
@@ -48,6 +38,7 @@ void ComponentManager::UpdateComponents(GameObject& gameObject) {
 
     for (Component* component : gameObject.componentsList) {
         if (component->ShouldUpdate()) {
+            std::cout << component->GetName() << std::endl;
             component->Update(m_pRenderer);
         }
     }

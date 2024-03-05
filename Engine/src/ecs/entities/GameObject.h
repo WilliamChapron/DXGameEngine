@@ -37,9 +37,9 @@ struct ConstantBufferData {
 class GameObject
 {
 public:
-    GameObject();
+    GameObject(Renderer* renderer, Camera* camera, ComponentManager* componentManager);
 
-    void Initialize(Renderer* renderer, Camera* camera, ComponentManager* componentManager, const XMFLOAT3& position, const XMFLOAT3& rotation, const XMFLOAT3& scale);
+    void Initialize(const XMFLOAT3& position, const XMFLOAT3& rotation, const XMFLOAT3& scale);
     void Update(float deltaTime, Renderer* renderer, Camera* camera);
 
     //const Transform& GetTransform() const { return m_transform; }
@@ -54,18 +54,21 @@ public:
     std::list<Component*> componentsList;
 
 protected:
+    Renderer* m_pRenderer;
+    Camera* m_pCamera;
+    ComponentManager* m_pComponentManager;
 
     ConstantBufferData m_cbData;
 
-    ID3D12Resource* m_constantBuffer;
-    UINT8* m_mappedConstantBuffer;
+    //ID3D12Resource* m_constantBuffer;
+    //UINT8* m_mappedConstantBuffer;
 
-    // Vertex buffer
-    ID3D12Resource* m_vertexBuffer;
-    D3D12_VERTEX_BUFFER_VIEW m_vertexBufferView;
+    //// Vertex buffer
+    //ID3D12Resource* m_vertexBuffer;
+    //D3D12_VERTEX_BUFFER_VIEW m_vertexBufferView;
 
-    ID3D12Resource* m_indexBuffer;
-    D3D12_INDEX_BUFFER_VIEW m_indexBufferView;
+    //ID3D12Resource* m_indexBuffer;
+    //D3D12_INDEX_BUFFER_VIEW m_indexBufferView;
     //Transform m_transform;
 
 
