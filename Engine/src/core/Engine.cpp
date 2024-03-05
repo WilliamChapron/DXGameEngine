@@ -55,14 +55,14 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
 
     //Create Objects
     m_pCube = new GameObject(m_pComponentManager);
-    //m_pCube2 = new GameObject;
+    m_pCube2 = new GameObject(m_pComponentManager);
 
-    m_pCube->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(0.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
-    //m_pCube2->Initialize(m_pRenderer, m_pCamera, m_pComponentManager, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
+    m_pCube->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(-0.5f, 0.0f, 0.0f), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
+    m_pCube2->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
 
 
     m_pGameObjectManager->AddObject("Cube", m_pCube);
-    //m_pGameObjectManager->AddObject("Cube2", m_pCube2);
+    m_pGameObjectManager->AddObject("Cube2", m_pCube2);
 
     // Drawing
     SetEngineRenderable(true);
@@ -109,7 +109,7 @@ void Engine::Run() {
 
         m_pWindow->UpdateTitleWithFPS(time.GetFramePerSecond());
 
-        //m_pTriangle2->GetComponent<Transform>(ComponentType::Transform)->Translate(0.005,0.005,0.0);
+        //m_pCube2->GetComponent<Transform>(ComponentType::Transform)->Translate(0.005,0.005,0.0);
         //PRINT(m_pTriangle2->GetComponent<Transform>(ComponentType::Transform)->GetPosition().x);
 
         //------ TEST INPUT
