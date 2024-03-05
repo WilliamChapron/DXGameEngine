@@ -13,6 +13,8 @@
 #include <unordered_map>
 #include <string>
 
+#include "../systems/ComponentManager.h"
+
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
 
@@ -20,14 +22,6 @@ class Renderer;
 class Component;
 class ComponentManager;
 class Camera;
-
-// Vertex
-struct Vertex
-{
-    XMFLOAT3 Pos;
-    XMFLOAT4 Color;
-    XMFLOAT2 Uv;
-};
 
 struct ConstantBufferData {
     XMFLOAT4X4 model;
@@ -38,10 +32,10 @@ struct ConstantBufferData {
 class GameObject
 {
 public:
-    GameObject();
+    GameObject(ComponentManager* componentManager);
 
-    void Initialize(Renderer* renderer, Camera* camera, ComponentManager* componentManager, const XMFLOAT3& position, const XMFLOAT3& rotation, const XMFLOAT3& scale);
-    void Update(float deltaTime, Renderer* renderer, Camera* camera);
+    void Initialize(Renderer* renderer, Camera* camera, const XMFLOAT3& position, const XMFLOAT3& rotation, const XMFLOAT3& scale);
+    void Update(Renderer* renderer, Camera* camera);
 
     //const Transform& GetTransform() const { return m_transform; }
     const ConstantBufferData& GetConstantBufferData() const { return m_cbData; }
@@ -61,6 +55,8 @@ public:
 
 
 protected:
+    
+private:
 
     ConstantBufferData m_cbData;
 
@@ -76,10 +72,5 @@ protected:
 
     ComponentManager* m_pComponentManager;
     //Transform m_transform;
-
-
-
-
-private:
 
 };

@@ -10,7 +10,7 @@ using namespace DirectX;
 
 Camera::Camera(float fov, float aspectRatio, float nearPlane, float farPlane) {
     // Init View Matrix
-    m_position = XMFLOAT3(0.0f, 0.0f, -2.0f);
+    m_position = XMFLOAT3(0.0f, -5.0f, -2.0f);
     m_target = XMFLOAT3(0.0f, 0.0f, 0.0f);
     m_up = XMFLOAT3(0.0f, 1.0f, 0.0f);
 

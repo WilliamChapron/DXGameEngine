@@ -61,7 +61,7 @@ bool IsColliding(XMFLOAT3& vectorPositionInput, XMFLOAT3& vectorPositionOutput) 
 
     return normalizedDistance.x <= 0 && normalizedDistance.y <= 0 && normalizedDistance.x <= 0;
 }
-void GameObjectManager::Update(Renderer* renderer) {
+void GameObjectManager::Update(Renderer* renderer, Camera* _m_pCamera) {
     HRESULT hr;
 
     //PRINT("Rendering...");
@@ -75,6 +75,7 @@ void GameObjectManager::Update(Renderer* renderer) {
 
     for (auto& pair : objectMap) {
         GameObject* gameObject = pair.second;
+      
         gameObject->Update(1.0, renderer, m_pCamera);
 
         // try collide = object on which we test collide
@@ -124,6 +125,5 @@ void GameObjectManager::Update(Renderer* renderer) {
     ASSERT_FAILED(hr);
 
     renderer->WaitForPreviousFrame();
-
     //PRINT("Rendering complete");
 }
