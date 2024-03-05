@@ -18,6 +18,7 @@ using Microsoft::WRL::ComPtr;
 
 class Renderer;
 class Component;
+class ComponentManager;
 class Camera;
 
 // Vertex
@@ -48,10 +49,16 @@ public:
 
     ID3D12Resource* GetConstantBuffer() const { return m_constantBuffer; }
     ID3D12Resource* GetIndexBuffer() const { return m_indexBuffer; }
+
+
+    template <typename T>
+    T* GetComponent(ComponentType type);
+
     const D3D12_VERTEX_BUFFER_VIEW& GetVertexBufferView() const { return m_vertexBufferView; }
     const D3D12_INDEX_BUFFER_VIEW& GetIndexBufferView() const { return m_indexBufferView; }
 
     std::list<Component*> componentsList;
+
 
 protected:
 
@@ -66,6 +73,8 @@ protected:
 
     ID3D12Resource* m_indexBuffer;
     D3D12_INDEX_BUFFER_VIEW m_indexBufferView;
+
+    ComponentManager* m_pComponentManager;
     //Transform m_transform;
 
 

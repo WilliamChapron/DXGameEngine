@@ -37,6 +37,8 @@ void GameObject::Initialize(Renderer* renderer, Camera* camera, ComponentManager
     //m_transform = Transform(position, rotation, scale);
     //m_cbData.model = m_transform.GetTransformMatrix();
 
+    m_pComponentManager = componentManager;
+
 
 
     Transform* defaultTransform = new Transform(position, rotation, scale);
@@ -126,20 +128,27 @@ void GameObject::Initialize(Renderer* renderer, Camera* camera, ComponentManager
 }
 
 
+template <typename T>
+T* GameObject::GetComponent(ComponentType type) {
+    Component* component = m_pComponentManager->GetComponentByType(*this, type);
+    return dynamic_cast<T*>(component);
+}
+
+
+
 void GameObject::Update(float deltaTime, Renderer* renderer, Camera* camera)
 {
     HRESULT hr;
 
-    Engine& e = Engine::GetInstance();
-    Component* component = e.m_pComponentManager->GetComponentByType(*this, ComponentType::Transform);
-    Transform* transformComponent = dynamic_cast<Transform*>(component);
+    
+    Transform* transformComponent = this->GetComponent<Transform>(ComponentType::Transform);
 
     m_cbData.view = camera->GetViewMatrix();
     m_cbData.projection = camera->GetProjectionMatrix();
 
 
 
-    float rotationAngle = 0.03;
+    float rotationAngle = 90.0;
     float rotationOffset = 0.01;
     //PRINT("Translation offset");
     //PRINT(m_transform.vPosition.z);
@@ -149,8 +158,8 @@ void GameObject::Update(float deltaTime, Renderer* renderer, Camera* camera)
 
 
     //m_transform.Translate(m_transform.vPosition.x, m_transform.vPosition.y, translationOffset);
-    transformComponent->Rotate(0, 0, rotationAngle);
-    printFloatWithPrecision(transformComponent->GetRotation().z,1);
+    transformComponent->Rotate(0.003, 0, 0);
+    //printFloatWithPrecision(transformComponent->GetRotation().z,1);
     //m_transform.Scale(fScale, fScale, fScale);
 
 
