@@ -28,9 +28,9 @@ public:
         return instance;
     }
 
-    GameObject* m_pTriangle;
-    GameObject* m_pTriangle2;
-    GameObject* m_pTriangle3;
+    GameObject* m_pCube;
+    GameObject* m_pCube2;
+    GameObject* m_pCube3;
     Renderer* m_pRenderer;
     std::shared_ptr<GameObjectManager> m_pGameObjectManager;
     ComponentManager* m_pComponentManager;
