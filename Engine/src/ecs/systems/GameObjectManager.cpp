@@ -1,8 +1,8 @@
-#include "GameObjectManager.h"
+ï»¿#include "GameObjectManager.h"
 #include "../../renderer/Graphics.h" // renderer
 
-// Constructeur par défaut
-GameObjectManager::GameObjectManager() {}
+// Constructeur par dï¿½faut
+GameObjectManager::GameObjectManager(Camera* camera) : m_pCamera(camera) {}
 
 // Ajouter un objet au gestionnaire
 void GameObjectManager::AddObject(const std::string& name, GameObject* object) {
@@ -28,7 +28,7 @@ void GameObjectManager::Update(Renderer* renderer) {
 
     for (auto& pair : objectMap) {
         GameObject* gameObject = pair.second;
-        gameObject->Update(1.0, renderer);
+        gameObject->Update(1.0, renderer, m_pCamera);
     }
 
     renderer->Postcommandlist();

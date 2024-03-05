@@ -1,37 +1,114 @@
-#include "Input.h"
-#include "../../core/Defines.h"
-#include <Windows.h>
-#define PRINT(x) std::cout << x << std::endl
+ï»¿#include "Input.h"
+#include "State.h"
 
-Input::Input() {}
 
-Input::~Input() {}
+Input::Input() {
+    keyStates.clear();
+    // Initialisation de l'ï¿½tat des touches clavier 
+    // Gï¿½re les touches Z, Q, S, D
+    keyStates['Z'] = KeyState::Inactive;
+    keyStates['Q'] = KeyState::Inactive;
+    keyStates['S'] = KeyState::Inactive;
+    keyStates['D'] = KeyState::Inactive;
+    // Gï¿½re les touches Espace et Shift
+    keyStates[VK_SPACE] = KeyState::Inactive;
+    keyStates[VK_SHIFT] = KeyState::Inactive;
+    // Gï¿½re les touches des flï¿½ches directionnelles
+    keyStates[VK_UP] = KeyState::Inactive;
+    keyStates[VK_DOWN] = KeyState::Inactive;
+    keyStates[VK_LEFT] = KeyState::Inactive;
+    keyStates[VK_RIGHT] = KeyState::Inactive;
+    // Gï¿½re le bouton gauche de la souris
+    keyStates[VK_LBUTTON] = KeyState::Inactive;
+    // Gï¿½re le bouton droit de la souris
+    keyStates[VK_RBUTTON] = KeyState::Inactive;
+}
 
-void Input::update() {
-    previousKeys = currentKeys;
-    for (int i = 0; i < 256; ++i) {
-        currentKeys[i] = (GetAsyncKeyState(i) & 0x8000) != 0;
+void Input::Update() {
+    // Met ï¿½ jour l'ï¿½tat des touches clavier
+    HandleKeyboardInput();
+    // Gï¿½re les clics de souris
+    HandleMouseInput();
+    // Trouve la position de la souris
+    GetMousePosition();
+}
+
+void Input::HandleKeyboardInput() {
+    // Stocke l'ï¿½tat de chaque touche dans keyStates
+    // Gï¿½re les touches Z, Q, S, D
+    keyStates['Z'] = GetKeyStateHelper('Z');
+    keyStates['Q'] = GetKeyStateHelper('Q');
+    keyStates['S'] = GetKeyStateHelper('S');
+    keyStates['D'] = GetKeyStateHelper('D');
+    // Gï¿½re les touches Espace et Shift
+    keyStates[VK_SPACE] = GetKeyStateHelper(VK_SPACE);
+    keyStates[VK_SHIFT] = GetKeyStateHelper(VK_SHIFT);
+    // Gï¿½re les touches des flï¿½ches directionnelles
+    keyStates[VK_UP] = GetKeyStateHelper(VK_UP);
+    keyStates[VK_DOWN] = GetKeyStateHelper(VK_DOWN);
+    keyStates[VK_LEFT] = GetKeyStateHelper(VK_LEFT);
+    keyStates[VK_RIGHT] = GetKeyStateHelper(VK_RIGHT);
+}
+
+void Input::HandleMouseInput() {
+    // Vï¿½rifie si le bouton gauche de la souris est enfoncï¿½
+    keyStates[VK_LBUTTON] = GetKeyStateHelper(VK_LBUTTON);
+
+    // Vï¿½rifie si le bouton droit de la souris est enfoncï¿½
+    keyStates[VK_RBUTTON] = GetKeyStateHelper(VK_RBUTTON);
+}
+
+KeyState Input::GetKeyStateHelper(char key) const {
+    // Rï¿½cupï¿½re l'ï¿½tat actuel de la touche
+    bool isKeyDown = GetAsyncKeyState(key) & 0x8000;
+    // Recherche de l'ï¿½tat prï¿½cï¿½dent de la touche dans keyStates
+    auto search = keyStates.find(key);
+    KeyState previousState = search->second;
+
+    // Si la touche est enfoncï¿½e 
+    if (isKeyDown) {
+        // Si la touche ï¿½tait enfoncï¿½e avant
+        if (previousState == KeyState::Pressed || previousState == KeyState::Held) {
+            return KeyState::Held;
+        }
+        // Si la touche n'ï¿½tait pas enfoncï¿½e avant
+        else {
+            return KeyState::Pressed;
+        }
     }
-    PRINT("Input udapted"); //Check si l'input est updated.
+    // Si la touche n'est pas enfoncï¿½e 
+    else {
+        // Si la touche ï¿½tait enfoncï¿½e avant
+        if (previousState == KeyState::Pressed || previousState == KeyState::Held) {
+            return KeyState::Released;
+        }
+        // Si la touche n'ï¿½tait pas enfoncï¿½e avant
+        else {
+            return KeyState::Inactive;
+        }
+    }
 }
 
-bool Input::isKeyDown(int keyCode) const {
-    auto it = currentKeys.find(keyCode);
-    return it == currentKeys.end() && it->second;
+
+KeyState Input::GetKeyState(char key) const {
+    // Recherche la touche dans le unordered_map keyStates
+    auto it = keyStates.find(key);
+    // Si la touche est trouvï¿½e, retourne son ï¿½tat
+    if (it != keyStates.end()) {
+        return it->second;
+    }
+    else {
+        // Si la touche n'est pas trouvï¿½e, retourne false (non pressï¿½e)
+        return KeyState::Inactive;
+    }
 }
 
-bool Input::isKeyUp(int keyCode) const {
-    auto it = currentKeys.find(keyCode);
-    return it == currentKeys.end() || !it->second;
+const std::unordered_map<char, KeyState>& Input::GetKeyStates() const {
+    return keyStates;
 }
 
-bool Input::isKeyPressed(int keyCode) const {
-    auto currentIt = currentKeys.find(keyCode);
-    auto previousIt = previousKeys.find(keyCode);
-    return currentIt != currentKeys.end() && currentIt->second &&
-        (previousIt == previousKeys.end() || !previousIt->second);
-}
-
-bool Input::isMouseDown() const {
-    return GetAsyncKeyState(VK_LBUTTON) & 0x8000; // Check si le click gauche est préssé 
+POINT Input::GetMousePosition() const {
+    POINT cursorPos;
+    GetCursorPos(&cursorPos); // Obtient la position actuelle du curseur
+    return cursorPos; // Retourne les coordonnï¿½es actuelles de la souris
 }
