@@ -18,9 +18,18 @@ ComponentManager::ComponentManager(std::shared_ptr<GameObjectManager>& gameObjec
 int ComponentManager::AddTextureToResources(Component* addComponent) {
     // WORKING ON TEXTURE
     if (dynamic_cast<TextureComponent*>(addComponent)) {
+        PRINT("DYNAMIC CAST");
         int componentID = ++m_currentComponentID;
         // #TODO check si existe déja 
+        addComponent->GetName();
         m_textureComponents[componentID] = static_cast<TextureComponent*>(addComponent);
+        PRINT("Push work");
+
+        //std::map<int, TextureComponent*> theArray = GetTextureComponents();
+        //for (const auto& pair : theArray) {
+        //    std::cout << "Component ID: " << pair.first << std::endl;
+        //    std::cout << "Texture: " << pair.second->GetName() << std::endl;
+        //}
         return componentID; // Offset??
     }
     return 0;
@@ -50,15 +59,13 @@ void ComponentManager::AddComponent(GameObject& gameObject, Component* addCompon
 
 
 
-    PRINT("Push component ");
+    //PRINT("Push component ");
     gameObject.componentsList.push_back(addComponent);
 
     
-    for (const Component* component : gameObject.componentsList) {
-        std::cout << "    Component: " << component->GetName() << std::endl;
-    }
-
-    AddTextureToResources(addComponent);
+    //for (const Component* component : gameObject.componentsList) {
+    //    std::cout << "    Component: " << component->GetName() << std::endl;
+    //}
 }
 
 std::map<int, TextureComponent*> ComponentManager::GetTextureComponents() {

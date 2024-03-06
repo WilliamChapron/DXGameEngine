@@ -30,6 +30,7 @@ GameObject::GameObject(ComponentManager* componentManager) : m_cbData(), m_pComp
 }
 
 void GameObject::Initialize(Renderer* renderer, Camera* camera, const XMFLOAT3& position, const XMFLOAT3& rotation, const XMFLOAT3& scale, std::string textureName) {
+    PRINT("Creation des component");
     // Initialisation de l'objet GameObject avec un gestionnaire de composants
     Transform* defaultTransform = new Transform(position, rotation, scale);  // Création d'un objet Transform par défaut
 
@@ -40,8 +41,7 @@ void GameObject::Initialize(Renderer* renderer, Camera* camera, const XMFLOAT3& 
 
 
 
-    TextureComponent* defaultTexture = new TextureComponent(textureName);  
-    MeshComponent* defaultMesh = new MeshComponent("Mesh", &m_cbData);  
+
 
 
     // Initialisation des composants Mesh et Texture
@@ -79,8 +79,18 @@ void GameObject::Initialize(Renderer* renderer, Camera* camera, const XMFLOAT3& 
     int numElementsV = sizeof(cubeVertices) / sizeof(cubeVertices[0]);
     int numElementsI = sizeof(cubeIndices) / sizeof(cubeIndices[0]);
 
+    TextureComponent* defaultTexture = new TextureComponent(textureName);
+    MeshComponent* defaultMesh = new MeshComponent("Mesh", &m_cbData);
+
     // Add to resource manager before init
     int textureComponentID = m_pComponentManager->AddTextureToResources(defaultTexture);
+
+    PRINT("COmponentIDPRINT");
+    PRINT(textureComponentID);
+
+
+
+
 
     defaultTexture->Initialize(renderer, textureComponentID);  // Initialisation du composant Texture
     defaultMesh->Initialize(renderer, cubeVertices, numElementsV, cubeIndices, numElementsI);
@@ -90,6 +100,8 @@ void GameObject::Initialize(Renderer* renderer, Camera* camera, const XMFLOAT3& 
     m_pComponentManager->AddComponent(*this, defaultTransform);  // Ajout du composant Transform au gestionnaire
     m_pComponentManager->AddComponent(*this, defaultTexture);  // Ajout du composant Texture au gestionnaire
     m_pComponentManager->AddComponent(*this, defaultMesh);  // Ajout du composant Mesh au gestionnaire
+
+    PRINT("Suivant");
 
 }
 

@@ -56,19 +56,25 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
     //Create Objects
     m_pCube = new GameObject(m_pComponentManager);
     m_pCube2 = new GameObject(m_pComponentManager);
+    m_pCube3 = new GameObject(m_pComponentManager);
+    m_pCube4 = new GameObject(m_pComponentManager);
 
     m_pCube->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(-0.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), "texture");
     m_pCube2->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(0.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), "texture2");
+    m_pCube3->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), "texture");
+    m_pCube4->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(1.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), "texture2");
 
 
     m_pGameObjectManager->AddObject("Cube", m_pCube);
     m_pGameObjectManager->AddObject("Cube2", m_pCube2);
+    m_pGameObjectManager->AddObject("Cube3", m_pCube3);
+    m_pGameObjectManager->AddObject("Cube4", m_pCube4);
 
-    std::map<int, TextureComponent*> theArray = m_pComponentManager->GetTextureComponents();
-    for (const auto& pair : theArray) {
-        std::cout << "Component ID: " << pair.first << std::endl;
-        std::cout << "Texture: " << pair.second->GetName() << std::endl;
-    }
+    //std::map<int, TextureComponent*> theArray = m_pComponentManager->GetTextureComponents();
+    //for (const auto& pair : theArray) {
+    //    std::cout << "Component ID: " << pair.first << std::endl;
+    //    std::cout << "Texture: " << pair.second->GetName() << std::endl;
+    //}
 
 
     // Drawing
