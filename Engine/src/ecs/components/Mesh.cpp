@@ -3,6 +3,7 @@
 #include "../../core/Defines.h"
 #include "Component.h"
 #include "../entities/GameObject.hpp"
+#include "../../Utils.h"
 
 Mesh::Mesh()
 {
@@ -19,7 +20,6 @@ void Mesh::Initialize(ConstantBufferData* cbData, Renderer* renderer, Vertex* ve
     m_numVertices = numVertices;
     m_numIndices = numIndices;
 
-    m_cbData = cbData;
 
     //PRINT("NUMelement");
     //PRINT(numElementsI);
@@ -43,11 +43,15 @@ void Mesh::Initialize(ConstantBufferData* cbData, Renderer* renderer, Vertex* ve
     );
     ASSERT_FAILED(hr);
 
+    std::cout << "Model Matrix during initialization:" << std::endl;
+    PrintMatrix(cbData->model);
+
+
     // Mappage du tampon de constantes pour la copie des données
     hr = m_constantBuffer->Map(0, nullptr, reinterpret_cast<void**>(&m_mappedConstantBuffer));
     ASSERT_FAILED(hr);
     // Copie des données des constantes
-    memcpy(m_mappedConstantBuffer, m_cbData, sizeof(ConstantBufferData));
+    memcpy(m_mappedConstantBuffer, cbData, sizeof(ConstantBufferData));
     m_constantBuffer->Unmap(0, nullptr);
 }
 

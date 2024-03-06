@@ -13,6 +13,8 @@ public:
     void UpdateConstantBuffer(ConstantBufferData* cbData);
     void Update(Renderer* renderer) override;
 
+    inline ConstantBufferData* GetConstantBufferData() const { return m_cbData; }
+
 private:
     ConstantBufferData* m_cbData;
     Mesh* m_pMesh;

@@ -108,6 +108,7 @@ void GameObject::Update(Renderer* renderer, Camera* camera)
     MeshRenderer* meshComponent = GetComponent<MeshRenderer>(ComponentType::MeshRenderer);
 
 
+
     ConstantBufferData* sendToMeshCbData = new ConstantBufferData();
     sendToMeshCbData->view = camera->GetViewMatrix();
     sendToMeshCbData->projection = camera->GetProjectionMatrix();

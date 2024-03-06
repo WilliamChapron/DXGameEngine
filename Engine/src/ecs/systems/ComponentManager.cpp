@@ -60,8 +60,8 @@ std::map<int, TextureComponent*> ComponentManager::GetTextureComponents() {
 void ComponentManager::UpdateComponents(GameObject* gameObject) {
     for (const auto& pair : gameObject->componentsList)
     {
-        PRINT("pair->GetName()");
-        PRINT(pair->GetName());
+        //PRINT("pair->GetName()");
+        //PRINT(pair->GetName());
         //std::cout << pair->GetName() << " UPDATE !" << std::endl;
         pair->Update(m_pRenderer);
     }

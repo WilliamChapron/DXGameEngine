@@ -28,7 +28,6 @@ public:
 	void Initialize(ConstantBufferData* cbData, Renderer* renderer, Vertex* vertices, int numVertices, UINT* indices, int numIndices);
 
 private:
-	ConstantBufferData* m_cbData;
 
 	// Vertex buffer
 	ID3D12Resource* m_vertexBuffer;
@@ -46,7 +45,6 @@ private:
 	int m_numIndices;
 
 public:
-	ConstantBufferData* GetConstantBufferData() const { return m_cbData; }
 	ID3D12Resource* GetVertexBuffer() const { return m_vertexBuffer; }
 	const D3D12_VERTEX_BUFFER_VIEW& GetVertexBufferView() const { return m_vertexBufferView; }
 	ID3D12Resource* GetIndexBuffer() const { return m_indexBuffer; }

@@ -3,6 +3,7 @@
 #include "../../core/Defines.h"
 #include "../components/Component.h"
 #include "MeshRenderer.h"
+#include "../../Utils.h"
 
 MeshRenderer::MeshRenderer(std::string name, ConstantBufferData* cbData, Mesh* mesh) : Component(name, ComponentType::MeshRenderer, false)
 {
@@ -25,6 +26,10 @@ void MeshRenderer::Update(Renderer* renderer) {
     memcpy(m_pMesh->GetMappedConstantBuffer(), m_cbData, sizeof(ConstantBufferData));
     m_pMesh->GetConstantBuffer()->Unmap(0, nullptr);
 
+
+    // Affichage de la matrice modèle
+    //std::cout << "Model Matrix of" << GetName() << std::endl;
+    //PrintMatrix(m_cbData->model);
 
     D3D12_GPU_VIRTUAL_ADDRESS cbvAddress = m_pMesh->GetConstantBuffer()->GetGPUVirtualAddress();
     renderer->m_pCommandList->SetGraphicsRootConstantBufferView(1, cbvAddress);
