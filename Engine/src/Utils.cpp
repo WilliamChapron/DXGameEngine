@@ -1,7 +1,5 @@
 #include "Utils.h"
 #include "core/Defines.h"
-#include <iostream>
-#include <iomanip>
 
 void PrintMatrix(const DirectX::XMFLOAT4X4& matrix)
 {

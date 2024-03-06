@@ -64,6 +64,13 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
     m_pGameObjectManager->AddObject("Cube", m_pCube);
     m_pGameObjectManager->AddObject("Cube2", m_pCube2);
 
+    std::map<int, TextureComponent*> theArray = m_pComponentManager->GetTextureComponents();
+    for (const auto& pair : theArray) {
+        std::cout << "Component ID: " << pair.first << std::endl;
+        std::cout << "Texture: " << pair.second->GetName() << std::endl;
+    }
+
+
     // Drawing
     SetEngineRenderable(true);
     Run();

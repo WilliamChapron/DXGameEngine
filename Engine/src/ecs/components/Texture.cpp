@@ -9,9 +9,16 @@ TextureComponent::TextureComponent(std::string name) : Component(name, Component
 
 }
 
-void TextureComponent::Initialize(Renderer* renderer)
+void TextureComponent::Initialize(Renderer* renderer, int offset)
 {
     HRESULT hr;
+
+    m_offset = offset;
+
+    PRINT("premier offset");
+    PRINT(offset);
+
+
 
     // Reset Alloc / List
     hr = renderer->m_pCommandAllocator->Reset();
@@ -19,7 +26,7 @@ void TextureComponent::Initialize(Renderer* renderer)
     hr = renderer->m_pCommandList->Reset(renderer->m_pCommandAllocator.Get(), nullptr);
     ASSERT_FAILED(hr);
 
-    // Concaténer m_name avec le chemin du fichier
+
     std::wstring texturePath = L"res/texture/" + stringToWString(GetName()) + L".dds";
 
     // Create / Upload Ressource With Command List
@@ -41,7 +48,12 @@ void TextureComponent::Initialize(Renderer* renderer)
     srvDesc.Format = m_textureBuffer->GetDesc().Format;
     srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
     srvDesc.Texture2D.MipLevels = m_textureBuffer->GetDesc().MipLevels;
-    renderer->m_pDevice->CreateShaderResourceView(m_textureBuffer.Get(), &srvDesc, renderer->m_pSrvHeap->GetCPUDescriptorHandleForHeapStart());
+
+  
+    CD3DX12_CPU_DESCRIPTOR_HANDLE srvHandle(renderer->m_pCbvSrvHeap->GetCPUDescriptorHandleForHeapStart());
+    srvHandle.Offset(m_offset - 1, renderer->m_cbvSrvDescriptorSize); // Utilisation du bon increment size
+
+    renderer->m_pDevice->CreateShaderResourceView(m_textureBuffer.Get(), &srvDesc, renderer->m_pCbvSrvHeap->GetCPUDescriptorHandleForHeapStart());
 
     // Get List from DDS Creation
 
@@ -51,13 +63,15 @@ void TextureComponent::Initialize(Renderer* renderer)
     ID3D12CommandList* ppCommandLists[] = { renderer->m_pCommandList.Get() };
     renderer->m_pCommandQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
 
-    // Wait Fence / #THINK Init Value can Impact ??
     renderer->WaitForPreviousFrame();
 
-    //PRINT(m_textureBuffer.Get());
-    //PRINT(m_uploadTexture.Get());
 }
 
 void TextureComponent::Update(Renderer* renderer) {
+    CD3DX12_GPU_DESCRIPTOR_HANDLE cbvSrvHandle(renderer->m_pCbvSrvHeap.Get()->GetGPUDescriptorHandleForHeapStart());
+    cbvSrvHandle.Offset(m_offset-1, renderer->m_cbvSrvDescriptorSize); // Utilisation du bon increment size
+    renderer->m_pCommandList->SetGraphicsRootDescriptorTable(0, cbvSrvHandle);
+
+
     PRINT("Update Texture");
 }

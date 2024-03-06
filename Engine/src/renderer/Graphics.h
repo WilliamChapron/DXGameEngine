@@ -69,18 +69,11 @@ public:
 
     Window* m_pWindow;
 
-    // RTV
-    ComPtr<ID3D12DescriptorHeap> m_pRtvHeap; 
+    // HEAP
+    ComPtr<ID3D12DescriptorHeap> m_pRtvHeap;
     UINT m_rtvDescriptorSize;
-
-    // CBV
-    ComPtr<ID3D12DescriptorHeap> m_pCbvHeap; 
-    UINT m_cbvDescriptorSize;
-
-    // SRV
-    ComPtr<ID3D12DescriptorHeap> m_pSrvHeap;
-    UINT m_srvDescriptorSize;
-
+    ComPtr<ID3D12DescriptorHeap> m_pCbvSrvHeap;
+    UINT m_cbvSrvDescriptorSize;
 
     int m_renderCallNum = 0;
 

@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "../include.h"
 #include "Graphics.h"
@@ -24,8 +24,7 @@ Renderer::Renderer(Window* pWindow) {
     m_pCommandList.Reset();
     m_pFence.Reset();
     m_pRtvHeap.Reset();
-    m_pSrvHeap.Reset();
-    m_pCbvHeap.Reset();
+    m_pCbvSrvHeap.Reset();
     m_rtvDescriptorSize = 0;
 
     m_vertexShaderBlob.Reset();
@@ -45,40 +44,39 @@ Renderer::Renderer(Window* pWindow) {
 
 Renderer::~Renderer() {
     for (int i = 0; i < m_FRAME_COUNT; ++i) {
-        m_pRenderTargets[i].Reset(); 
+        m_pRenderTargets[i].Reset(); // Utilisation de Reset() pour libï¿½rer l'interface COM
     }
 
 
-    m_pPipelineState.Reset(); 
-    m_pRootSignature.Reset(); 
+    m_pPipelineState.Reset();
+    m_pRootSignature.Reset();
 
-    m_vertexShaderBlob.Reset(); 
-    m_pixelShaderBlob.Reset(); 
+    m_vertexShaderBlob.Reset();
+    m_pixelShaderBlob.Reset();
 
-    m_pRtvHeap.Reset(); 
-    m_pSrvHeap.Reset();
-    m_pCbvHeap.Reset();
-    m_pFence.Reset(); 
-    m_pCommandList.Reset(); 
-    m_pCommandAllocator.Reset(); 
-    m_pCommandQueue.Reset(); 
-    m_pSwapChain.Reset(); 
-    m_pDevice.Reset(); 
-    m_pAdapter.Reset(); 
-    m_pFactory.Reset(); 
+    m_pRtvHeap.Reset();
+    m_pCbvSrvHeap.Reset();
+    m_pFence.Reset(); // Utilisation de Reset() pour libï¿½rer l'interface COM
+    m_pCommandList.Reset(); // Utilisation de Reset() pour libï¿½rer l'interface COM
+    m_pCommandAllocator.Reset(); // Utilisation de Reset() pour libï¿½rer l'interface COM
+    m_pCommandQueue.Reset(); // Utilisation de Reset() pour libï¿½rer l'interface COM
+    m_pSwapChain.Reset(); // Utilisation de Reset() pour libï¿½rer l'interface COM
+    m_pDevice.Reset(); // Utilisation de Reset() pour libï¿½rer l'interface COM
+    m_pAdapter.Reset(); // Utilisation de Reset() pour libï¿½rer l'interface COM
+    m_pFactory.Reset(); // Utilisation de Reset() pour libï¿½rer l'interface COM
 }
 
 void Renderer::InitializeDirectX12Instances() {
 
-    #if defined(DEBUG) || defined(_DEBUG)
-        if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&m_debugController))))
-        {
-            m_debugController->EnableDebugLayer();
+#if defined(DEBUG) || defined(_DEBUG)
+    if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&m_debugController))))
+    {
+        m_debugController->EnableDebugLayer();
 
-            // Enable additional debug layers.
-            m_dxgiFactoryFlags |= DXGI_CREATE_FACTORY_DEBUG;
-        }
-    #endif
+        // Enable additional debug layers.
+        m_dxgiFactoryFlags |= DXGI_CREATE_FACTORY_DEBUG;
+    }
+#endif
 
     CreateFactory();
     CreateDevice();
@@ -89,7 +87,7 @@ void Renderer::InitializeDirectX12Instances() {
     CreateCommandList();
     CreateFence();
 
-    
+
     CreateRootSignature();
     CreatePipelineState();
 
@@ -101,23 +99,23 @@ void Renderer::CreateSwapChain() {
 
     WindowProperties windowProperties = m_pWindow->getWndProps();
 
-    DXGI_MODE_DESC backBufferDesc = {}; 
-    backBufferDesc.Width = windowProperties.width; 
-    backBufferDesc.Height = windowProperties.height; 
-    backBufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; 
+    DXGI_MODE_DESC backBufferDesc = {};
+    backBufferDesc.Width = windowProperties.width;
+    backBufferDesc.Height = windowProperties.height;
+    backBufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 
 
     DXGI_SAMPLE_DESC sampleDesc = {};
-    sampleDesc.Count = 1; 
+    sampleDesc.Count = 1;
 
 
     DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
     swapChainDesc.BufferCount = m_FRAME_COUNT;
-    swapChainDesc.BufferDesc = backBufferDesc; 
-    swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT; 
+    swapChainDesc.BufferDesc = backBufferDesc;
+    swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
     swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
     swapChainDesc.OutputWindow = windowProperties.hwnd;
-    swapChainDesc.SampleDesc = sampleDesc; 
+    swapChainDesc.SampleDesc = sampleDesc;
     swapChainDesc.Windowed = true;
 
     HRESULT hr;
@@ -153,7 +151,7 @@ void Renderer::CreateDevice() {
         ASSERT_FAILED(hr);
         if (SUCCEEDED(hr)) {
             adapterFound = true;
-            break;  // Sortir de la boucle une fois que l'adaptateur est trouvé
+            break;  // Sortir de la boucle une fois que l'adaptateur est trouvï¿½
         }
 
         adapterIndex++;
@@ -202,9 +200,6 @@ void Renderer::CreateFence() {
     PRINT("Fence event success");
 }
 
-
-
-
 void Renderer::CreateDescriptorHeap() {
     HRESULT hr;
 
@@ -234,19 +229,10 @@ void Renderer::CreateDescriptorHeap() {
     cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
     cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 
-    hr = m_pDevice->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&m_pCbvHeap));
+    hr = m_pDevice->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&m_pCbvSrvHeap));
     ASSERT_FAILED(hr);
 
-    D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
-    srvHeapDesc.NumDescriptors = 100;
-    srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV; // Correction ici
-    srvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-
-    hr = m_pDevice->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&m_pSrvHeap));
-    ASSERT_FAILED(hr);
-
-    m_srvDescriptorSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-    m_cbvDescriptorSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+    m_cbvSrvDescriptorSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 }
 
 
@@ -255,16 +241,15 @@ void Renderer::CreateRootSignature() {
 
     CD3DX12_DESCRIPTOR_RANGE range;
     range.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
-        
+
     CD3DX12_ROOT_PARAMETER parameter[2];
     parameter[0].InitAsDescriptorTable(1, &range, D3D12_SHADER_VISIBILITY_ALL);
-
     parameter[1].InitAsConstantBufferView(0); //b0
 
 
 
     D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
-        D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT | 
+        D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT |
         D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS |
         D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS |
         D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS;
@@ -301,16 +286,16 @@ void Renderer::CreateRootSignature() {
 
 void Renderer::CreatePipelineState() {
 
-    #if defined(_DEBUG)
-        // Enable better shader debugging with the graphics debugging tools.
-        UINT compileFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
-    #else
-        UINT compileFlags = 0;
-    #endif
-    // Charger les shaders spécifiques au Triangle
-    HRESULT hr = CompileShaderFromFile(L"res/shader/Shader.hlsl", "VSMain", "vs_5_0", &m_vertexShaderBlob);
+#if defined(_DEBUG)
+    // Enable better shader debugging with the graphics debugging tools.
+    UINT compileFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
+#else
+    UINT compileFlags = 0;
+#endif
+    // Charger les shaders spï¿½cifiques au Triangle
+    HRESULT hr = CompileShaderFromFile(L"../Engine/res/shader/Shader.hlsl", "VSMain", "vs_5_0", &m_vertexShaderBlob);
     ASSERT_FAILED(hr);
-    hr = CompileShaderFromFile(L"res/shader/Shader.hlsl", "PSMain", "ps_5_0", &m_pixelShaderBlob);
+    hr = CompileShaderFromFile(L"../Engine/res/shader/Shader.hlsl", "PSMain", "ps_5_0", &m_pixelShaderBlob);
     ASSERT_FAILED(hr);
     PRINT("Shaders loaded successfully");
 
@@ -396,9 +381,8 @@ void Renderer::Precommandlist() {
         D3D12_RESOURCE_STATE_RENDER_TARGET);
     m_pCommandList->ResourceBarrier(1, &transitionBarrier);
 
-    ID3D12DescriptorHeap* heaps[] = { m_pSrvHeap.Get(), m_pCbvHeap.Get()};
+    ID3D12DescriptorHeap* heaps[] = { m_pCbvSrvHeap.Get() };
     m_pCommandList->SetDescriptorHeaps(_countof(heaps), heaps);
-
 
     m_pCommandList->RSSetViewports(1, m_pViewport);
     m_pCommandList->RSSetScissorRects(1, m_pScissorRect);
@@ -439,14 +423,14 @@ void Renderer::Postcommandlist()
 
 //D3D12_RASTERIZER_DESC rasterizerStateDesc {};
 //rasterizerStateDesc.FillMode = D3D12_FILL_MODE_SOLID;   // Remplissage solide
-//rasterizerStateDesc.CullMode = D3D12_CULL_MODE_FRONT;    // Désactivation du culling
-//rasterizerStateDesc.FrontCounterClockwise = TRUE;       // Les triangles sont définis dans le sens inverse des aiguilles d'une montre (orientation des sommets)
+//rasterizerStateDesc.CullMode = D3D12_CULL_MODE_FRONT;    // Dï¿½sactivation du culling
+//rasterizerStateDesc.FrontCounterClockwise = TRUE;       // Les triangles sont dï¿½finis dans le sens inverse des aiguilles d'une montre (orientation des sommets)
 //rasterizerStateDesc.DepthBias = 0;
 //rasterizerStateDesc.DepthBiasClamp = 0.0f;
 //rasterizerStateDesc.SlopeScaledDepthBias = 0;
 //rasterizerStateDesc.DepthClipEnable = FALSE;             // Activation du test de profondeur
 
-//rasterizerStateDesc.MultisampleEnable = FALSE;          // Désactivation de l'échantillonnage multiple
+//rasterizerStateDesc.MultisampleEnable = FALSE;          // Dï¿½sactivation de l'ï¿½chantillonnage multiple
 //rasterizerStateDesc.AntialiasedLineEnable = FALSE;
 
 //D3D12_BLEND_DESC blendDesc {};

@@ -51,31 +51,20 @@ void MeshComponent::Initialize(Renderer* renderer, Vertex* vertices, int numVert
 void MeshComponent::Update(Renderer* renderer) {
 
 	HRESULT hr;
-	//ConstantBufferData tmp = *m_cbData;
-
-	// Mappage du tampon de constantes pour la mise à jour des données
 	hr = m_constantBuffer->Map(0, nullptr, reinterpret_cast<void**>(&m_mappedConstantBuffer));
 	ASSERT_FAILED(hr);
-	//m_cbData->model
 
-	// Copie des données des constantes mises à jour
 	memcpy(m_mappedConstantBuffer, m_cbData, sizeof(ConstantBufferData));
 	m_constantBuffer->Unmap(0, nullptr);
 
-	// Configuration du descripteur de table de racine pour le tampon de constantes
-	CD3DX12_GPU_DESCRIPTOR_HANDLE cbvSrvHandle(renderer->m_pCbvHeap.Get()->GetGPUDescriptorHandleForHeapStart());
-	renderer->m_pCommandList->SetGraphicsRootDescriptorTable(0, cbvSrvHandle);
 
-	// Mise à jour du tampon de constantes sur le périphérique graphique
 	D3D12_GPU_VIRTUAL_ADDRESS cbvAddress = m_constantBuffer->GetGPUVirtualAddress();
 	renderer->m_pCommandList->SetGraphicsRootConstantBufferView(1, cbvAddress);
 
-	// Configuration des données de rendu
 	renderer->m_pCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	renderer->m_pCommandList->IASetVertexBuffers(0, 1, &m_vertexBufferView);
 	renderer->m_pCommandList->IASetIndexBuffer(&m_indexBufferView);
 
-	// Dessin du maillage
 	renderer->m_pCommandList->DrawIndexedInstanced(m_numIndices, 1, 0, 0, 0);
 
     PRINT("Update Mesh OK");
