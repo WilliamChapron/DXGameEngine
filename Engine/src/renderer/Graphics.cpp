@@ -43,7 +43,7 @@ Renderer::Renderer(Window* pWindow) {
 
 Renderer::~Renderer() {
     for (int i = 0; i < m_FRAME_COUNT; ++i) {
-        m_pRenderTargets[i].Reset(); // Utilisation de Reset() pour libérer l'interface COM
+        m_pRenderTargets[i].Reset(); 
     }
 
 
@@ -55,14 +55,14 @@ Renderer::~Renderer() {
 
     m_pRtvHeap.Reset(); 
     m_pCbvSrvHeap.Reset();
-    m_pFence.Reset(); // Utilisation de Reset() pour libérer l'interface COM
-    m_pCommandList.Reset(); // Utilisation de Reset() pour libérer l'interface COM
-    m_pCommandAllocator.Reset(); // Utilisation de Reset() pour libérer l'interface COM
-    m_pCommandQueue.Reset(); // Utilisation de Reset() pour libérer l'interface COM
-    m_pSwapChain.Reset(); // Utilisation de Reset() pour libérer l'interface COM
-    m_pDevice.Reset(); // Utilisation de Reset() pour libérer l'interface COM
-    m_pAdapter.Reset(); // Utilisation de Reset() pour libérer l'interface COM
-    m_pFactory.Reset(); // Utilisation de Reset() pour libérer l'interface COM
+    m_pFence.Reset(); 
+    m_pCommandList.Reset(); 
+    m_pCommandAllocator.Reset(); 
+    m_pCommandQueue.Reset(); 
+    m_pSwapChain.Reset(); 
+    m_pDevice.Reset(); 
+    m_pAdapter.Reset(); 
+    m_pFactory.Reset(); 
 }
 
 void Renderer::InitializeDirectX12Instances() {

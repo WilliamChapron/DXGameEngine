@@ -43,7 +43,43 @@ void GameObject::Initialize(Renderer* renderer, Camera* camera, const XMFLOAT3& 
     TextureComponent* defaultTexture = new TextureComponent(textureName);  // Création d'un composant Texture par défaut
 
     // Initialisation des composants Mesh et Texture
-    defaultMesh->Initialize(renderer);  // Initialisation du composant Mesh
+
+    Vertex cubeVertices[] = {
+            { {-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f, 1.0f}, {0.0f, 1.0f} },
+            { {-0.5f, -0.5f,  0.5f}, {1.0f, 0.0f, 0.0f, 1.0f}, {0.0f, 0.0f} },
+            { {-0.5f,  0.5f, -0.5f}, {0.0f, 0.0f, 1.0f, 1.0f}, {1.0f, 1.0f} },
+            { {-0.5f,  0.5f,  0.5f}, {0.0f, 0.0f, 1.0f, 1.0f}, {1.0f, 0.0f} },
+            { { 0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 0.0f, 1.0f}, {0.0f, 1.0f} },
+            { { 0.5f, -0.5f,  0.5f}, {1.0f, 1.0f, 0.0f, 1.0f}, {0.0f, 0.0f} },
+            { { 0.5f,  0.5f, -0.5f}, {0.5f, 0.5f, 0.5f, 1.0f}, {1.0f, 1.0f} },
+            { { 0.5f,  0.5f,  0.5f}, {0.5f, 0.5f, 0.5f, 1.0f}, {1.0f, 0.0f} }
+    };
+
+    // Définition des indices du cube
+    UINT cubeIndices[] = {
+        0, 1, 2,
+        2, 1, 3,
+        4, 6, 5,
+        6, 7, 5,
+        0, 2, 4,
+        2, 6, 4,
+        1, 5, 3,
+        3, 5, 7,
+        2, 3, 6,
+        3, 7, 6,
+        0, 4, 1,
+        1, 4, 5
+    };
+
+    Vertex* pVertices = &cubeVertices[0];
+    UINT* pIndices = &cubeIndices[0];
+
+    int numElementsV = sizeof(cubeVertices) / sizeof(cubeVertices[0]);
+    int numElementsI = sizeof(cubeIndices) / sizeof(cubeIndices[0]);
+
+    defaultMesh->Initialize(renderer, cubeVertices, numElementsV, cubeIndices, numElementsI);
+
+
     defaultTexture->Initialize(renderer);  // Initialisation du composant Texture
 
     // Ajout des composants au gestionnaire de composants
