@@ -159,7 +159,7 @@ void Engine::Run() {
 
         if (GetIsRenderable()) {
             // Appelez la fonction Render de la classe Renderer et passez-lui la liste de Cubes
-            m_pGameObjectManager->Update(m_pRenderer, m_pCamera);
+            m_pGameObjectManager->Update(m_pRenderer);
         }
     }
 }

@@ -6,34 +6,16 @@
 
 #include "../components/Component.h"
 #include "../components/Texture.h"
+#include "../components/Mesh.h"
 
 
 // Pass Instance of GameObjectManager to Work with alive entity
-ComponentManager::ComponentManager(std::shared_ptr<GameObjectManager>& gameObjectManager, Renderer* renderer, Camera* camera) : m_pGameObjectManager(gameObjectManager), m_pRenderer(renderer), m_pCamera(camera), m_currentComponentID(0)
+ComponentManager::ComponentManager(std::shared_ptr<GameObjectManager>& gameObjectManager, Renderer* renderer, Camera* camera) : m_pGameObjectManager(gameObjectManager), m_pRenderer(renderer), m_pCamera(camera), m_currentMeshComponentID(0), m_currentTextureComponentID(0)
 {
     //PRINT(m_pGameObjectManager.use_count());
 }
 
 
-int ComponentManager::AddTextureToResources(Component* addComponent) {
-    // WORKING ON TEXTURE
-    if (dynamic_cast<TextureComponent*>(addComponent)) {
-        PRINT("DYNAMIC CAST");
-        int componentID = ++m_currentComponentID;
-        // #TODO check si existe déja 
-        addComponent->GetName();
-        m_textureComponents[componentID] = static_cast<TextureComponent*>(addComponent);
-        PRINT("Push work");
-
-        //std::map<int, TextureComponent*> theArray = GetTextureComponents();
-        //for (const auto& pair : theArray) {
-        //    std::cout << "Component ID: " << pair.first << std::endl;
-        //    std::cout << "Texture: " << pair.second->GetName() << std::endl;
-        //}
-        return componentID; // Offset??
-    }
-    return 0;
-}
 
 
 void ComponentManager::AddComponent(GameObject& gameObject, Component* addComponent) {
@@ -88,3 +70,34 @@ Component* ComponentManager::GetComponentByType(GameObject& gameObject, Componen
     }
     return nullptr;
 }
+
+int ComponentManager::AddTextureToResources(Component* addComponent) {
+    // WORKING ON TEXTURE
+    if (dynamic_cast<TextureComponent*>(addComponent)) {
+        int componentID = ++m_currentTextureComponentID;
+        // #TODO check si existe déja 
+        m_textureComponents[componentID] = static_cast<TextureComponent*>(addComponent);
+        // #TODO AVOID DOUBLE COMPILATION
+        return componentID; 
+    }
+    return 0;
+}
+
+int ComponentManager::AddMeshToResources(Component* addComponent) {
+    if (dynamic_cast<MeshComponent*>(addComponent)) {
+        int componentID = ++m_currentMeshComponentID;
+        m_meshComponents[componentID] = static_cast<MeshComponent*>(addComponent);
+        return componentID; 
+    }
+    return 0;
+}
+
+
+//Component* ComponentManager::FindComponentByNameAndType(const std::string& componentName, ComponentType componentType) {
+//    for (Component* component : gameObject.componentsList) {
+//        if (component->GetType() == componentType && component->GetName() == componentName) {
+//            return component;
+//        }
+//    }
+//    return nullptr;
+//}

@@ -17,7 +17,7 @@ class TextureComponent : public Component
 public:
 	TextureComponent(std::string name);
 	void Initialize(Renderer* renderer, int offset);
-	void Update(Renderer* renderer);
+	void Update(Renderer* renderer) override;
 
 private:
 	int m_offset;

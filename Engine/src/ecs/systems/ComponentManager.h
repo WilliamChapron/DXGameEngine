@@ -17,7 +17,8 @@ class GameObjectManager;
 class GameObject;
 class Renderer;
 class TextureComponent;
-//class Camera;
+class MeshComponent;
+
 
 class ComponentManager
 {
@@ -31,6 +32,7 @@ public:
     void UpdateComponents(GameObject* gameObject);
 
     int AddTextureToResources(Component* addComponent);
+    int AddMeshToResources(Component* addComponent);
 
     std::map<int, TextureComponent*> GetTextureComponents();
 
@@ -41,10 +43,14 @@ private:
 
     // RESSOURCE MANAGER
     std::map<int, TextureComponent*> m_textureComponents;
-    int m_currentComponentID;
-    /**/
+    std::map<int, MeshComponent*> m_meshComponents;
+    //
 
-    //std::map<GameObject*, std::list<Component*>> componentsByGameObject;
+    // Id
+    int m_currentTextureComponentID;
+    int m_currentMeshComponentID;
+    //
+
     std::shared_ptr<GameObjectManager> m_pGameObjectManager;
     Renderer* m_pRenderer;
 };

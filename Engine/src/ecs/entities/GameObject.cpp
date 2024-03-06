@@ -9,8 +9,6 @@
 #include "../../core/Engine.h"  
 #include "../components/Camera.h"
 
-#include <stdexcept>
-
 #include <DirectXColors.h>
 
 #include "../components/Texture.h"
@@ -21,8 +19,6 @@
 
 
 
-#include <iostream>
-#include <iomanip>
 
 
 GameObject::GameObject(ComponentManager* componentManager) : m_cbData(), m_pComponentManager(componentManager)
@@ -40,12 +36,6 @@ void GameObject::Initialize(Renderer* renderer, Camera* camera, const XMFLOAT3& 
     m_cbData.projection = camera->GetProjectionMatrix();  // Obtention de la matrice de projection de la caméra
 
 
-
-
-
-
-    // Initialisation des composants Mesh et Texture
-
     Vertex cubeVertices[] = {
             { {-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f, 1.0f}, {0.0f, 1.0f} },
             { {-0.5f, -0.5f,  0.5f}, {1.0f, 0.0f, 0.0f, 1.0f}, {0.0f, 0.0f} },
@@ -57,7 +47,6 @@ void GameObject::Initialize(Renderer* renderer, Camera* camera, const XMFLOAT3& 
             { { 0.5f,  0.5f,  0.5f}, {0.5f, 0.5f, 0.5f, 1.0f}, {1.0f, 0.0f} }
     };
 
-    // Définition des indices du cube
     UINT cubeIndices[] = {
         0, 1, 2,
         2, 1, 3,
@@ -89,9 +78,6 @@ void GameObject::Initialize(Renderer* renderer, Camera* camera, const XMFLOAT3& 
     PRINT(textureComponentID);
 
 
-
-
-
     defaultTexture->Initialize(renderer, textureComponentID);  // Initialisation du composant Texture
     defaultMesh->Initialize(renderer, cubeVertices, numElementsV, cubeIndices, numElementsI);
 
@@ -105,25 +91,25 @@ void GameObject::Initialize(Renderer* renderer, Camera* camera, const XMFLOAT3& 
 
 }
 
+
 void GameObject::Update(Renderer* renderer, Camera* camera)
 {
-    Engine& e = Engine::GetInstance();  // Obtention de l'instance du moteur
-    Component* component = e.m_pComponentManager->GetComponentByType(*this, ComponentType::Transform);  // Obtention du composant Transform de l'objet
-    Transform* transformComponent = dynamic_cast<Transform*>(component);  // Conversion du composant en type Transform
+ 
+    Transform* transformComponent = GetComponent<Transform>(ComponentType::Transform);
 
-    // Mise à jour des matrices de vue et de projection de la caméra
-    m_cbData.view = camera->GetViewMatrix();  // Obtention de la matrice de vue de la caméra
-    m_cbData.projection = camera->GetProjectionMatrix();  // Obtention de la matrice de projection de la caméra
 
-    std::cout << "Update GameObject" << std::endl;  // Affichage de "Update" dans la console
+    m_cbData.view = camera->GetViewMatrix();  
+    m_cbData.projection = camera->GetProjectionMatrix(); 
 
-    float rotationAngle = 0.03;  // Définition de l'angle de rotation
-    float rotationOffset = 0.01;  // Définition du décalage de rotation
-    float translationOffset = transformComponent->GetPosition().z + 0.01f;  // Définition du décalage de translation
-    float fScale = transformComponent->GetScale().z - 0.001f;  // Définition de l'échelle de transformation
+    std::cout << "Update GameObject" << std::endl;  
 
-    transformComponent->Rotate(0, 0, rotationAngle);  // Rotation du composant Transform
-    m_cbData.model = transformComponent->GetTransformMatrix();  // Mise à jour de la matrice de transformation du GameObject
+    float rotationAngle = 0.03;  
+    float rotationOffset = 0.01;  
+    float translationOffset = transformComponent->GetPosition().z + 0.01f; 
+    float fScale = transformComponent->GetScale().z - 0.001f;  
 
-    m_pComponentManager->UpdateComponents(this);  // Mise à jour des composants du GameObject
+    transformComponent->Rotate(0, 0, rotationAngle); 
+    m_cbData.model = transformComponent->GetTransformMatrix();  
+
+    m_pComponentManager->UpdateComponents(this); 
 }

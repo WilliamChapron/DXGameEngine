@@ -4,7 +4,7 @@
 #include "../../include.h"
 #include "../components/Transform.h"
 
-#include "../systems/ComponentManager.h"
+
 
 #include <iostream>
 #include <map>
@@ -14,6 +14,7 @@
 #include <string>
 
 #include "../systems/ComponentManager.h"
+
 
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
@@ -39,6 +40,8 @@ public:
     //const Transform& GetTransform() const { return m_transform; }
     const ConstantBufferData& GetConstantBufferData() const { return m_cbData; }
 
+    template <typename T>
+    T* GetComponent(ComponentType type);
 
     std::list<Component*> componentsList;
 
@@ -50,3 +53,9 @@ private:
 
     ComponentManager* m_pComponentManager;
 };
+
+template <typename T>
+T* GameObject::GetComponent(ComponentType type) {
+    Component* component = m_pComponentManager->GetComponentByType(*this, type);
+    return dynamic_cast<T*>(component);
+}

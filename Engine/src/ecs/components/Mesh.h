@@ -19,7 +19,7 @@ class MeshComponent : public Component
 public:
 	MeshComponent(std::string name, ConstantBufferData* m_cbData);
 	void Initialize(Renderer* renderer, Vertex* vertices, int numVertices, UINT* indices, int numIndices);
-	void Update(Renderer* renderer);
+	void Update(Renderer* renderer) override;
 
 private:
 	ConstantBufferData* m_cbData;
