@@ -1,4 +1,5 @@
-#include "GameObject.h"
+#include "GameObject.hpp"
+
 #include "../../renderer/Graphics.h"
 #include "../../core/Defines.h"
 #include "../../Utils.h"
@@ -21,7 +22,7 @@
 
 
 
-GameObject::GameObject(ComponentManager* componentManager) : m_cbData(), m_pComponentManager(componentManager)
+GameObject::GameObject(ComponentManager* componentManager) : m_pComponentManager(componentManager)
 {
 }
 
@@ -30,10 +31,10 @@ void GameObject::Initialize(Renderer* renderer, Camera* camera, const XMFLOAT3& 
     // Initialisation de l'objet GameObject avec un gestionnaire de composants
     Transform* defaultTransform = new Transform(position, rotation, scale);  // Création d'un objet Transform par défaut
 
-    // Mise à jour des matrices de transformation du GameObject
-    m_cbData.model = defaultTransform->GetTransformMatrix();  // Obtention de la matrice de transformation du GameObject
-    m_cbData.view = camera->GetViewMatrix();  // Obtention de la matrice de vue de la caméra
-    m_cbData.projection = camera->GetProjectionMatrix();  // Obtention de la matrice de projection de la caméra
+    ConstantBufferData* sendToMeshCbData = new ConstantBufferData(); 
+    sendToMeshCbData->model = defaultTransform->GetTransformMatrix();  
+    sendToMeshCbData->view = camera->GetViewMatrix(); 
+    sendToMeshCbData->projection = camera->GetProjectionMatrix();  
 
 
     Vertex cubeVertices[] = {
@@ -69,7 +70,7 @@ void GameObject::Initialize(Renderer* renderer, Camera* camera, const XMFLOAT3& 
     int numElementsI = sizeof(cubeIndices) / sizeof(cubeIndices[0]);
 
     TextureComponent* defaultTexture = new TextureComponent(textureName);
-    MeshComponent* defaultMesh = new MeshComponent("Mesh", &m_cbData);
+    MeshComponent* defaultMesh = new MeshComponent("Mesh", sendToMeshCbData);
 
     // Add to resource manager before init
     int textureComponentID = m_pComponentManager->AddTextureToResources(defaultTexture);
@@ -92,14 +93,26 @@ void GameObject::Initialize(Renderer* renderer, Camera* camera, const XMFLOAT3& 
 }
 
 
+
+template <typename T>
+T* GameObject::GetComponent(ComponentType type) {
+    Component* component = m_pComponentManager->GetGameObjectComponentByType(*this, type);
+    return dynamic_cast<T*>(component);
+}
+
+
+
 void GameObject::Update(Renderer* renderer, Camera* camera)
 {
  
     Transform* transformComponent = GetComponent<Transform>(ComponentType::Transform);
 
+    MeshComponent* meshComponent = GetComponent<MeshComponent>(ComponentType::Mesh);
 
-    m_cbData.view = camera->GetViewMatrix();  
-    m_cbData.projection = camera->GetProjectionMatrix(); 
+
+    ConstantBufferData* sendToMeshCbData = new ConstantBufferData();
+    sendToMeshCbData->view = camera->GetViewMatrix();
+    sendToMeshCbData->projection = camera->GetProjectionMatrix();
 
     std::cout << "Update GameObject" << std::endl;  
 
@@ -107,9 +120,9 @@ void GameObject::Update(Renderer* renderer, Camera* camera)
     float rotationOffset = 0.01;  
     float translationOffset = transformComponent->GetPosition().z + 0.01f; 
     float fScale = transformComponent->GetScale().z - 0.001f;  
-
     transformComponent->Rotate(0, 0, rotationAngle); 
-    m_cbData.model = transformComponent->GetTransformMatrix();  
+    sendToMeshCbData->model = transformComponent->GetTransformMatrix();
 
+    meshComponent->UpdateConstantBuffer(sendToMeshCbData);
     m_pComponentManager->UpdateComponents(this); 
 }

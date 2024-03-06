@@ -45,9 +45,11 @@ void ComponentManager::AddComponent(GameObject& gameObject, Component* addCompon
     gameObject.componentsList.push_back(addComponent);
 
     
-    //for (const Component* component : gameObject.componentsList) {
-    //    std::cout << "    Component: " << component->GetName() << std::endl;
-    //}
+    for (const Component* component : gameObject.componentsList) {
+        std::cout << "    Component: " << component->GetName() << std::endl;
+    }
+
+    PRINT("ds");
 }
 
 std::map<int, TextureComponent*> ComponentManager::GetTextureComponents() {
@@ -57,12 +59,14 @@ std::map<int, TextureComponent*> ComponentManager::GetTextureComponents() {
 void ComponentManager::UpdateComponents(GameObject* gameObject) {
     for (const auto& pair : gameObject->componentsList)
     {
+        PRINT("pair->GetName()");
+        PRINT(pair->GetName());
         //std::cout << pair->GetName() << " UPDATE !" << std::endl;
         pair->Update(m_pRenderer);
     }
 }
 
-Component* ComponentManager::GetComponentByType(GameObject& gameObject, ComponentType componentType) {
+Component* ComponentManager::GetGameObjectComponentByType(GameObject& gameObject, ComponentType componentType) {
     for (Component* component : gameObject.componentsList) {
         if (component->GetType() == componentType) {
             return component;
@@ -92,12 +96,30 @@ int ComponentManager::AddMeshToResources(Component* addComponent) {
     return 0;
 }
 
+MeshComponent* ComponentManager::FindMeshComponentByName(const std::string& componentName) {
+    for (const auto& pair : m_meshComponents) {
 
-//Component* ComponentManager::FindComponentByNameAndType(const std::string& componentName, ComponentType componentType) {
-//    for (Component* component : gameObject.componentsList) {
-//        if (component->GetType() == componentType && component->GetName() == componentName) {
-//            return component;
-//        }
-//    }
-//    return nullptr;
-//}
+        const auto& component = pair.second;
+        MeshComponent* meshComponent = dynamic_cast<MeshComponent*>(component);
+
+        if (meshComponent->GetName() == componentName) {
+            return meshComponent;
+        }
+    }
+
+    return nullptr;
+}
+
+TextureComponent* ComponentManager::FindTextureComponentByName(const std::string& componentName) {
+    for (const auto& pair : m_textureComponents) {
+
+        const auto& component = pair.second;
+        TextureComponent* textureComponent = dynamic_cast<TextureComponent*>(component);
+
+        if (textureComponent->GetName() == componentName) {
+            return textureComponent;
+        }
+    }
+
+    return nullptr;
+}

@@ -27,8 +27,10 @@ public:
 
     // Actions to add, remove, ... on a game object
     void AddComponent(GameObject& gameObject, Component* component);
-    //void RemoveComponent(GameObject gameObject, Component& component);
-    //void RemoveAllComponents(GameObject& gameObject);
+
+
+
+
     void UpdateComponents(GameObject* gameObject);
 
     int AddTextureToResources(Component* addComponent);
@@ -36,7 +38,9 @@ public:
 
     std::map<int, TextureComponent*> GetTextureComponents();
 
-    Component* GetComponentByType(GameObject& gameObject, ComponentType componentType);
+    Component* GetGameObjectComponentByType(GameObject& gameObject, ComponentType componentType);
+    MeshComponent* FindMeshComponentByName(const std::string& componentName);
+    TextureComponent* FindTextureComponentByName(const std::string& componentName);
 
 private:
     Camera* m_pCamera;

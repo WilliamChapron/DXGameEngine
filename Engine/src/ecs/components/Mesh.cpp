@@ -2,10 +2,15 @@
 #include "../../renderer/Graphics.h"
 #include "../../core/Defines.h"
 #include "Component.h"
-#include "../entities/GameObject.h"
+#include "../entities/GameObject.hpp"
 
 MeshComponent::MeshComponent(std::string name, ConstantBufferData* _m_cbData) : Component(name, ComponentType::Mesh, false), m_cbData(_m_cbData)
 {
+}
+
+void MeshComponent::UpdateConstantBuffer(ConstantBufferData* cbData)
+{
+    m_cbData = cbData;
 }
 
 void MeshComponent::Initialize(Renderer* renderer, Vertex* vertices, int numVertices, UINT* indices, int numIndices)

@@ -142,7 +142,7 @@
     <ClInclude Include="src\ecs\components\Component.h" />
     <ClInclude Include="src\DDSTextureLoader.h" />
     <ClInclude Include="extern\d3dx12.h" />
-    <ClInclude Include="src\ecs\entities\GameObject.h" />
+    <ClInclude Include="src\ecs\entities\GameObject.hpp" />
     <ClInclude Include="src\core\Defines.h" />
     <ClInclude Include="src\core\Engine.h" />
     <ClInclude Include="src\core\Window.h" />

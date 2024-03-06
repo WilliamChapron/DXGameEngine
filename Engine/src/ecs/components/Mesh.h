@@ -2,9 +2,15 @@
 
 #include "../../include.h"
 #include "../components/Component.h"
-#include "../entities/GameObject.h"
+#include "../entities/GameObject.hpp"
 
 class Renderer;
+
+struct ConstantBufferData {
+	XMFLOAT4X4 model;
+	XMFLOAT4X4 view;
+	XMFLOAT4X4 projection;
+};
 
 // Vertex
 struct Vertex
@@ -18,6 +24,7 @@ class MeshComponent : public Component
 {
 public:
 	MeshComponent(std::string name, ConstantBufferData* m_cbData);
+	void UpdateConstantBuffer(ConstantBufferData* cbData);
 	void Initialize(Renderer* renderer, Vertex* vertices, int numVertices, UINT* indices, int numIndices);
 	void Update(Renderer* renderer) override;
 

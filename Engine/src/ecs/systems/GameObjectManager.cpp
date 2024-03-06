@@ -77,34 +77,36 @@ void GameObjectManager::Update(Renderer* renderer) {
         GameObject* gameObject = pair.second;
         gameObject->Update(renderer, m_pCamera);
 
-        // try collide = object on which we test collide
-        for (auto& tryCollide : objectMap) {
-            if (tryCollide.first == pair.first) {
-                continue;
-            }
+        PRINT("Update all");
+
+        //// try collide = object on which we test collide
+        //for (auto& tryCollide : objectMap) {
+        //    if (tryCollide.first == pair.first) {
+        //        continue;
+        //    }
 
 
 
-            std::pair<std::string, std::string> objectPair(pair.first, tryCollide.first);
-            auto it = std::find(testedPairs.begin(), testedPairs.end(), objectPair);
+        //    std::pair<std::string, std::string> objectPair(pair.first, tryCollide.first);
+        //    auto it = std::find(testedPairs.begin(), testedPairs.end(), objectPair);
 
-            // not in the array
+        //    // not in the array
 
-            XMFLOAT3 componentInputPosition = gameObject->GetComponent<Transform>(ComponentType::Transform)->GetPosition();
-            XMFLOAT3 componentOutputPosition = tryCollide.second->GetComponent<Transform>(ComponentType::Transform)->GetPosition();
+        //    XMFLOAT3 componentInputPosition = gameObject->GetComponent<Transform>(ComponentType::Transform)->GetPosition();
+        //    XMFLOAT3 componentOutputPosition = tryCollide.second->GetComponent<Transform>(ComponentType::Transform)->GetPosition();
 
-            //PRINT("PAS TESTE");
-            //PRINT("Object1");
-            //PRINT(tryCollide.first);
-            //PRINT("Object2");
-            //PRINT(pair.first);
+        //    //PRINT("PAS TESTE");
+        //    //PRINT("Object1");
+        //    //PRINT(tryCollide.first);
+        //    //PRINT("Object2");
+        //    //PRINT(pair.first);
 
-            //PRINT(IsColliding(componentInputPosition, componentOutputPosition));
+        //    //PRINT(IsColliding(componentInputPosition, componentOutputPosition));
 
-            // Ajoutez la paire testée au vecteur
+        //    // Ajoutez la paire testée au vecteur
 
-            testedPairs.push_back(objectPair);
-        }
+        //    testedPairs.push_back(objectPair);
+        //}
     }
 
     for (const auto& pair : testedPairs) {

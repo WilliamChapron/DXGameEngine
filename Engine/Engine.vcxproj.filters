@@ -10,7 +10,7 @@
     <ClInclude Include="src\renderer\Graphics.h" />
     <ClInclude Include="src\ecs\components\Camera.h" />
     <ClInclude Include="src\ecs\components\Transform.h" />
-    <ClInclude Include="src\ecs\entities\GameObject.h" />
+    <ClInclude Include="src\ecs\entities\GameObject.hpp" />
     <ClInclude Include="src\ecs\systems\State.h" />
     <ClInclude Include="src\ecs\systems\StateMachine.h" />
     <ClInclude Include="src\ecs\systems\Time.h" />

@@ -18,6 +18,8 @@ class Input;
 
 class Engine {
 public:
+    Engine();
+
     void Init(HINSTANCE hInstance, int nShowCmd);
     void Cleanup();
 
@@ -25,6 +27,7 @@ public:
 
     static Engine& GetInstance() {
         static Engine instance;
+        //instance.m_isRenderable = false;
         return instance;
     }
 
@@ -48,12 +51,10 @@ public:
         return m_isRenderable;
     }
 
-
-
+    bool m_isRenderable;
 private:
 
-    bool m_isRenderable = false;
-    Engine() = default;
+    //Engine() = default;
     StateMachine* stateMachine;
 
     Window* m_pWindow = nullptr;
