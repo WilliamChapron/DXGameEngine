@@ -55,14 +55,14 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
 
     //Create Objects
     m_pCube = new GameObject(m_pComponentManager);
-    //m_pCube2 = new GameObject;
+    m_pCube2 = new GameObject(m_pComponentManager);
 
-    m_pCube->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(0.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
-    //m_pCube2->Initialize(m_pRenderer, m_pCamera, m_pComponentManager, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
+    m_pCube->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(-0.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), "texture");
+    m_pCube2->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(0.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), "texture2");
 
 
     m_pGameObjectManager->AddObject("Cube", m_pCube);
-    //m_pGameObjectManager->AddObject("Cube2", m_pCube2);
+    m_pGameObjectManager->AddObject("Cube2", m_pCube2);
 
     // Drawing
     SetEngineRenderable(true);
@@ -110,29 +110,29 @@ void Engine::Run() {
         m_pWindow->UpdateTitleWithFPS(time.GetFramePerSecond());
 
         //------ TEST INPUT
-        m_pInput->Update();
+        //m_pInput->Update();
 
-        // Affichez la liste des touches et leur �tat
-        std::cout << "Touches pressees : " << std::endl;
-        for (const auto& pair : m_pInput->GetKeyStates()) {
-            std::cout << "Touche : " << pair.first << ", Etat : ";
-            // Utilisez un switch pour g�rer les diff�rents �tats de la touche
-            switch (pair.second) {
-            case KeyState::Pressed:
-                std::cout << "Pressed";
-                break;
-            case KeyState::Held:
-                std::cout << "Held";
-                break;
-            case KeyState::Released:
-                std::cout << "Released";
-                break;
-            case KeyState::Inactive:
-                std::cout << "Inactive";
-                break;
-            }
-            std::cout << std::endl;
-        }
+        //// Affichez la liste des touches et leur �tat
+        //std::cout << "Touches pressees : " << std::endl;
+        //for (const auto& pair : m_pInput->GetKeyStates()) {
+        //    std::cout << "Touche : " << pair.first << ", Etat : ";
+        //    // Utilisez un switch pour g�rer les diff�rents �tats de la touche
+        //    switch (pair.second) {
+        //    case KeyState::Pressed:
+        //        std::cout << "Pressed";
+        //        break;
+        //    case KeyState::Held:
+        //        std::cout << "Held";
+        //        break;
+        //    case KeyState::Released:
+        //        std::cout << "Released";
+        //        break;
+        //    case KeyState::Inactive:
+        //        std::cout << "Inactive";
+        //        break;
+        //    }
+        //    std::cout << std::endl;
+        //}
 
 
 

@@ -33,7 +33,7 @@ class GameObject
 public:
     GameObject(ComponentManager* componentManager);
 
-    void Initialize(Renderer* renderer, Camera* camera, const XMFLOAT3& position, const XMFLOAT3& rotation, const XMFLOAT3& scale);
+    void Initialize(Renderer* renderer, Camera* camera, const XMFLOAT3& position, const XMFLOAT3& rotation, const XMFLOAT3& scale, std::string textureName);
     void Update(Renderer* renderer, Camera* camera);
 
     //const Transform& GetTransform() const { return m_transform; }

@@ -29,7 +29,7 @@ GameObject::GameObject(ComponentManager* componentManager) : m_cbData(), m_pComp
 {
 }
 
-void GameObject::Initialize(Renderer* renderer, Camera* camera, const XMFLOAT3& position, const XMFLOAT3& rotation, const XMFLOAT3& scale) {
+void GameObject::Initialize(Renderer* renderer, Camera* camera, const XMFLOAT3& position, const XMFLOAT3& rotation, const XMFLOAT3& scale, std::string textureName) {
     // Initialisation de l'objet GameObject avec un gestionnaire de composants
     Transform* defaultTransform = new Transform(position, rotation, scale);  // Création d'un objet Transform par défaut
 
@@ -40,7 +40,7 @@ void GameObject::Initialize(Renderer* renderer, Camera* camera, const XMFLOAT3& 
 
     // Initialisation des composants Mesh, Texture et Shader par défaut
     MeshComponent* defaultMesh = new MeshComponent("Mesh", &m_cbData);  // Création d'un composant Mesh par défaut
-    TextureComponent* defaultTexture = new TextureComponent("Texture");  // Création d'un composant Texture par défaut
+    TextureComponent* defaultTexture = new TextureComponent(textureName);  // Création d'un composant Texture par défaut
 
     // Initialisation des composants Mesh et Texture
     defaultMesh->Initialize(renderer);  // Initialisation du composant Mesh
