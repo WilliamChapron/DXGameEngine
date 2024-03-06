@@ -5,6 +5,7 @@
 #include "../core/Defines.h"
 #include "../core/Window.h"
 #include "../ecs/entities/GameObject.h"
+#include "../Utils.h"
 
 
 Renderer::Renderer(Window* pWindow) {
@@ -23,7 +24,8 @@ Renderer::Renderer(Window* pWindow) {
     m_pCommandList.Reset();
     m_pFence.Reset();
     m_pRtvHeap.Reset();
-    m_pCbvSrvHeap.Reset();
+    m_pSrvHeap.Reset();
+    m_pCbvHeap.Reset();
     m_rtvDescriptorSize = 0;
 
     m_vertexShaderBlob.Reset();
@@ -54,7 +56,8 @@ Renderer::~Renderer() {
     m_pixelShaderBlob.Reset(); 
 
     m_pRtvHeap.Reset(); 
-    m_pCbvSrvHeap.Reset();
+    m_pSrvHeap.Reset();
+    m_pCbvHeap.Reset();
     m_pFence.Reset(); 
     m_pCommandList.Reset(); 
     m_pCommandAllocator.Reset(); 
@@ -199,6 +202,9 @@ void Renderer::CreateFence() {
     PRINT("Fence event success");
 }
 
+
+
+
 void Renderer::CreateDescriptorHeap() {
     HRESULT hr;
 
@@ -228,42 +234,22 @@ void Renderer::CreateDescriptorHeap() {
     cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
     cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 
-    hr = m_pDevice->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&m_pCbvSrvHeap));
+    hr = m_pDevice->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&m_pCbvHeap));
     ASSERT_FAILED(hr);
 
-    m_cbvSrvDescriptorSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+    D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
+    srvHeapDesc.NumDescriptors = 100;
+    srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV; // Correction ici
+    srvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+
+    hr = m_pDevice->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&m_pSrvHeap));
+    ASSERT_FAILED(hr);
+
+    m_srvDescriptorSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+    m_cbvDescriptorSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 }
 
 
-HRESULT CompileShaderFromFile(const wchar_t* filePath, const char* entryPoint, const char* shaderModel, ID3DBlob** blob)
-{
-    DWORD shaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
-
-    #if defined(DEBUG) || defined(_DEBUG)
-        shaderFlags |= D3DCOMPILE_DEBUG;
-    #endif
-
-    ID3DBlob* errorBlob = nullptr;
-    HRESULT hr = D3DCompileFromFile(filePath, nullptr, nullptr, entryPoint, shaderModel, shaderFlags, 0, blob, &errorBlob);
-    ASSERT_FAILED(hr);
-
-    if (FAILED(hr))
-    {
-        if (errorBlob)
-        {
-            OutputDebugStringA(static_cast<const char*>(errorBlob->GetBufferPointer()));
-            errorBlob->Release();
-        }
-        PRINT("Shader compilation failed");
-        return hr;
-    }
-
-    if (errorBlob) errorBlob->Release();
-
-    PRINT("Shader compilation successful");
-
-    return S_OK;
-}
 
 void Renderer::CreateRootSignature() {
 
@@ -272,6 +258,7 @@ void Renderer::CreateRootSignature() {
         
     CD3DX12_ROOT_PARAMETER parameter[2];
     parameter[0].InitAsDescriptorTable(1, &range, D3D12_SHADER_VISIBILITY_ALL);
+
     parameter[1].InitAsConstantBufferView(0); //b0
 
 
@@ -409,8 +396,9 @@ void Renderer::Precommandlist() {
         D3D12_RESOURCE_STATE_RENDER_TARGET);
     m_pCommandList->ResourceBarrier(1, &transitionBarrier);
 
-    ID3D12DescriptorHeap* heaps[] = { m_pCbvSrvHeap.Get() };
+    ID3D12DescriptorHeap* heaps[] = { m_pSrvHeap.Get(), m_pCbvHeap.Get()};
     m_pCommandList->SetDescriptorHeaps(_countof(heaps), heaps);
+
 
     m_pCommandList->RSSetViewports(1, m_pViewport);
     m_pCommandList->RSSetScissorRects(1, m_pScissorRect);

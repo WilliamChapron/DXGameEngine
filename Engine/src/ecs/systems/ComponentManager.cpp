@@ -47,7 +47,7 @@ void ComponentManager::AddComponent(GameObject& gameObject, Component* addCompon
 void ComponentManager::UpdateComponents(GameObject* gameObject) {
     for (const auto& pair : gameObject->componentsList)
     {
-        std::cout << pair->GetName() << " UPDATE !" << std::endl;
+        //std::cout << pair->GetName() << " UPDATE !" << std::endl;
         pair->Update(m_pRenderer);
     }
 }

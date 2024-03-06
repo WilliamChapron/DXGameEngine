@@ -63,7 +63,7 @@ void MeshComponent::Update(Renderer* renderer) {
 	m_constantBuffer->Unmap(0, nullptr);
 
 	// Configuration du descripteur de table de racine pour le tampon de constantes
-	CD3DX12_GPU_DESCRIPTOR_HANDLE cbvSrvHandle(renderer->m_pCbvSrvHeap.Get()->GetGPUDescriptorHandleForHeapStart());
+	CD3DX12_GPU_DESCRIPTOR_HANDLE cbvSrvHandle(renderer->m_pCbvHeap.Get()->GetGPUDescriptorHandleForHeapStart());
 	renderer->m_pCommandList->SetGraphicsRootDescriptorTable(0, cbvSrvHandle);
 
 	// Mise à jour du tampon de constantes sur le périphérique graphique

@@ -41,7 +41,7 @@ void TextureComponent::Initialize(Renderer* renderer)
     srvDesc.Format = m_textureBuffer->GetDesc().Format;
     srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
     srvDesc.Texture2D.MipLevels = m_textureBuffer->GetDesc().MipLevels;
-    renderer->m_pDevice->CreateShaderResourceView(m_textureBuffer.Get(), &srvDesc, renderer->m_pCbvSrvHeap->GetCPUDescriptorHandleForHeapStart());
+    renderer->m_pDevice->CreateShaderResourceView(m_textureBuffer.Get(), &srvDesc, renderer->m_pSrvHeap->GetCPUDescriptorHandleForHeapStart());
 
     // Get List from DDS Creation
 
