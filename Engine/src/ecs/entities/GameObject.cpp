@@ -15,6 +15,7 @@
 #include "../components/Texture.h"
 #include "../components/Transform.h"
 #include "../components/Mesh.h"
+#include "../systems/MeshRenderer.h"
 
 #include "../../renderer/Resources.h"
 
@@ -29,7 +30,7 @@ GameObject::GameObject(ComponentManager* componentManager) : m_pComponentManager
 void GameObject::Initialize(Renderer* renderer, Camera* camera, const XMFLOAT3& position, const XMFLOAT3& rotation, const XMFLOAT3& scale, std::string textureName) {
     PRINT("Creation des component");
     // Initialisation de l'objet GameObject avec un gestionnaire de composants
-    Transform* defaultTransform = new Transform(position, rotation, scale);  // Création d'un objet Transform par défaut
+    Transform* defaultTransform = new Transform(position, rotation, scale);  
 
     ConstantBufferData* sendToMeshCbData = new ConstantBufferData(); 
     sendToMeshCbData->model = defaultTransform->GetTransformMatrix();  
@@ -70,23 +71,21 @@ void GameObject::Initialize(Renderer* renderer, Camera* camera, const XMFLOAT3& 
     int numElementsI = sizeof(cubeIndices) / sizeof(cubeIndices[0]);
 
     TextureComponent* defaultTexture = new TextureComponent(textureName);
-    MeshComponent* defaultMesh = new MeshComponent("Mesh", sendToMeshCbData);
+    Mesh* defaultMesh = new Mesh(); // Class
+    MeshRenderer* defaultMeshRenderer = new MeshRenderer("Mesh", sendToMeshCbData, defaultMesh); // Component
+
 
     // Add to resource manager before init
     int textureComponentID = m_pComponentManager->AddTextureToResources(defaultTexture);
 
-    PRINT("COmponentIDPRINT");
-    PRINT(textureComponentID);
-
-
     defaultTexture->Initialize(renderer, textureComponentID);  // Initialisation du composant Texture
-    defaultMesh->Initialize(renderer, cubeVertices, numElementsV, cubeIndices, numElementsI);
+    defaultMesh->Initialize(sendToMeshCbData, renderer, cubeVertices, numElementsV, cubeIndices, numElementsI);
 
 
     // Ajout des composants au gestionnaire de composants
-    m_pComponentManager->AddComponent(*this, defaultTransform);  // Ajout du composant Transform au gestionnaire
-    m_pComponentManager->AddComponent(*this, defaultTexture);  // Ajout du composant Texture au gestionnaire
-    m_pComponentManager->AddComponent(*this, defaultMesh);  // Ajout du composant Mesh au gestionnaire
+    m_pComponentManager->AddComponent(*this, defaultTransform);  
+    m_pComponentManager->AddComponent(*this, defaultTexture);  
+    m_pComponentManager->AddComponent(*this, defaultMeshRenderer);  
 
     PRINT("Suivant");
 
@@ -106,8 +105,7 @@ void GameObject::Update(Renderer* renderer, Camera* camera)
 {
  
     Transform* transformComponent = GetComponent<Transform>(ComponentType::Transform);
-
-    MeshComponent* meshComponent = GetComponent<MeshComponent>(ComponentType::Mesh);
+    MeshRenderer* meshComponent = GetComponent<MeshRenderer>(ComponentType::MeshRenderer);
 
 
     ConstantBufferData* sendToMeshCbData = new ConstantBufferData();

@@ -7,6 +7,7 @@
 #include "../components/Component.h"
 #include "../components/Texture.h"
 #include "../components/Mesh.h"
+#include "MeshRenderer.h"
 
 
 // Pass Instance of GameObjectManager to Work with alive entity
@@ -88,19 +89,19 @@ int ComponentManager::AddTextureToResources(Component* addComponent) {
 }
 
 int ComponentManager::AddMeshToResources(Component* addComponent) {
-    if (dynamic_cast<MeshComponent*>(addComponent)) {
+    if (dynamic_cast<MeshRenderer*>(addComponent)) {
         int componentID = ++m_currentMeshComponentID;
-        m_meshComponents[componentID] = static_cast<MeshComponent*>(addComponent);
+        m_meshComponents[componentID] = static_cast<MeshRenderer*>(addComponent);
         return componentID; 
     }
     return 0;
 }
 
-MeshComponent* ComponentManager::FindMeshComponentByName(const std::string& componentName) {
+MeshRenderer* ComponentManager::FindMeshComponentByName(const std::string& componentName) {
     for (const auto& pair : m_meshComponents) {
 
         const auto& component = pair.second;
-        MeshComponent* meshComponent = dynamic_cast<MeshComponent*>(component);
+        MeshRenderer* meshComponent = dynamic_cast<MeshRenderer*>(component);
 
         if (meshComponent->GetName() == componentName) {
             return meshComponent;

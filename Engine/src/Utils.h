@@ -4,7 +4,7 @@
 #include <iostream>
 #include <iomanip>
 
-using namespace DirectX;
+//using namespace DirectX;
 
 void PrintMatrix(const DirectX::XMFLOAT4X4& matrix);
 

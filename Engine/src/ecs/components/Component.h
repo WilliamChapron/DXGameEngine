@@ -6,7 +6,7 @@ class Renderer;
 
 enum class ComponentType {
     Shader,
-    Mesh,
+    MeshRenderer,
     Texture,
     Transform
 };

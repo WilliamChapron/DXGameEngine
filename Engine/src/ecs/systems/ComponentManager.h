@@ -17,7 +17,8 @@ class GameObjectManager;
 class GameObject;
 class Renderer;
 class TextureComponent;
-class MeshComponent;
+class Mesh;
+class MeshRenderer;
 
 
 class ComponentManager
@@ -39,7 +40,7 @@ public:
     std::map<int, TextureComponent*> GetTextureComponents();
 
     Component* GetGameObjectComponentByType(GameObject& gameObject, ComponentType componentType);
-    MeshComponent* FindMeshComponentByName(const std::string& componentName);
+    MeshRenderer* FindMeshComponentByName(const std::string& componentName);
     TextureComponent* FindTextureComponentByName(const std::string& componentName);
 
 private:
@@ -47,7 +48,7 @@ private:
 
     // RESSOURCE MANAGER
     std::map<int, TextureComponent*> m_textureComponents;
-    std::map<int, MeshComponent*> m_meshComponents;
+    std::map<int, MeshRenderer*> m_meshComponents;
     //
 
     // Id

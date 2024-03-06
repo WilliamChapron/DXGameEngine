@@ -4,16 +4,12 @@
 #include "Component.h"
 #include "../entities/GameObject.hpp"
 
-MeshComponent::MeshComponent(std::string name, ConstantBufferData* _m_cbData) : Component(name, ComponentType::Mesh, false), m_cbData(_m_cbData)
+Mesh::Mesh()
 {
 }
 
-void MeshComponent::UpdateConstantBuffer(ConstantBufferData* cbData)
-{
-    m_cbData = cbData;
-}
 
-void MeshComponent::Initialize(Renderer* renderer, Vertex* vertices, int numVertices, UINT* indices, int numIndices)
+void Mesh::Initialize(ConstantBufferData* cbData, Renderer* renderer, Vertex* vertices, int numVertices, UINT* indices, int numIndices)
 {
     // Calcul des tailles des tampons de sommets et d'indices
     const UINT vertexBufferSize = sizeof(Vertex) * numVertices;
@@ -22,6 +18,8 @@ void MeshComponent::Initialize(Renderer* renderer, Vertex* vertices, int numVert
 
     m_numVertices = numVertices;
     m_numIndices = numIndices;
+
+    m_cbData = cbData;
 
     //PRINT("NUMelement");
     //PRINT(numElementsI);
@@ -53,24 +51,3 @@ void MeshComponent::Initialize(Renderer* renderer, Vertex* vertices, int numVert
     m_constantBuffer->Unmap(0, nullptr);
 }
 
-void MeshComponent::Update(Renderer* renderer) {
-
-	HRESULT hr;
-	hr = m_constantBuffer->Map(0, nullptr, reinterpret_cast<void**>(&m_mappedConstantBuffer));
-	ASSERT_FAILED(hr);
-
-	memcpy(m_mappedConstantBuffer, m_cbData, sizeof(ConstantBufferData));
-	m_constantBuffer->Unmap(0, nullptr);
-
-
-	D3D12_GPU_VIRTUAL_ADDRESS cbvAddress = m_constantBuffer->GetGPUVirtualAddress();
-	renderer->m_pCommandList->SetGraphicsRootConstantBufferView(1, cbvAddress);
-
-	renderer->m_pCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	renderer->m_pCommandList->IASetVertexBuffers(0, 1, &m_vertexBufferView);
-	renderer->m_pCommandList->IASetIndexBuffer(&m_indexBufferView);
-
-	renderer->m_pCommandList->DrawIndexedInstanced(m_numIndices, 1, 0, 0, 0);
-
-    PRINT("Update Mesh OK");
-}
