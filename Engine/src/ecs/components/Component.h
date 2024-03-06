@@ -34,7 +34,7 @@ public:
         return m_allowMultipleInstances;
     }
 
-    virtual void Initialize(Renderer* renderer);
+    //virtual void Initialize(Renderer* renderer);
     virtual void Update(Renderer* renderer);
 
 private:

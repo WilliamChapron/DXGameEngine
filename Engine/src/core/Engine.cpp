@@ -121,9 +121,13 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
     Mesh* defaultMesh = new Mesh(); // Class
 
     MeshRenderer* defaultMeshRenderer1 = new MeshRenderer("MeshRenderer1", m_cbData, defaultMesh); // Component
+    defaultMeshRenderer1->Initialize(m_pRenderer, m_cbData);
     MeshRenderer* defaultMeshRenderer2 = new MeshRenderer("MeshRenderer2", m_cbData, defaultMesh); // Component
+    defaultMeshRenderer2->Initialize(m_pRenderer, m_cbData);
     MeshRenderer* defaultMeshRenderer3 = new MeshRenderer("MeshRenderer3", m_cbData, defaultMesh); // Component
+    defaultMeshRenderer3->Initialize(m_pRenderer, m_cbData);
     MeshRenderer* defaultMeshRenderer4 = new MeshRenderer("MeshRenderer4", m_cbData, defaultMesh); // Component
+    defaultMeshRenderer4->Initialize(m_pRenderer, m_cbData);
 
 
     texture->Initialize(m_pRenderer, textureComponentID);  // Initialisation du composant Texture
@@ -138,10 +142,10 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
     m_pCube3 = new GameObject(m_pComponentManager);
     m_pCube4 = new GameObject(m_pComponentManager);
 
-    //m_pCube->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(-0.9f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), "texture");
-    //m_pCube2->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), "texture2");
-    //m_pCube3->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), "texture");
-    //m_pCube4->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(1.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), "texture2");
+    m_pCube->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(-0.9f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), "texture");
+    m_pCube2->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), "texture2");
+    m_pCube3->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), "texture");
+    m_pCube4->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(1.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), "texture2");
 
 
     m_pComponentManager->AddComponent(*m_pCube, transform1);  // Ajout du composant Transform au gestionnaire

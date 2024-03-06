@@ -13,9 +13,19 @@ public:
     void UpdateConstantBuffer(ConstantBufferData* cbData);
     void Update(Renderer* renderer) override;
 
+    void Initialize(Renderer* renderer, ConstantBufferData* cbData);
+
     inline ConstantBufferData* GetConstantBufferData() const { return m_cbData; }
 
+    ID3D12Resource* GetConstantBuffer() const { return m_constantBuffer; }
+    UINT8* GetMappedConstantBuffer() const { return m_mappedConstantBuffer; }
+
 private:
+    // Constant buffer
+    ID3D12Resource* m_constantBuffer;
+    UINT8* m_mappedConstantBuffer;
+    //
+
     ConstantBufferData* m_cbData;
     Mesh* m_pMesh;
 };

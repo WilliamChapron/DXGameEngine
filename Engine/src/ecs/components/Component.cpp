@@ -8,9 +8,6 @@ Component::~Component() {
 
 }
 
-void Component::Initialize(Renderer* renderer) {
-
-}
 
 void Component::Update(Renderer* renderer)
 {

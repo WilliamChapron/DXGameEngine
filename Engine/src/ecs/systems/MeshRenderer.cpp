@@ -11,27 +11,59 @@ MeshRenderer::MeshRenderer(std::string name, ConstantBufferData* cbData, Mesh* m
     m_pMesh = mesh;
 }
 
+void MeshRenderer::Initialize(Renderer* renderer, ConstantBufferData* cbData) {
+    PRINT("INITIALIZE");
+    // Création du tampon de constantes
+    HRESULT hr;
+    CD3DX12_HEAP_PROPERTIES cbHeapProps(D3D12_HEAP_TYPE_UPLOAD);
+    CD3DX12_RESOURCE_DESC cbDesc = CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstantBufferData) + 255) & ~255);
+
+    hr = renderer->m_pDevice->CreateCommittedResource(
+        &cbHeapProps,
+        D3D12_HEAP_FLAG_NONE,
+        &cbDesc,
+        D3D12_RESOURCE_STATE_GENERIC_READ,
+        nullptr,
+        IID_PPV_ARGS(&m_constantBuffer)
+    );
+    ASSERT_FAILED(hr);
+
+    std::cout << "Model Matrix during initialization:" << std::endl;
+    PrintMatrix(cbData->model);
+
+
+    // #TODO FAIRE UNE FOIS PAR OBJET
+
+    // Mappage du tampon de constantes pour la copie des données
+    hr = m_constantBuffer->Map(0, nullptr, reinterpret_cast<void**>(&m_mappedConstantBuffer));
+    ASSERT_FAILED(hr);
+    // Copie des données des constantes
+    memcpy(m_mappedConstantBuffer, cbData, sizeof(ConstantBufferData));
+    m_constantBuffer->Unmap(0, nullptr);
+}
+
 void MeshRenderer::UpdateConstantBuffer(ConstantBufferData* cbData)
 {
     m_cbData = cbData;
+    // Affichage de la matrice modèle
+    //std::cout << "Model Matrix of" << GetName() << std::endl;
+    //PrintMatrix(m_cbData->model);
 }
 
 
 void MeshRenderer::Update(Renderer* renderer) {
 
     HRESULT hr;
-    hr = m_pMesh->GetConstantBuffer()->Map(0, nullptr, reinterpret_cast<void**>(m_pMesh->GetMappedConstantBuffer()));
+    hr = m_constantBuffer->Map(0, nullptr, reinterpret_cast<void**>(m_mappedConstantBuffer));
     ASSERT_FAILED(hr);
 
-    memcpy(m_pMesh->GetMappedConstantBuffer(), m_cbData, sizeof(ConstantBufferData));
-    m_pMesh->GetConstantBuffer()->Unmap(0, nullptr);
+    memcpy(m_mappedConstantBuffer, m_cbData, sizeof(ConstantBufferData));
+    m_constantBuffer->Unmap(0, nullptr);
 
 
-    // Affichage de la matrice modèle
-    //std::cout << "Model Matrix of" << GetName() << std::endl;
-    //PrintMatrix(m_cbData->model);
 
-    D3D12_GPU_VIRTUAL_ADDRESS cbvAddress = m_pMesh->GetConstantBuffer()->GetGPUVirtualAddress();
+
+    D3D12_GPU_VIRTUAL_ADDRESS cbvAddress = m_constantBuffer->GetGPUVirtualAddress();
     renderer->m_pCommandList->SetGraphicsRootConstantBufferView(1, cbvAddress);
 
     renderer->m_pCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

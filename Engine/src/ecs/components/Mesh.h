@@ -37,9 +37,7 @@ private:
 	ID3D12Resource* m_indexBuffer;
 	D3D12_INDEX_BUFFER_VIEW m_indexBufferView;
 
-	// Constant buffer
-	ID3D12Resource* m_constantBuffer;
-	UINT8* m_mappedConstantBuffer;
+
 
 	int m_numVertices;
 	int m_numIndices;
@@ -49,8 +47,7 @@ public:
 	const D3D12_VERTEX_BUFFER_VIEW& GetVertexBufferView() const { return m_vertexBufferView; }
 	ID3D12Resource* GetIndexBuffer() const { return m_indexBuffer; }
 	const D3D12_INDEX_BUFFER_VIEW& GetIndexBufferView() const { return m_indexBufferView; }
-	ID3D12Resource* GetConstantBuffer() const { return m_constantBuffer; }
-	UINT8* GetMappedConstantBuffer() const { return m_mappedConstantBuffer; }
+
 	int GetNumVertices() const { return m_numVertices; }
 	int GetNumIndices() const { return m_numIndices; }
 

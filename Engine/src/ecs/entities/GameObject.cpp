@@ -103,25 +103,34 @@ T* GameObject::GetComponent(ComponentType type) {
 
 void GameObject::Update(Renderer* renderer, Camera* camera)
 {
- 
     Transform* transformComponent = GetComponent<Transform>(ComponentType::Transform);
     MeshRenderer* meshComponent = GetComponent<MeshRenderer>(ComponentType::MeshRenderer);
 
-
+    PRINT("Avant");
+    PRINT(meshComponent->GetName());
+    //std::cout << "Model Matrix during update:" << std::endl;
+    PrintMatrix(meshComponent->GetConstantBufferData()->model);
 
     ConstantBufferData* sendToMeshCbData = new ConstantBufferData();
     sendToMeshCbData->view = camera->GetViewMatrix();
     sendToMeshCbData->projection = camera->GetProjectionMatrix();
 
-    std::cout << "Update GameObject" << std::endl;  
+    //std::cout << "Update GameObject" << std::endl;
 
-    float rotationAngle = 0.03;  
-    float rotationOffset = 0.01;  
-    float translationOffset = transformComponent->GetPosition().z + 0.01f; 
-    float fScale = transformComponent->GetScale().z - 0.001f;  
-    transformComponent->Rotate(0, 0, rotationAngle); 
+    float rotationAngle = 0.03;
+    float rotationOffset = 0.01;
+    float translationOffset = transformComponent->GetPosition().z + 0.01f;
+    float fScale = transformComponent->GetScale().z - 0.001f;
+    transformComponent->Rotate(0, 0, rotationAngle);
     sendToMeshCbData->model = transformComponent->GetTransformMatrix();
 
+    //// Imprimer la matrice modèle mise à jour
+    PRINT("Après");
+    PRINT(meshComponent->GetName());
+    //std::cout << "Model Matrix during update:" << std::endl;
+    PrintMatrix(sendToMeshCbData->model);
+
+
     meshComponent->UpdateConstantBuffer(sendToMeshCbData);
-    m_pComponentManager->UpdateComponents(this); 
+    m_pComponentManager->UpdateComponents(this);
 }
