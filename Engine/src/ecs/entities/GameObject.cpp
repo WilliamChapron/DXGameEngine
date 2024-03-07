@@ -131,7 +131,8 @@ void GameObject::Update(Renderer* renderer, Camera* camera)
     float rotationOffset = 0.01;
     float translationOffset = transformComponent->GetPosition().z + 0.01f;
     float fScale = transformComponent->GetScale().z - 0.001f;
-    transformComponent->Rotate(0, 0, rotationAngle);
+    transformComponent->SetRotation(0, 0, rotationAngle);
+    transformComponent->Translate(0, 0, rotationAngle);
     sendToMeshCbData->model = transformComponent->GetTransformMatrix();
 
     //// Imprimer la matrice modèle mise à jour
