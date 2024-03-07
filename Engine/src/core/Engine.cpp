@@ -204,8 +204,8 @@ void Engine::Run() {
         //CAMERA DEBUG
         //m_pCamera->UpdatePosition(0.0f, 0.0f, 0.2f);
         //m_pCamera->Rotate(0.0f, 0.0f, 0.25f);
-        m_pCamera->RotateAroundTarget(0.f, .0f, 0.2f);
-        m_pCamera->UpdateTarget(XMFLOAT3(0.0f, 0.0f, 0.0f));
+        /*m_pCamera->RotateAroundTarget(0.f, .0f, 0.2f);
+        m_pCamera->UpdateTarget(XMFLOAT3(0.0f, 0.0f, 0.0f));*/
         //m_pCamera->Rotate(m_pInput->GetMousePosition().x, m_pInput->GetMousePosition().y, 0.f);
 
         m_pCamera->Update(time.GetDeltaTime());
