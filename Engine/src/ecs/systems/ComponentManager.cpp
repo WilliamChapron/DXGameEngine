@@ -23,23 +23,22 @@ ComponentManager::ComponentManager(std::shared_ptr<GameObjectManager>& gameObjec
 
 
 bool CompareByPriority(const Component* leftValue, const Component* rightValue) {
-    // Obtient les types des composants
     ComponentType leftType = leftValue->GetType();
     ComponentType rightType = rightValue->GetType();
-
-    // Compare les types (ComponentType est un enum class)
-    return static_cast<int>(leftType) < static_cast<int>(rightType);
+    return static_cast<int>(leftType) < static_cast<int>(rightType); // Get value associate at an enum
 }
 
 void ComponentManager::SortComponentsMap(GameObject& gameObject) {
-    std::list<Component*> newList;
+    // Transférer les composants dans un vecteur
+    std::vector<Component*> componentsVector(gameObject.componentsList.begin(), gameObject.componentsList.end());
 
+    // Trier le vecteur par priorité
+    std::stable_sort(componentsVector.begin(), componentsVector.end(), CompareByPriority);
 
-    // Ajoutez vos composants au vector
-
-    // Triez le vector par priorité en utilisant la fonction de comparaison
-    std::stable_sort(gameObject.componentsList.begin(), gameObject.componentsList.end(), CompareByPriority);
+    // Remettre les composants triés dans la liste
+    gameObject.componentsList.assign(componentsVector.begin(), componentsVector.end());
 }
+
 
 void ComponentManager::AddComponent(GameObject& gameObject, Component* addComponent) {
 
@@ -51,7 +50,7 @@ void ComponentManager::AddComponent(GameObject& gameObject, Component* addCompon
         }
     }
     gameObject.componentsList.push_back(addComponent);
-    SortComponentsMap(gameObject)
+    SortComponentsMap(gameObject);
 }
 
 void ComponentManager::UpdateComponents(GameObject* gameObject) {

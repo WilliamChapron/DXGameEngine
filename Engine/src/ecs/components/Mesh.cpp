@@ -5,10 +5,10 @@
 #include "../entities/GameObject.hpp"
 #include "../../Utils.h"
 
-#include "MeshRenderer.h"
 
 
-Mesh::Mesh()
+
+Mesh::Mesh(std::string name) : m_name(name)
 {
 }
 

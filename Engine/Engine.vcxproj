@@ -137,6 +137,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\ecs\components\Shader.h" />
     <ClInclude Include="src\ecs\systems\ResourceManager.h" />
     <ClInclude Include="src\ecs\components\MeshRenderer.h" />
     <ClInclude Include="src\ecs\components\Mesh.h" />
@@ -167,8 +168,6 @@
     <ClCompile Include="src\ecs\systems\ComponentManager.cpp" />
     <ClCompile Include="src\ecs\components\Component.cpp" />
     <ClCompile Include="src\DDSTextureLoader.cpp" />
-    <ClCompile Include="src\ecs\components\Shader.cpp" />
-    <ClCompile Include="src\ecs\components\Shader.h.cpp" />
     <ClCompile Include="src\ecs\entities\GameObject.cpp" />
     <ClCompile Include="src\core\Engine.cpp" />
     <ClCompile Include="src\core\Window.cpp" />

@@ -31,13 +31,61 @@
 
 using namespace DirectX;
 
+class CubeMesh {
+public:
+    Vertex* cubeVertices;
+    UINT* cubeIndices;
+    int numElementsV;
+    int numElementsI;
+
+    CubeMesh() {
+        // Initialisation des pointeurs
+        cubeVertices = new Vertex[8]{
+            { {-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f, 1.0f}, {0.0f, 1.0f} },
+            { {-0.5f, -0.5f,  0.5f}, {1.0f, 0.0f, 0.0f, 1.0f}, {0.0f, 0.0f} },
+            { {-0.5f,  0.5f, -0.5f}, {0.0f, 0.0f, 1.0f, 1.0f}, {1.0f, 1.0f} },
+            { {-0.5f,  0.5f,  0.5f}, {0.0f, 0.0f, 1.0f, 1.0f}, {1.0f, 0.0f} },
+            { { 0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 0.0f, 1.0f}, {0.0f, 1.0f} },
+            { { 0.5f, -0.5f,  0.5f}, {1.0f, 1.0f, 0.0f, 1.0f}, {0.0f, 0.0f} },
+            { { 0.5f,  0.5f, -0.5f}, {0.5f, 0.5f, 0.5f, 1.0f}, {1.0f, 1.0f} },
+            { { 0.5f,  0.5f,  0.5f}, {0.5f, 0.5f, 0.5f, 1.0f}, {1.0f, 0.0f} }
+        };
+
+        cubeIndices = new UINT[36]{
+            0, 1, 2,
+            2, 1, 3,
+            4, 6, 5,
+            6, 7, 5,
+            0, 2, 4,
+            2, 6, 4,
+            1, 5, 3,
+            3, 5, 7,
+            2, 3, 6,
+            3, 7, 6,
+            0, 4, 1,
+            1, 4, 5
+        };
+
+        numElementsV = 8;
+        numElementsI = 36;
+    }
+
+    ~CubeMesh() {
+        delete[] cubeVertices;
+        delete[] cubeIndices;
+    }
+};
+
 
 Engine::Engine()
 {
 
 }
 
+
+
 void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
+    CubeMesh cubeMesh;
     m_hInstance = hInstance;
 
     AllocConsole();
@@ -63,57 +111,33 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
 
     // INITIALIZE UNIQUE COMPONENT
 
-    Vertex cubeVertices[] = {
-            { {-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f, 1.0f}, {0.0f, 1.0f} },
-            { {-0.5f, -0.5f,  0.5f}, {1.0f, 0.0f, 0.0f, 1.0f}, {0.0f, 0.0f} },
-            { {-0.5f,  0.5f, -0.5f}, {0.0f, 0.0f, 1.0f, 1.0f}, {1.0f, 1.0f} },
-            { {-0.5f,  0.5f,  0.5f}, {0.0f, 0.0f, 1.0f, 1.0f}, {1.0f, 0.0f} },
-            { { 0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 0.0f, 1.0f}, {0.0f, 1.0f} },
-            { { 0.5f, -0.5f,  0.5f}, {1.0f, 1.0f, 0.0f, 1.0f}, {0.0f, 0.0f} },
-            { { 0.5f,  0.5f, -0.5f}, {0.5f, 0.5f, 0.5f, 1.0f}, {1.0f, 1.0f} },
-            { { 0.5f,  0.5f,  0.5f}, {0.5f, 0.5f, 0.5f, 1.0f}, {1.0f, 0.0f} }
-    };
-
-    UINT cubeIndices[] = {
-        0, 1, 2,
-        2, 1, 3,
-        4, 6, 5,
-        6, 7, 5,
-        0, 2, 4,
-        2, 6, 4,
-        1, 5, 3,
-        3, 5, 7,
-        2, 3, 6,
-        3, 7, 6,
-        0, 4, 1,
-        1, 4, 5
-    };
-
-    Vertex* pVertices = &cubeVertices[0];
-    UINT* pIndices = &cubeIndices[0];
-
-    int numElementsV = sizeof(cubeVertices) / sizeof(cubeVertices[0]);
-    int numElementsI = sizeof(cubeIndices) / sizeof(cubeIndices[0]);
+    
 
     ConstantBufferData* cbData = new ConstantBufferData(); // Alloue de la mémoire pour m_cbData
-
     XMStoreFloat4x4(&cbData->model, XMMatrixIdentity()); ;
     cbData->view = m_pCamera->GetViewMatrix();
     cbData->projection = m_pCamera->GetProjectionMatrix();
 
     TextureComponent* texture = new TextureComponent("texture");
     TextureComponent* texture2 = new TextureComponent("texture2");
-    int textureComponentID = m_pResourceManager->AddTextureToResources(texture);
-    int textureComponentID2 = m_pResourceManager->AddTextureToResources(texture2);
+    Mesh* baseMesh = new Mesh("mesh1");
+
+    m_pResourceManager->AddTextureToResources(texture);
+    m_pResourceManager->AddTextureToResources(texture2);
+    m_pResourceManager->AddMeshToResources(baseMesh);
 
 
 
-    Mesh* defaultMesh = new Mesh(); // Class || INITIALIZE MESH BEFORE TEXTURE BECAUSE DRAWING ORDER !!!
 
 
-    texture->Initialize(m_pRenderer, textureComponentID);  
-    texture2->Initialize(m_pRenderer, textureComponentID2); 
-    defaultMesh->Initialize(cbData, m_pRenderer, cubeVertices, numElementsV, cubeIndices, numElementsI);
+
+
+    // Any order
+    baseMesh->Initialize(cbData, m_pRenderer, cubeMesh.cubeVertices, cubeMesh.numElementsV, cubeMesh.cubeIndices, cubeMesh.numElementsI);
+    texture->Initialize(m_pRenderer, m_pResourceManager->FindTextureComponentByName("texture").key);
+    texture2->Initialize(m_pRenderer, m_pResourceManager->FindTextureComponentByName("texture2").key);
+
+
 
 
 
@@ -123,27 +147,23 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
     m_pCube3 = new GameObject(m_pComponentManager);
     m_pCube4 = new GameObject(m_pComponentManager);
 
-    m_pComponentManager->AddComponent(*m_pCube, m_pResourceManager->FindTextureComponentByName("texture"));
-    m_pComponentManager->AddComponent(*m_pCube2, m_pResourceManager->FindTextureComponentByName("texture2"));
-    m_pComponentManager->AddComponent(*m_pCube3, m_pResourceManager->FindTextureComponentByName("texture"));
-    m_pComponentManager->AddComponent(*m_pCube4, m_pResourceManager->FindTextureComponentByName("texture2"));
 
-    m_pCube->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(-1.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), defaultMesh, cbData);
-    m_pCube2->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), defaultMesh, cbData);
-    m_pCube3->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(1.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), defaultMesh, cbData);
-    m_pCube4->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(3.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), defaultMesh, cbData);
+
+    m_pCube->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(-1.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), m_pResourceManager->FindMeshComponentByName("mesh1").component, cbData);
+    m_pCube2->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), m_pResourceManager->FindMeshComponentByName("mesh1").component, cbData);
+    m_pCube3->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(1.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), m_pResourceManager->FindMeshComponentByName("mesh1").component, cbData);
+    m_pCube4->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(3.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), m_pResourceManager->FindMeshComponentByName("mesh1").component, cbData);
+
+    m_pComponentManager->AddComponent(*m_pCube, m_pResourceManager->FindTextureComponentByName("texture").component);
+    m_pComponentManager->AddComponent(*m_pCube2, m_pResourceManager->FindTextureComponentByName("texture2").component);
+    m_pComponentManager->AddComponent(*m_pCube3, m_pResourceManager->FindTextureComponentByName("texture").component);
+    m_pComponentManager->AddComponent(*m_pCube4, m_pResourceManager->FindTextureComponentByName("texture2").component);
 
     m_pGameObjectManager->AddObject("Cube", m_pCube);
     m_pGameObjectManager->AddObject("Cube2", m_pCube2);
     m_pGameObjectManager->AddObject("Cube3", m_pCube3);
     m_pGameObjectManager->AddObject("Cube4", m_pCube4);
 
-
-    //std::map<int, TextureComponent*> theArray = m_pComponentManager->GetTextureComponents();
-    //for (const auto& pair : theArray) {
-    //    std::cout << "Component ID: " << pair.first << std::endl;
-    //    std::cout << "Texture: " << pair.second->GetName() << std::endl;
-    //}
 
 
     // Drawing

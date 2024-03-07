@@ -12,6 +12,8 @@
 #include "../extern/d3dx12.h"
 #include <wrl/client.h>
 
+#include <iostream>
+
 
 //#include "utils.h"
 

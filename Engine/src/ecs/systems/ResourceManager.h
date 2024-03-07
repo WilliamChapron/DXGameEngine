@@ -11,7 +11,17 @@
 
 
 class TextureComponent;
-class MeshRenderer;
+class Mesh;
+
+struct TextureComponentInfo {
+    int key;
+    TextureComponent* component;
+};
+
+struct MeshComponentInfo {
+    int key;
+    Mesh* component;
+};
 
 
 class ResourceManager
@@ -20,18 +30,18 @@ public:
     ResourceManager();
 
 
-    int AddTextureToResources(Component* addComponent);
-    int AddMeshToResources(Component* addComponent);
+    void AddTextureToResources(Component* addComponent);
+    void AddMeshToResources(Mesh* addComponent);
 
-    MeshRenderer* FindMeshComponentByName(const std::string& componentName);
-    TextureComponent* FindTextureComponentByName(const std::string & componentName);
+    MeshComponentInfo FindMeshComponentByName(const std::string& componentName);
+    TextureComponentInfo FindTextureComponentByName(const std::string & componentName);
         
 
 private:
 
     // RESSOURCE MANAGER
     std::map<int, TextureComponent*> m_textureComponents;
-    std::map<int, MeshRenderer*> m_meshComponents;
+    std::map<int, Mesh*> m_meshRendererComponents;
     //
 
     // Id

@@ -2,55 +2,49 @@
 
 #include "../components/Component.h"
 #include "../components/Texture.h"
-#include "../components/MeshRenderer.h"
+#include "../components/Mesh.h"
 
 ResourceManager::ResourceManager() : m_currentMeshComponentID(0), m_currentTextureComponentID(0) {
 }
 
-int ResourceManager::AddTextureToResources(Component* addComponent) {
+void ResourceManager::AddTextureToResources(Component* addComponent) {
     // WORKING ON TEXTURE
     if (dynamic_cast<TextureComponent*>(addComponent)) {
         int componentID = ++m_currentTextureComponentID;
         // #TODO check si existe déja 
         m_textureComponents[componentID] = static_cast<TextureComponent*>(addComponent);
-        return componentID; 
     }
-    return 0;
 }
 
-int ResourceManager::AddMeshToResources(Component* addComponent) {
-    if (dynamic_cast<MeshRenderer*>(addComponent)) {
-        int componentID = ++m_currentMeshComponentID;
-        m_meshComponents[componentID] = static_cast<MeshRenderer*>(addComponent);
-        return componentID; 
-    }
-    return 0;
+void ResourceManager::AddMeshToResources(Mesh* addComponent) {
+    int componentID = ++m_currentMeshComponentID;
+    // #TODO check si existe déja 
+    m_meshRendererComponents[componentID] = addComponent;
 }
 
-MeshRenderer* ResourceManager::FindMeshComponentByName(const std::string& componentName) {
-    for (const auto& pair : m_meshComponents) {
-
+MeshComponentInfo ResourceManager::FindMeshComponentByName(const std::string& componentName) {
+    for (const auto& pair : m_meshRendererComponents) {
+        int key = pair.first;
         const auto& component = pair.second;
-        MeshRenderer* meshComponent = dynamic_cast<MeshRenderer*>(component);
-
+        Mesh* meshComponent = dynamic_cast<Mesh*>(component);
         if (meshComponent->GetName() == componentName) {
-            return meshComponent;
+            return { key, meshComponent };
         }
     }
 
-    return nullptr;
+    return { -1, nullptr };
 }
 
-TextureComponent* ResourceManager::FindTextureComponentByName(const std::string& componentName) {
+TextureComponentInfo ResourceManager::FindTextureComponentByName(const std::string& componentName) {
     for (const auto& pair : m_textureComponents) {
-
+        int key = pair.first;
         const auto& component = pair.second;
         TextureComponent* textureComponent = dynamic_cast<TextureComponent*>(component);
 
         if (textureComponent->GetName() == componentName) {
-            return textureComponent;
+            return { key, textureComponent };
         }
     }
 
-    return nullptr;
+    return { -1, nullptr };
 }
