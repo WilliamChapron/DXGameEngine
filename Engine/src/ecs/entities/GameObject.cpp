@@ -15,7 +15,7 @@
 #include "../components/Texture.h"
 #include "../components/Transform.h"
 #include "../components/Mesh.h"
-#include "../systems/MeshRenderer.h"
+#include "../components/MeshRenderer.h"
 
 #include "../../renderer/Resources.h"
 
@@ -27,9 +27,15 @@ GameObject::GameObject(ComponentManager* componentManager) : m_pComponentManager
 {
 }
 
-void GameObject::Initialize(Renderer* renderer, Camera* camera, const XMFLOAT3& position, const XMFLOAT3& rotation, const XMFLOAT3& scale, std::string textureName) {
+void GameObject::Initialize(Renderer* renderer, Camera* camera, const XMFLOAT3& position, const XMFLOAT3& rotation, const XMFLOAT3& scale, Mesh* mesh, ConstantBufferData* cbData) {
+    // Specific to each object
     Transform* baseTransform = new Transform(position, rotation, scale);
-    m_pComponentManager->AddComponent(*this, baseTransform);  // Ajout du composant Transform au gestionnaire
+    m_pComponentManager->AddComponent(*this, baseTransform);  
+
+    MeshRenderer* baseMeshRenderer = new MeshRenderer("MeshRenderer", cbData, mesh); // Component
+    baseMeshRenderer->Initialize(renderer, cbData);
+    m_pComponentManager->AddComponent(*this, baseMeshRenderer);
+
 
     //PRINT("Creation des component");
     //// Initialisation de l'objet GameObject avec un gestionnaire de composants
@@ -112,8 +118,8 @@ void GameObject::Update(Renderer* renderer, Camera* camera)
 
     //PRINT("Avant");
     //PRINT(meshComponent->GetName());
-    std::cout << "Model Matrix during update:" << std::endl;
-    PrintMatrix(meshComponent->GetConstantBufferData()->model);
+    //std::cout << "Model Matrix during update:" << std::endl;
+    //PrintMatrix(meshComponent->GetConstantBufferData()->model);
 
     ConstantBufferData* sendToMeshCbData = new ConstantBufferData();
     sendToMeshCbData->view = camera->GetViewMatrix();

@@ -13,7 +13,7 @@ void TextureComponent::Initialize(Renderer* renderer, int offset)
 {
     HRESULT hr;
 
-    m_offset = offset;
+    m_offset = offset - 1;
 
 
 
@@ -51,9 +51,8 @@ void TextureComponent::Initialize(Renderer* renderer, int offset)
     CD3DX12_CPU_DESCRIPTOR_HANDLE srvHandle(renderer->m_pCbvSrvHeap->GetCPUDescriptorHandleForHeapStart());
     srvHandle.Offset(m_offset, renderer->m_cbvSrvDescriptorSize);
 
-    renderer->m_pDevice->CreateShaderResourceView(m_textureBuffer.Get(), &srvDesc, srvHandle);
 
-    // Get List from DDS Creation
+    // PEUT ON RECUPERER LA
 
     hr = renderer->m_pCommandList->Close();
     ASSERT_FAILED(hr);
@@ -63,13 +62,24 @@ void TextureComponent::Initialize(Renderer* renderer, int offset)
 
     renderer->WaitForPreviousFrame();
 
+    renderer->m_pDevice->CreateShaderResourceView(m_textureBuffer.Get(), &srvDesc, srvHandle);
+
+    // Get List from DDS Creation
+
+
+    m_textureAdress = CD3DX12_GPU_DESCRIPTOR_HANDLE(renderer->m_pCbvSrvHeap->GetGPUDescriptorHandleForHeapStart());
+    m_textureAdress.Offset(m_offset, renderer->m_cbvSrvDescriptorSize);
+    
 }
 
 void TextureComponent::Update(Renderer* renderer) {
-    CD3DX12_GPU_DESCRIPTOR_HANDLE cbvSrvHandle(renderer->m_pCbvSrvHeap.Get()->GetGPUDescriptorHandleForHeapStart());
-    cbvSrvHandle.Offset(m_offset, renderer->m_cbvSrvDescriptorSize); // Utilisation du bon increment size
-    renderer->m_pCommandList->SetGraphicsRootDescriptorTable(0, cbvSrvHandle);
-
-
     PRINT("Update Texture");
+    PRINT("OFFSET");
+    PRINT(m_offset);
+    //CD3DX12_GPU_DESCRIPTOR_HANDLE cbvSrvHandle(renderer->m_pCbvSrvHeap.Get()->GetGPUDescriptorHandleForHeapStart());
+    //cbvSrvHandle.Offset(m_offset, renderer->m_cbvSrvDescriptorSize); // Utilisation du bon increment size
+    renderer->m_pCommandList->SetGraphicsRootDescriptorTable(0, m_textureAdress);
+
+
+
 }

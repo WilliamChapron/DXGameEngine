@@ -1,17 +1,13 @@
 #pragma once
 
 #include "../../include.h"
-#include "../components/Component.h"
-#include "../entities/GameObject.hpp"
 
+using namespace DirectX;
 
+struct ConstantBufferData;
+
+class MeshRenderer;
 class Renderer;
-
-struct ConstantBufferData {
-	XMFLOAT4X4 model;
-	XMFLOAT4X4 view;
-	XMFLOAT4X4 projection;
-};
 
 // Vertex
 struct Vertex

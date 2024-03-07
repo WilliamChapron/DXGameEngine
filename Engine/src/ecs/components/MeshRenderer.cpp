@@ -1,8 +1,9 @@
 #include "../components/Mesh.h"
+#include "MeshRenderer.h"
 #include "../../renderer/Graphics.h"
 #include "../../core/Defines.h"
 #include "../components/Component.h"
-#include "MeshRenderer.h"
+
 #include "../../Utils.h"
 
 MeshRenderer::MeshRenderer(std::string name, ConstantBufferData* cbData, Mesh* mesh) : Component(name, ComponentType::MeshRenderer, false)
@@ -57,8 +58,8 @@ void MeshRenderer::Update(Renderer* renderer) {
     PRINT("Update Mesh renderer");
     HRESULT hr;
 
-    std::cout << "Model Matrix of" << GetName() << std::endl;
-    PrintMatrix(m_cbData->model);
+    //std::cout << "Model Matrix of" << GetName() << std::endl;
+    //PrintMatrix(m_cbData->model);
 
     hr = m_constantBuffer->Map(0, nullptr, reinterpret_cast<void**>(m_mappedConstantBuffer));
     ASSERT_FAILED(hr);

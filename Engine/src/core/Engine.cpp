@@ -18,7 +18,7 @@
 #include "../ecs/components/Camera.h"
 #include "../ecs/components/Mesh.h"
 
-#include "../ecs/systems/MeshRenderer.h"
+#include "../ecs/components/MeshRenderer.h"
 
 // Miscellaneous
 #include "../ecs/systems/Time.h"
@@ -97,45 +97,33 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
 
 
 
-    ConstantBufferData* m_cbData = new ConstantBufferData(); // Alloue de la mémoire pour m_cbData
+    ConstantBufferData* cbData = new ConstantBufferData(); // Alloue de la mémoire pour m_cbData
 
-    XMStoreFloat4x4(&m_cbData->model, XMMatrixIdentity()); ;
-    m_cbData->view = m_pCamera->GetViewMatrix();
-    m_cbData->projection = m_pCamera->GetProjectionMatrix();
+    XMStoreFloat4x4(&cbData->model, XMMatrixIdentity()); ;
+    cbData->view = m_pCamera->GetViewMatrix();
+    cbData->projection = m_pCamera->GetProjectionMatrix();
 
     TextureComponent* texture = new TextureComponent("texture");
     TextureComponent* texture2 = new TextureComponent("texture2");
-
-
-
-
     int textureComponentID = m_pComponentManager->AddTextureToResources(texture);
     PRINT("Texture Component 1 ID: " + std::to_string(textureComponentID));
-
     int textureComponentID2 = m_pComponentManager->AddTextureToResources(texture2);
     PRINT("Texture Component 2 ID: " + std::to_string(textureComponentID));
 
-    Mesh* defaultMesh = new Mesh(); // Class
+
+
+    Mesh* defaultMesh = new Mesh(); // Class || INITIALIZE MESH BEFORE TEXTURE BECAUSE DRAWING ORDER !!!
 
 
 
 
-    texture->Initialize(m_pRenderer, textureComponentID);  // Initialisation du composant Texture
-    texture2->Initialize(m_pRenderer, textureComponentID2);  // Initialisation du composant Texture
-    defaultMesh->Initialize(m_cbData, m_pRenderer, cubeVertices, numElementsV, cubeIndices, numElementsI);
 
-    MeshRenderer* defaultMeshRenderer1 = new MeshRenderer("MeshRenderer", m_cbData, defaultMesh); // Component
-    defaultMeshRenderer1->Initialize(m_pRenderer, m_cbData);
-    PRINT(defaultMeshRenderer1->GetConstantBuffer());
-    MeshRenderer* defaultMeshRenderer2 = new MeshRenderer("MeshRenderer", m_cbData, defaultMesh); // Component
-    defaultMeshRenderer2->Initialize(m_pRenderer, m_cbData);
-    PRINT(defaultMeshRenderer2->GetConstantBuffer());
-    MeshRenderer* defaultMeshRenderer3 = new MeshRenderer("MeshRenderer", m_cbData, defaultMesh); // Component
-    defaultMeshRenderer3->Initialize(m_pRenderer, m_cbData);
-    PRINT(defaultMeshRenderer3->GetConstantBuffer());
-    MeshRenderer* defaultMeshRenderer4 = new MeshRenderer("MeshRenderer", m_cbData, defaultMesh); // Component
-    defaultMeshRenderer4->Initialize(m_pRenderer, m_cbData);
-    PRINT(defaultMeshRenderer4->GetConstantBuffer());
+
+    texture->Initialize(m_pRenderer, textureComponentID);  
+    texture2->Initialize(m_pRenderer, textureComponentID2); 
+    defaultMesh->Initialize(cbData, m_pRenderer, cubeVertices, numElementsV, cubeIndices, numElementsI);
+
+
 
     //Transform* transform1 = new Transform(XMFLOAT3(-0.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
     //Transform* transform2 = new Transform(XMFLOAT3(0.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
@@ -148,27 +136,21 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
     m_pCube3 = new GameObject(m_pComponentManager);
     m_pCube4 = new GameObject(m_pComponentManager);
 
-    m_pCube->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(-0.9f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), "texture");
-    m_pCube2->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), "texture2");
-    m_pCube3->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), "texture");
-    m_pCube4->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(1.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), "texture2");
-
-
-
-    m_pComponentManager->AddComponent(*m_pCube, texture);  // Ajout du composant Texture au gestionnaire
-    m_pComponentManager->AddComponent(*m_pCube, defaultMeshRenderer1);  // Ajout du composant Mesh au gestionnaire
-
-
+    m_pComponentManager->AddComponent(*m_pCube, texture);  
     m_pComponentManager->AddComponent(*m_pCube2, texture2); 
-    m_pComponentManager->AddComponent(*m_pCube2, defaultMeshRenderer2); 
-
-
     m_pComponentManager->AddComponent(*m_pCube3, texture);  
-    m_pComponentManager->AddComponent(*m_pCube3, defaultMeshRenderer3);  
-
 
     m_pComponentManager->AddComponent(*m_pCube4, texture2);  
-    m_pComponentManager->AddComponent(*m_pCube4, defaultMeshRenderer4); 
+
+    m_pCube->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(-0.9f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), defaultMesh, cbData);
+    m_pCube2->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), defaultMesh, cbData);
+    m_pCube3->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), defaultMesh, cbData);
+    m_pCube4->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(1.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), defaultMesh, cbData);
+
+
+
+
+
 
 
 

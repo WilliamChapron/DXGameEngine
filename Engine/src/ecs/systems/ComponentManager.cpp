@@ -7,7 +7,7 @@
 #include "../components/Component.h"
 #include "../components/Texture.h"
 #include "../components/Mesh.h"
-#include "MeshRenderer.h"
+#include "../components/MeshRenderer.h"
 
 
 // Pass Instance of GameObjectManager to Work with alive entity

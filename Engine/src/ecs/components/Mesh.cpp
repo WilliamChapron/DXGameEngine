@@ -5,6 +5,9 @@
 #include "../entities/GameObject.hpp"
 #include "../../Utils.h"
 
+#include "MeshRenderer.h"
+
+
 Mesh::Mesh()
 {
 }

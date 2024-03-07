@@ -24,5 +24,7 @@ private:
 	std::string m_namePath;
 	ComPtr<ID3D12Resource> m_textureBuffer;
 	ComPtr<ID3D12Resource> m_uploadTexture;
+
+	CD3DX12_GPU_DESCRIPTOR_HANDLE m_textureAdress;
 };
 

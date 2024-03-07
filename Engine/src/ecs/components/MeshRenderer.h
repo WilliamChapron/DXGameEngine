@@ -2,7 +2,14 @@
 
 
 #include "../components/Component.h"
-#include "../components/Mesh.h"
+//#include "../components/Mesh.h"
+
+struct ConstantBufferData {
+    XMFLOAT4X4 model;
+    XMFLOAT4X4 view;
+    XMFLOAT4X4 projection;
+};
+
 
 class Renderer;
 
