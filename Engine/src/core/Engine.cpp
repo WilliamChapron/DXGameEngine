@@ -55,14 +55,14 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
 
     //Create Objects
     m_pCube = new GameObject(m_pComponentManager);
-    m_pCube2 = new GameObject(m_pComponentManager);
+    //m_pCube2 = new GameObject(m_pComponentManager);
 
-    m_pCube->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(-0.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), "texture");
-    m_pCube2->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(0.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), "texture2");
+    m_pCube->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(0.f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), "texture");
+    //m_pCube2->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(0.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), "texture2");
 
 
     m_pGameObjectManager->AddObject("Cube", m_pCube);
-    m_pGameObjectManager->AddObject("Cube2", m_pCube2);
+    //m_pGameObjectManager->AddObject("Cube2", m_pCube2);
 
     // Drawing
     SetEngineRenderable(true);
@@ -89,6 +89,7 @@ void Engine::Run() {
 
     std::vector<GameObject> Cubes;
 
+    float speed = 15.f;
 
     //Cubes.push_back(*m_pCube1);
     //Cubes.push_back(*m_pCube2);
@@ -99,10 +100,10 @@ void Engine::Run() {
         time.UpdateTime();
 
         //CAMERA DEBUG
-        //m_pCamera->UpdatePosition(0.0f, 0.0f, 0.2f);
+        //m_pCamera->UpdatePosition(0.02f, 0.0f, 0.f);
         //m_pCamera->Rotate(0.0f, 0.0f, 0.25f);
-        m_pCamera->RotateAroundTarget(0.f, .0f, 0.2f);
-        m_pCamera->UpdateTarget(XMFLOAT3(0.0f, 0.0f, 0.0f));
+        //m_pCamera->RotateAroundTarget(0.f, .0f, 0.2f);
+        //m_pCamera->UpdateTarget(XMFLOAT3(0.0f, 0.0f, 0.0f));
         //m_pCamera->Rotate(m_pInput->GetMousePosition().x, m_pInput->GetMousePosition().y, 0.f);
 
         m_pCamera->Update(time.GetDeltaTime());
@@ -110,7 +111,7 @@ void Engine::Run() {
         m_pWindow->UpdateTitleWithFPS(time.GetFramePerSecond());
 
         //------ TEST INPUT
-        //m_pInput->Update();
+        m_pInput->Update();
 
         //// Affichez la liste des touches et leur �tat
         //std::cout << "Touches pressees : " << std::endl;
@@ -133,9 +134,39 @@ void Engine::Run() {
         //    }
         //    std::cout << std::endl;
         //}
+        m_pInput->Update();
 
+        // Affichez la liste des touches et leur �tat
+        for (const auto& pair : m_pInput->GetKeyStates()) {
+            switch (pair.first) {
+                case 'Z':
+                    if (pair.second == KeyState::Pressed || pair.second == KeyState::Held)
+                        m_pCamera->UpdatePosition(0.0f, speed * time.GetDeltaTime(), 0.0f);
+                    break;
+                case 'S':
+                    if (pair.second == KeyState::Pressed || pair.second == KeyState::Held)
+                        m_pCamera->UpdatePosition(0.0f, -speed * time.GetDeltaTime(), 0.0f);
+                    break;
+                case 'Q':
+                    if (pair.second == KeyState::Pressed || pair.second == KeyState::Held)
+                        m_pCamera->UpdatePosition(-speed * time.GetDeltaTime(), 0.0f, 0.0f);
+                    break;
+                case 'D':
+                    if (pair.second == KeyState::Pressed || pair.second == KeyState::Held)
+                        m_pCamera->UpdatePosition(speed * time.GetDeltaTime(), 0.0f, 0.0f);
+                    break;
+                case VK_SPACE:
+                    if (pair.second == KeyState::Pressed || pair.second == KeyState::Held)
+                        m_pCamera->UpdatePosition(0.0f, 0.0f, -speed * time.GetDeltaTime());
+                    break;
+                case VK_SHIFT:
+                    if (pair.second == KeyState::Pressed || pair.second == KeyState::Held)
+                        m_pCamera->UpdatePosition(0.0f, 0.0f, speed * time.GetDeltaTime());
+                    break;
 
+            }
 
+        }
 
         if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
             if (msg.message == WM_QUIT)

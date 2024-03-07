@@ -64,10 +64,10 @@ void GameObject::Update(Renderer* renderer, Camera* camera)
 
     std::cout << "Update GameObject" << std::endl;  // Affichage de "Update" dans la console
 
-    float rotationAngle = 0.03;  // Définition de l'angle de rotation
-    float rotationOffset = 0.01;  // Définition du décalage de rotation
-    float translationOffset = transformComponent->GetPosition().z + 0.01f;  // Définition du décalage de translation
-    float fScale = transformComponent->GetScale().z - 0.001f;  // Définition de l'échelle de transformation
+    float rotationAngle = 0.0f;  // Définition de l'angle de rotation
+    float rotationOffset = 0.0f;  // Définition du décalage de rotation
+    //float translationOffset = transformComponent->GetPosition().z + 0.01f;  // Définition du décalage de translation
+    //float fScale = transformComponent->GetScale().z - 0.001f;  // Définition de l'échelle de transformation
 
     transformComponent->Rotate(0, 0, rotationAngle);  // Rotation du composant Transform
     m_cbData.model = transformComponent->GetTransformMatrix();  // Mise à jour de la matrice de transformation du GameObject
