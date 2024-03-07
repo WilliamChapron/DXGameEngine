@@ -45,6 +45,8 @@ public:
 
     std::list<Component*> componentsList;
 
+    MeshRenderer* m_pMeshRenderer;
+
 protected:
     
 private:

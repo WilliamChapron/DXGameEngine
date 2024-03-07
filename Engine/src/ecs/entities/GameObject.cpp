@@ -28,66 +28,70 @@ GameObject::GameObject(ComponentManager* componentManager) : m_pComponentManager
 }
 
 void GameObject::Initialize(Renderer* renderer, Camera* camera, const XMFLOAT3& position, const XMFLOAT3& rotation, const XMFLOAT3& scale, std::string textureName) {
-    PRINT("Creation des component");
-    // Initialisation de l'objet GameObject avec un gestionnaire de composants
-    Transform* defaultTransform = new Transform(position, rotation, scale);  
+    Transform* baseTransform = new Transform(position, rotation, scale);
+    m_pComponentManager->AddComponent(*this, baseTransform);  // Ajout du composant Transform au gestionnaire
 
-    ConstantBufferData* sendToMeshCbData = new ConstantBufferData(); 
-    sendToMeshCbData->model = defaultTransform->GetTransformMatrix();  
-    sendToMeshCbData->view = camera->GetViewMatrix(); 
-    sendToMeshCbData->projection = camera->GetProjectionMatrix();  
+    //PRINT("Creation des component");
+    //// Initialisation de l'objet GameObject avec un gestionnaire de composants
+    //Transform* defaultTransform = new Transform(position, rotation, scale);  
 
-
-    Vertex cubeVertices[] = {
-            { {-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f, 1.0f}, {0.0f, 1.0f} },
-            { {-0.5f, -0.5f,  0.5f}, {1.0f, 0.0f, 0.0f, 1.0f}, {0.0f, 0.0f} },
-            { {-0.5f,  0.5f, -0.5f}, {0.0f, 0.0f, 1.0f, 1.0f}, {1.0f, 1.0f} },
-            { {-0.5f,  0.5f,  0.5f}, {0.0f, 0.0f, 1.0f, 1.0f}, {1.0f, 0.0f} },
-            { { 0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 0.0f, 1.0f}, {0.0f, 1.0f} },
-            { { 0.5f, -0.5f,  0.5f}, {1.0f, 1.0f, 0.0f, 1.0f}, {0.0f, 0.0f} },
-            { { 0.5f,  0.5f, -0.5f}, {0.5f, 0.5f, 0.5f, 1.0f}, {1.0f, 1.0f} },
-            { { 0.5f,  0.5f,  0.5f}, {0.5f, 0.5f, 0.5f, 1.0f}, {1.0f, 0.0f} }
-    };
-
-    UINT cubeIndices[] = {
-        0, 1, 2,
-        2, 1, 3,
-        4, 6, 5,
-        6, 7, 5,
-        0, 2, 4,
-        2, 6, 4,
-        1, 5, 3,
-        3, 5, 7,
-        2, 3, 6,
-        3, 7, 6,
-        0, 4, 1,
-        1, 4, 5
-    };
-
-    Vertex* pVertices = &cubeVertices[0];
-    UINT* pIndices = &cubeIndices[0];
-
-    int numElementsV = sizeof(cubeVertices) / sizeof(cubeVertices[0]);
-    int numElementsI = sizeof(cubeIndices) / sizeof(cubeIndices[0]);
-
-    TextureComponent* defaultTexture = new TextureComponent(textureName);
-    Mesh* defaultMesh = new Mesh(); // Class
-    MeshRenderer* defaultMeshRenderer = new MeshRenderer("Mesh", sendToMeshCbData, defaultMesh); // Component
+    //ConstantBufferData* sendToMeshCbData = new ConstantBufferData(); 
+    //sendToMeshCbData->model = defaultTransform->GetTransformMatrix();  
+    //sendToMeshCbData->view = camera->GetViewMatrix(); 
+    //sendToMeshCbData->projection = camera->GetProjectionMatrix();  
 
 
-    // Add to resource manager before init
-    int textureComponentID = m_pComponentManager->AddTextureToResources(defaultTexture);
+    //Vertex cubeVertices[] = {
+    //        { {-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f, 1.0f}, {0.0f, 1.0f} },
+    //        { {-0.5f, -0.5f,  0.5f}, {1.0f, 0.0f, 0.0f, 1.0f}, {0.0f, 0.0f} },
+    //        { {-0.5f,  0.5f, -0.5f}, {0.0f, 0.0f, 1.0f, 1.0f}, {1.0f, 1.0f} },
+    //        { {-0.5f,  0.5f,  0.5f}, {0.0f, 0.0f, 1.0f, 1.0f}, {1.0f, 0.0f} },
+    //        { { 0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 0.0f, 1.0f}, {0.0f, 1.0f} },
+    //        { { 0.5f, -0.5f,  0.5f}, {1.0f, 1.0f, 0.0f, 1.0f}, {0.0f, 0.0f} },
+    //        { { 0.5f,  0.5f, -0.5f}, {0.5f, 0.5f, 0.5f, 1.0f}, {1.0f, 1.0f} },
+    //        { { 0.5f,  0.5f,  0.5f}, {0.5f, 0.5f, 0.5f, 1.0f}, {1.0f, 0.0f} }
+    //};
 
-    defaultTexture->Initialize(renderer, textureComponentID);  // Initialisation du composant Texture
-    defaultMesh->Initialize(sendToMeshCbData, renderer, cubeVertices, numElementsV, cubeIndices, numElementsI);
+    //UINT cubeIndices[] = {
+    //    0, 1, 2,
+    //    2, 1, 3,
+    //    4, 6, 5,
+    //    6, 7, 5,
+    //    0, 2, 4,
+    //    2, 6, 4,
+    //    1, 5, 3,
+    //    3, 5, 7,
+    //    2, 3, 6,
+    //    3, 7, 6,
+    //    0, 4, 1,
+    //    1, 4, 5
+    //};
+
+    //Vertex* pVertices = &cubeVertices[0];
+    //UINT* pIndices = &cubeIndices[0];
+
+    //int numElementsV = sizeof(cubeVertices) / sizeof(cubeVertices[0]);
+    //int numElementsI = sizeof(cubeIndices) / sizeof(cubeIndices[0]);
+
+    //TextureComponent* defaultTexture = new TextureComponent(textureName);
+    //Mesh* defaultMesh = new Mesh(); // Class
+    ////MeshRenderer* defaultMeshRenderer = new MeshRenderer("Mesh", sendToMeshCbData, defaultMesh); // Component
+    //m_pMeshRenderer = new MeshRenderer("Mesh", sendToMeshCbData, defaultMesh); // Component
+
+    //// Add to resource manager before init
+    //int textureComponentID = m_pComponentManager->AddTextureToResources(defaultTexture);
+
+    //defaultTexture->Initialize(renderer, textureComponentID);  // Initialisation du composant Texture
+    //defaultMesh->Initialize(sendToMeshCbData, renderer, cubeVertices, numElementsV, cubeIndices, numElementsI);
+    //m_pMeshRenderer->Initialize(renderer, sendToMeshCbData);
 
 
-    // Ajout des composants au gestionnaire de composants
-    m_pComponentManager->AddComponent(*this, defaultTransform);  
-    m_pComponentManager->AddComponent(*this, defaultTexture);  
-    m_pComponentManager->AddComponent(*this, defaultMeshRenderer);  
+    //// Ajout des composants au gestionnaire de composants
+    //m_pComponentManager->AddComponent(*this, defaultTransform);  
+    //m_pComponentManager->AddComponent(*this, defaultTexture);  
+    //m_pComponentManager->AddComponent(*this, m_pMeshRenderer);
 
-    PRINT("Suivant");
+    //PRINT("Suivant");
 
 }
 
@@ -106,9 +110,9 @@ void GameObject::Update(Renderer* renderer, Camera* camera)
     Transform* transformComponent = GetComponent<Transform>(ComponentType::Transform);
     MeshRenderer* meshComponent = GetComponent<MeshRenderer>(ComponentType::MeshRenderer);
 
-    PRINT("Avant");
-    PRINT(meshComponent->GetName());
-    //std::cout << "Model Matrix during update:" << std::endl;
+    //PRINT("Avant");
+    //PRINT(meshComponent->GetName());
+    std::cout << "Model Matrix during update:" << std::endl;
     PrintMatrix(meshComponent->GetConstantBufferData()->model);
 
     ConstantBufferData* sendToMeshCbData = new ConstantBufferData();
@@ -125,10 +129,10 @@ void GameObject::Update(Renderer* renderer, Camera* camera)
     sendToMeshCbData->model = transformComponent->GetTransformMatrix();
 
     //// Imprimer la matrice modèle mise à jour
-    PRINT("Après");
-    PRINT(meshComponent->GetName());
+    //PRINT("Après");
+    //PRINT(meshComponent->GetName());
     //std::cout << "Model Matrix during update:" << std::endl;
-    PrintMatrix(sendToMeshCbData->model);
+    //PrintMatrix(sendToMeshCbData->model);
 
 
     meshComponent->UpdateConstantBuffer(sendToMeshCbData);
