@@ -178,6 +178,11 @@ void Engine::Run() {
 
         m_pInput->ResetMousePosition();
 
+        /***
+        * J'ai un problème par rapport à la rotate de la caméra
+        * Lorsque je rotate ma caméra, elle rotate par rapport au nouvel axe
+        * MAIS mes déplacement restent sur l'axe originel, faudrait que j'arrive à update le nouvel axe     
+        ***/
         
         //------ Camera Movement
         
