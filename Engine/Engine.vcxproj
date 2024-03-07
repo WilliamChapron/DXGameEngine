@@ -137,6 +137,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\ecs\components\ScriptComponent.h" />
     <ClInclude Include="src\ecs\systems\MeshRenderer.h" />
     <ClInclude Include="src\ecs\components\Mesh.h" />
     <ClInclude Include="src\ecs\systems\ComponentManager.h" />
@@ -160,6 +161,7 @@
     <ClInclude Include="src\ecs\components\Texture.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\ecs\components\ScriptComponent.cpp" />
     <ClCompile Include="src\ecs\systems\MeshRenderer.cpp" />
     <ClCompile Include="src\ecs\components\Mesh.cpp" />
     <ClCompile Include="src\ecs\systems\ComponentManager.cpp" />

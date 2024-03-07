@@ -231,7 +231,7 @@ void Engine::Run() {
         m_pWindow->UpdateTitleWithFPS(time.GetFramePerSecond());
 
         //------ TEST INPUT
-        //m_pInput->Update();
+        m_pInput->Update();
 
         //// Affichez la liste des touches et leur �tat
         //std::cout << "Touches pressees : " << std::endl;
