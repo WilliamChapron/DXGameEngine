@@ -12,7 +12,7 @@ enum class ComponentType {
 };
 class Component {
 public:
-    Component(std::string componentName, ComponentType componentType, bool allowMultipleInstances);
+    Component(std::string componentName, ComponentType componentType);
     ~Component();
 
     inline std::string GetName() const {
@@ -28,10 +28,6 @@ public:
         return m_hasChanged;
     }
 
-    // By name for the moment
-    inline bool IsMultipleInstanceAllow() const {
-        return m_allowMultipleInstances;
-    }
 
     //virtual void Initialize(Renderer* renderer);
     virtual void Update(Renderer* renderer);
@@ -40,5 +36,5 @@ private:
     std::string m_name;
     ComponentType m_type;
     bool m_hasChanged; // Update if true
-    bool m_allowMultipleInstances; // Restrict creation with same name if true
+    //bool m_allowMultipleInstances; // Restrict creation with same name if true
 };

@@ -29,10 +29,7 @@ public:
     void CreatePipelineState();
     void CreateRootSignature();
 
-
-
     void WaitForPreviousFrame();
-
 
     void Precommandlist();
     void Postcommandlist();
@@ -50,8 +47,6 @@ public:
     ComPtr<ID3D12CommandAllocator> m_pCommandAllocator;
     ComPtr<ID3D12GraphicsCommandList> m_pCommandList;
     ComPtr<ID3D12Fence> m_pFence;
-
-
 
     ComPtr<ID3D12Resource> m_pRenderTargets[m_FRAME_COUNT];
 
@@ -76,10 +71,6 @@ public:
     UINT m_cbvSrvDescriptorSize;
 
     int m_renderCallNum = 0;
-
-
-
-
 private:
 
 

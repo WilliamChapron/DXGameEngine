@@ -6,7 +6,7 @@
 
 #include "../../Utils.h"
 
-MeshRenderer::MeshRenderer(std::string name, ConstantBufferData* cbData, Mesh* mesh) : Component(name, ComponentType::MeshRenderer, false)
+MeshRenderer::MeshRenderer(std::string name, ConstantBufferData* cbData, Mesh* mesh) : Component(name, ComponentType::MeshRenderer)
 {
     m_cbData = cbData;
     m_pMesh = mesh;

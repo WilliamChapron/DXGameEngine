@@ -27,54 +27,11 @@
 #include "../ecs/systems/Input.h"
 
 
-
+#include "../CommonsMesh.h"
 
 using namespace DirectX;
 
-class CubeMesh {
-public:
-    Vertex* cubeVertices;
-    UINT* cubeIndices;
-    int numElementsV;
-    int numElementsI;
 
-    CubeMesh() {
-        // Initialisation des pointeurs
-        cubeVertices = new Vertex[8]{
-            { {-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f, 1.0f}, {0.0f, 1.0f} },
-            { {-0.5f, -0.5f,  0.5f}, {1.0f, 0.0f, 0.0f, 1.0f}, {0.0f, 0.0f} },
-            { {-0.5f,  0.5f, -0.5f}, {0.0f, 0.0f, 1.0f, 1.0f}, {1.0f, 1.0f} },
-            { {-0.5f,  0.5f,  0.5f}, {0.0f, 0.0f, 1.0f, 1.0f}, {1.0f, 0.0f} },
-            { { 0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 0.0f, 1.0f}, {0.0f, 1.0f} },
-            { { 0.5f, -0.5f,  0.5f}, {1.0f, 1.0f, 0.0f, 1.0f}, {0.0f, 0.0f} },
-            { { 0.5f,  0.5f, -0.5f}, {0.5f, 0.5f, 0.5f, 1.0f}, {1.0f, 1.0f} },
-            { { 0.5f,  0.5f,  0.5f}, {0.5f, 0.5f, 0.5f, 1.0f}, {1.0f, 0.0f} }
-        };
-
-        cubeIndices = new UINT[36]{
-            0, 1, 2,
-            2, 1, 3,
-            4, 6, 5,
-            6, 7, 5,
-            0, 2, 4,
-            2, 6, 4,
-            1, 5, 3,
-            3, 5, 7,
-            2, 3, 6,
-            3, 7, 6,
-            0, 4, 1,
-            1, 4, 5
-        };
-
-        numElementsV = 8;
-        numElementsI = 36;
-    }
-
-    ~CubeMesh() {
-        delete[] cubeVertices;
-        delete[] cubeIndices;
-    }
-};
 
 
 Engine::Engine()
@@ -85,7 +42,9 @@ Engine::Engine()
 
 
 void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
-    CubeMesh cubeMesh;
+    CubeMesh cubeMesh; // Common Mesh
+    TriangleMesh cubeMesh2; // Common Mesh
+
     m_hInstance = hInstance;
 
     AllocConsole();
@@ -120,20 +79,21 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
 
     TextureComponent* texture = new TextureComponent("texture");
     TextureComponent* texture2 = new TextureComponent("texture2");
+
     Mesh* baseMesh = new Mesh("mesh1");
+    Mesh* baseMesh2 = new Mesh("mesh2");
 
     m_pResourceManager->AddTextureToResources(texture);
     m_pResourceManager->AddTextureToResources(texture2);
     m_pResourceManager->AddMeshToResources(baseMesh);
-
-
-
-
+    m_pResourceManager->AddMeshToResources(baseMesh2);
 
 
 
     // Any order
     baseMesh->Initialize(cbData, m_pRenderer, cubeMesh.cubeVertices, cubeMesh.numElementsV, cubeMesh.cubeIndices, cubeMesh.numElementsI);
+    baseMesh2->Initialize(cbData, m_pRenderer, cubeMesh2.cubeVertices, cubeMesh2.numElementsV, cubeMesh2.cubeIndices, cubeMesh2.numElementsI);
+
     texture->Initialize(m_pRenderer, m_pResourceManager->FindTextureComponentByName("texture").key);
     texture2->Initialize(m_pRenderer, m_pResourceManager->FindTextureComponentByName("texture2").key);
 
@@ -150,9 +110,9 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
 
 
     m_pCube->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(-1.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), m_pResourceManager->FindMeshComponentByName("mesh1").component, cbData);
-    m_pCube2->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), m_pResourceManager->FindMeshComponentByName("mesh1").component, cbData);
+    m_pCube2->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), m_pResourceManager->FindMeshComponentByName("mesh2").component, cbData);
     m_pCube3->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(1.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), m_pResourceManager->FindMeshComponentByName("mesh1").component, cbData);
-    m_pCube4->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(3.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), m_pResourceManager->FindMeshComponentByName("mesh1").component, cbData);
+    m_pCube4->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(3.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), m_pResourceManager->FindMeshComponentByName("mesh2").component, cbData);
 
     m_pComponentManager->AddComponent(*m_pCube, m_pResourceManager->FindTextureComponentByName("texture").component);
     m_pComponentManager->AddComponent(*m_pCube2, m_pResourceManager->FindTextureComponentByName("texture2").component);

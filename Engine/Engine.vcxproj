@@ -137,6 +137,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\CommonsMesh.h" />
     <ClInclude Include="src\ecs\components\Shader.h" />
     <ClInclude Include="src\ecs\systems\ResourceManager.h" />
     <ClInclude Include="src\ecs\components\MeshRenderer.h" />

@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "../include.h"
+
 #include "Graphics.h"
 #include "../core/Defines.h"
 #include "../core/Window.h"
@@ -68,15 +68,15 @@ Renderer::~Renderer() {
 
 void Renderer::InitializeDirectX12Instances() {
 
-#if defined(DEBUG) || defined(_DEBUG)
-    if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&m_debugController))))
-    {
-        m_debugController->EnableDebugLayer();
+    #if defined(DEBUG) || defined(_DEBUG)
+        if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&m_debugController))))
+        {
+            m_debugController->EnableDebugLayer();
 
-        // Enable additional debug layers.
-        m_dxgiFactoryFlags |= DXGI_CREATE_FACTORY_DEBUG;
-    }
-#endif
+            // Enable additional debug layers.
+            m_dxgiFactoryFlags |= DXGI_CREATE_FACTORY_DEBUG;
+        }
+    #endif
 
     CreateFactory();
     CreateDevice();
@@ -286,13 +286,14 @@ void Renderer::CreateRootSignature() {
 
 void Renderer::CreatePipelineState() {
 
-#if defined(_DEBUG)
-    // Enable better shader debugging with the graphics debugging tools.
-    UINT compileFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
-#else
-    UINT compileFlags = 0;
-#endif
-    // Charger les shaders sp�cifiques au Triangle
+    #if defined(_DEBUG)
+        // Enable better shader debugging with the graphics debugging tools.
+        UINT compileFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
+    #else
+        UINT compileFlags = 0;
+    #endif
+
+
     HRESULT hr = CompileShaderFromFile(L"../Engine/res/shader/Shader.hlsl", "VSMain", "vs_5_0", &m_vertexShaderBlob);
     ASSERT_FAILED(hr);
     hr = CompileShaderFromFile(L"../Engine/res/shader/Shader.hlsl", "PSMain", "ps_5_0", &m_pixelShaderBlob);

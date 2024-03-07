@@ -3,17 +3,21 @@
 #include "../components/Component.h"
 #include "../components/Texture.h"
 #include "../components/Mesh.h"
+#include "../components/Shader.h"
 
-ResourceManager::ResourceManager() : m_currentMeshComponentID(0), m_currentTextureComponentID(0) {
+ResourceManager::ResourceManager() : m_currentMeshComponentID(0), m_currentTextureComponentID(0), m_currentShaderComponentID(0) {
 }
 
-void ResourceManager::AddTextureToResources(Component* addComponent) {
-    // WORKING ON TEXTURE
-    if (dynamic_cast<TextureComponent*>(addComponent)) {
-        int componentID = ++m_currentTextureComponentID;
-        // #TODO check si existe déja 
-        m_textureComponents[componentID] = static_cast<TextureComponent*>(addComponent);
-    }
+void ResourceManager::AddTextureToResources(TextureComponent* addComponent) {
+    int componentID = ++m_currentTextureComponentID;
+    // #TODO check si existe déja 
+    m_textureComponents[componentID] = addComponent;
+}
+
+void ResourceManager::AddShaderToResources(ShaderComponent* addComponent) {
+    int componentID = ++m_currentShaderComponentID;
+    // #TODO check si existe déja 
+    m_shaderComponents[componentID] = addComponent;
 }
 
 void ResourceManager::AddMeshToResources(Mesh* addComponent) {
@@ -22,13 +26,26 @@ void ResourceManager::AddMeshToResources(Mesh* addComponent) {
     m_meshRendererComponents[componentID] = addComponent;
 }
 
+
+
 MeshComponentInfo ResourceManager::FindMeshComponentByName(const std::string& componentName) {
     for (const auto& pair : m_meshRendererComponents) {
         int key = pair.first;
-        const auto& component = pair.second;
-        Mesh* meshComponent = dynamic_cast<Mesh*>(component);
+        Mesh* meshComponent = pair.second;
         if (meshComponent->GetName() == componentName) {
             return { key, meshComponent };
+        }
+    }
+
+    return { -1, nullptr };
+}
+
+ShaderComponentInfo ResourceManager::FindShaderComponentByName(const std::string& componentName) {
+    for (const auto& pair : m_shaderComponents) {
+        int key = pair.first;
+        ShaderComponent* shaderComponent = pair.second;
+        if (shaderComponent->GetName() == componentName) {
+            return { key, shaderComponent };
         }
     }
 
