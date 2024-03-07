@@ -9,28 +9,39 @@
 #include "../components/Mesh.h"
 #include "../components/MeshRenderer.h"
 
+#include <iostream>
+#include <map>
+#include <algorithm>
+
 
 // Pass Instance of GameObjectManager to Work with alive entity
-ComponentManager::ComponentManager(std::shared_ptr<GameObjectManager>& gameObjectManager, Renderer* renderer, Camera* camera) : m_pGameObjectManager(gameObjectManager), m_pRenderer(renderer), m_pCamera(camera), m_currentMeshComponentID(0), m_currentTextureComponentID(0)
+ComponentManager::ComponentManager(std::shared_ptr<GameObjectManager>& gameObjectManager, Renderer* renderer, Camera* camera) : m_pGameObjectManager(gameObjectManager), m_pRenderer(renderer), m_pCamera(camera)
 {
     //PRINT(m_pGameObjectManager.use_count());
 }
 
 
 
+bool CompareByPriority(const Component* leftValue, const Component* rightValue) {
+    // Obtient les types des composants
+    ComponentType leftType = leftValue->GetType();
+    ComponentType rightType = rightValue->GetType();
+
+    // Compare les types (ComponentType est un enum class)
+    return static_cast<int>(leftType) < static_cast<int>(rightType);
+}
+
+void ComponentManager::SortComponentsMap(GameObject& gameObject) {
+    std::list<Component*> newList;
+
+
+    // Ajoutez vos composants au vector
+
+    // Triez le vector par priorité en utilisant la fonction de comparaison
+    std::stable_sort(gameObject.componentsList.begin(), gameObject.componentsList.end(), CompareByPriority);
+}
 
 void ComponentManager::AddComponent(GameObject& gameObject, Component* addComponent) {
-    std::unordered_map<std::string, GameObject*> aliveObjects = m_pGameObjectManager->GetAliveObjects();
-
-    // let's check if object is in game object manager
-    //auto it = std::find_if(aliveObjects.begin(), aliveObjects.end(), [gameObject](const auto& pair) {
-    //    return pair.second == gameObject;
-    //});
-
-    //if (it == aliveObjects.end()) {
-    //    PRINT("Game object not in game object manager ");
-    //    return;
-    //}
 
     // Check if the component is already in the object
     for (const Component* component : gameObject.componentsList) {
@@ -39,30 +50,13 @@ void ComponentManager::AddComponent(GameObject& gameObject, Component* addCompon
             return;
         }
     }
-
-
-
-    //PRINT("Push component ");
     gameObject.componentsList.push_back(addComponent);
-
-    
-    for (const Component* component : gameObject.componentsList) {
-        std::cout << "    Component: " << component->GetName() << std::endl;
-    }
-
-    PRINT("ds");
-}
-
-std::map<int, TextureComponent*> ComponentManager::GetTextureComponents() {
-    return m_textureComponents;
+    SortComponentsMap(gameObject)
 }
 
 void ComponentManager::UpdateComponents(GameObject* gameObject) {
     for (const auto& pair : gameObject->componentsList)
     {
-        //PRINT("pair->GetName()");
-        //PRINT(pair->GetName());
-        //std::cout << pair->GetName() << " UPDATE !" << std::endl;
         pair->Update(m_pRenderer);
     }
 }
@@ -76,51 +70,3 @@ Component* ComponentManager::GetGameObjectComponentByType(GameObject& gameObject
     return nullptr;
 }
 
-int ComponentManager::AddTextureToResources(Component* addComponent) {
-    // WORKING ON TEXTURE
-    if (dynamic_cast<TextureComponent*>(addComponent)) {
-        int componentID = ++m_currentTextureComponentID;
-        // #TODO check si existe déja 
-        m_textureComponents[componentID] = static_cast<TextureComponent*>(addComponent);
-        // #TODO AVOID DOUBLE COMPILATION
-        return componentID; 
-    }
-    return 0;
-}
-
-int ComponentManager::AddMeshToResources(Component* addComponent) {
-    if (dynamic_cast<MeshRenderer*>(addComponent)) {
-        int componentID = ++m_currentMeshComponentID;
-        m_meshComponents[componentID] = static_cast<MeshRenderer*>(addComponent);
-        return componentID; 
-    }
-    return 0;
-}
-
-MeshRenderer* ComponentManager::FindMeshComponentByName(const std::string& componentName) {
-    for (const auto& pair : m_meshComponents) {
-
-        const auto& component = pair.second;
-        MeshRenderer* meshComponent = dynamic_cast<MeshRenderer*>(component);
-
-        if (meshComponent->GetName() == componentName) {
-            return meshComponent;
-        }
-    }
-
-    return nullptr;
-}
-
-TextureComponent* ComponentManager::FindTextureComponentByName(const std::string& componentName) {
-    for (const auto& pair : m_textureComponents) {
-
-        const auto& component = pair.second;
-        TextureComponent* textureComponent = dynamic_cast<TextureComponent*>(component);
-
-        if (textureComponent->GetName() == componentName) {
-            return textureComponent;
-        }
-    }
-
-    return nullptr;
-}

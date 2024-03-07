@@ -7,6 +7,7 @@
 // System
 #include "../ecs/systems/GameObjectManager.h"  
 #include "../ecs/systems/ComponentManager.h"  
+#include "../ecs/systems/ResourceManager.h"
 
 
 // Ent
@@ -56,10 +57,9 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
 
     m_pCamera = new Camera(); // #TODO Shared ptr camera to each object
 
-
-
     m_pGameObjectManager = std::make_shared<GameObjectManager>(m_pCamera);
     m_pComponentManager = new ComponentManager(m_pGameObjectManager, m_pRenderer, m_pCamera);
+    m_pResourceManager = new ResourceManager();
 
     // INITIALIZE UNIQUE COMPONENT
 
@@ -95,8 +95,6 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
     int numElementsV = sizeof(cubeVertices) / sizeof(cubeVertices[0]);
     int numElementsI = sizeof(cubeIndices) / sizeof(cubeIndices[0]);
 
-
-
     ConstantBufferData* cbData = new ConstantBufferData(); // Alloue de la mémoire pour m_cbData
 
     XMStoreFloat4x4(&cbData->model, XMMatrixIdentity()); ;
@@ -105,18 +103,12 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
 
     TextureComponent* texture = new TextureComponent("texture");
     TextureComponent* texture2 = new TextureComponent("texture2");
-    int textureComponentID = m_pComponentManager->AddTextureToResources(texture);
-    PRINT("Texture Component 1 ID: " + std::to_string(textureComponentID));
-    int textureComponentID2 = m_pComponentManager->AddTextureToResources(texture2);
-    PRINT("Texture Component 2 ID: " + std::to_string(textureComponentID));
+    int textureComponentID = m_pResourceManager->AddTextureToResources(texture);
+    int textureComponentID2 = m_pResourceManager->AddTextureToResources(texture2);
 
 
 
     Mesh* defaultMesh = new Mesh(); // Class || INITIALIZE MESH BEFORE TEXTURE BECAUSE DRAWING ORDER !!!
-
-
-
-
 
 
     texture->Initialize(m_pRenderer, textureComponentID);  
@@ -125,34 +117,21 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
 
 
 
-    //Transform* transform1 = new Transform(XMFLOAT3(-0.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
-    //Transform* transform2 = new Transform(XMFLOAT3(0.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
-    //Transform* transform3 = new Transform(XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
-    //Transform* transform4 = new Transform(XMFLOAT3(1.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
-
-    //Create Objects
+    // #TODO CREATE FONCTION | CREATE OBJECT | CREATE TEXTURE | CREATE MESH | CREATE SHADER
     m_pCube = new GameObject(m_pComponentManager);
     m_pCube2 = new GameObject(m_pComponentManager);
     m_pCube3 = new GameObject(m_pComponentManager);
     m_pCube4 = new GameObject(m_pComponentManager);
 
-    m_pComponentManager->AddComponent(*m_pCube, texture);  
-    m_pComponentManager->AddComponent(*m_pCube2, texture2); 
-    m_pComponentManager->AddComponent(*m_pCube3, texture);  
+    m_pComponentManager->AddComponent(*m_pCube, m_pResourceManager->FindTextureComponentByName("texture"));
+    m_pComponentManager->AddComponent(*m_pCube2, m_pResourceManager->FindTextureComponentByName("texture2"));
+    m_pComponentManager->AddComponent(*m_pCube3, m_pResourceManager->FindTextureComponentByName("texture"));
+    m_pComponentManager->AddComponent(*m_pCube4, m_pResourceManager->FindTextureComponentByName("texture2"));
 
-    m_pComponentManager->AddComponent(*m_pCube4, texture2);  
-
-    m_pCube->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(-0.9f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), defaultMesh, cbData);
+    m_pCube->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(-1.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), defaultMesh, cbData);
     m_pCube2->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), defaultMesh, cbData);
-    m_pCube3->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), defaultMesh, cbData);
-    m_pCube4->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(1.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), defaultMesh, cbData);
-
-
-
-
-
-
-
+    m_pCube3->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(1.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), defaultMesh, cbData);
+    m_pCube4->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(3.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), defaultMesh, cbData);
 
     m_pGameObjectManager->AddObject("Cube", m_pCube);
     m_pGameObjectManager->AddObject("Cube2", m_pCube2);

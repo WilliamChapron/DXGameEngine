@@ -5,12 +5,11 @@
 class Renderer;
 
 enum class ComponentType {
-    Shader,
-    MeshRenderer,
-    Texture,
-    Transform
+    Transform = 0,
+    Texture = 1,
+    MeshRenderer = 2,
+    Shader = 3,
 };
-
 class Component {
 public:
     Component(std::string componentName, ComponentType componentType, bool allowMultipleInstances);

@@ -6,11 +6,16 @@
 #include <Windows.h>
 #include <iostream>
 #include "../ecs/systems/StateMachine.h"
+
+
 class Renderer;
 class GameObject;
 class Window;
+
 class GameObjectManager;
 class ComponentManager;
+class ResourceManager;
+
 class Camera;
 class TextureComponent;
 class Input;
@@ -36,8 +41,13 @@ public:
     GameObject* m_pCube3;
     GameObject* m_pCube4;
     Renderer* m_pRenderer;
+
+
     std::shared_ptr<GameObjectManager> m_pGameObjectManager;
     ComponentManager* m_pComponentManager;
+    ResourceManager* m_pResourceManager;
+
+
     Camera* m_pCamera;
     Input* m_pInput;
 

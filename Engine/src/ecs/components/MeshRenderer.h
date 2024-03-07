@@ -4,6 +4,8 @@
 #include "../components/Component.h"
 //#include "../components/Mesh.h"
 
+class Mesh;
+
 struct ConstantBufferData {
     XMFLOAT4X4 model;
     XMFLOAT4X4 view;

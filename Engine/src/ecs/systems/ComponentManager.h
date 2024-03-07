@@ -27,34 +27,22 @@ public:
     ComponentManager(std::shared_ptr<GameObjectManager>& gameObjectManager, Renderer* renderer, Camera* camera);
 
     // Actions to add, remove, ... on a game object
+    inline ComponentType GetComponentPriority(Component* component) {
+        return component->GetType();
+    }
+    void SortComponentsMap(GameObject& gameObject);
     void AddComponent(GameObject& gameObject, Component* component);
-
-
 
 
     void UpdateComponents(GameObject* gameObject);
 
-    int AddTextureToResources(Component* addComponent);
-    int AddMeshToResources(Component* addComponent);
 
-    std::map<int, TextureComponent*> GetTextureComponents();
+
 
     Component* GetGameObjectComponentByType(GameObject& gameObject, ComponentType componentType);
-    MeshRenderer* FindMeshComponentByName(const std::string& componentName);
-    TextureComponent* FindTextureComponentByName(const std::string& componentName);
 
 private:
     Camera* m_pCamera;
-
-    // RESSOURCE MANAGER
-    std::map<int, TextureComponent*> m_textureComponents;
-    std::map<int, MeshRenderer*> m_meshComponents;
-    //
-
-    // Id
-    int m_currentTextureComponentID;
-    int m_currentMeshComponentID;
-    //
 
     std::shared_ptr<GameObjectManager> m_pGameObjectManager;
     Renderer* m_pRenderer;
