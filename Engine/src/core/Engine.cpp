@@ -52,7 +52,9 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
     m_pRenderer->InitializeDirectX12Instances();
     m_pRenderer->m_pCommandList->Close();
 
-    m_pInput = new Input();
+    m_pInput = new Input(m_pWindow->getWndProps());
+    m_pInput->ResetMousePosition();
+
 
     m_pCamera = new Camera(); // #TODO Shared ptr camera to each object
 
@@ -192,7 +194,11 @@ void Engine::Run() {
 
     std::vector<GameObject> Cubes;
 
+    float speed = 15.f;
 
+    ShowCursor(FALSE);
+
+    m_pCamera->UpdateTarget(XMFLOAT3(0.0f, 0.0f, 0.0f));
     //Cubes.push_back(*m_pCube1);
     //Cubes.push_back(*m_pCube2);
     // Ajoutez d'autres Cubes au besoin
@@ -213,7 +219,6 @@ void Engine::Run() {
         m_pWindow->UpdateTitleWithFPS(time.GetFramePerSecond());
 
         //------ TEST INPUT
-        //m_pInput->Update();
 
         //// Affichez la liste des touches et leur �tat
         //std::cout << "Touches pressees : " << std::endl;
@@ -237,6 +242,60 @@ void Engine::Run() {
         //    std::cout << std::endl;
         //}
 
+
+        m_pInput->Update();
+
+        //------ Camera Movement
+        for (const auto& pair : m_pInput->GetKeyStates()) {
+            switch (pair.first) {
+                case 'Z':
+                    if (pair.second == KeyState::Pressed || pair.second == KeyState::Held)
+                        m_pCamera->UpdatePosition(0.0f, speed * time.GetDeltaTime(), 0.0f);
+                    break;
+                case 'S':
+                    if (pair.second == KeyState::Pressed || pair.second == KeyState::Held)
+                        m_pCamera->UpdatePosition(0.0f, -speed * time.GetDeltaTime(), 0.0f);
+                    break;
+                case 'Q':
+                    if (pair.second == KeyState::Pressed || pair.second == KeyState::Held)
+                        m_pCamera->UpdatePosition(-speed * time.GetDeltaTime(), 0.0f, 0.0f);
+                    break;
+                case 'D':
+                    if (pair.second == KeyState::Pressed || pair.second == KeyState::Held)
+                        m_pCamera->UpdatePosition(speed * time.GetDeltaTime(), 0.0f, 0.0f);
+                    break;
+                case VK_SPACE:
+                    if (pair.second == KeyState::Pressed || pair.second == KeyState::Held)
+                        m_pCamera->UpdatePosition(0.0f, 0.0f, -speed * time.GetDeltaTime());
+                    break;
+                case VK_SHIFT:
+                    if (pair.second == KeyState::Pressed || pair.second == KeyState::Held)
+                        m_pCamera->UpdatePosition(0.0f, 0.0f, speed * time.GetDeltaTime());
+                    break;
+                /*case VK_LBUTTON:
+                    if (pair.second == KeyState::Pressed || pair.second == KeyState::Held)
+                    {
+                        
+                    }*/
+            }
+        }
+        m_pCamera->Rotate(m_pInput->GetMousePosition().y * 0.2f, 0.0f, - m_pInput->GetMousePosition().x * 0.2f);
+        std::cout << "mouse x : "
+            << m_pInput->GetMousePosition().x
+            << "   mouse y : "
+            << m_pInput->GetMousePosition().y
+            << std::endl;
+
+        m_pInput->ResetMousePosition();
+
+        /***
+        * J'ai un problème par rapport à la rotate de la caméra
+        * Lorsque je rotate ma caméra, elle rotate par rapport au nouvel axe
+        * MAIS mes déplacement restent sur l'axe originel, faudrait que j'arrive à update le nouvel axe     
+        ***/
+        
+        //------ Camera Movement
+        
 
 
 

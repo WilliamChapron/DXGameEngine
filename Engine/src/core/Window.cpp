@@ -112,3 +112,4 @@ void Window::UpdateTitleWithFPS(int fps)
 
     SetWindowText(m_wndProps.hwnd, newTitle.c_str());
 }
+
