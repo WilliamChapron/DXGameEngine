@@ -101,7 +101,7 @@ void Camera::Rotate(float pitch, float yaw, float roll)
     forward = XMVector3Rotate(forward, currentRotation);
     up = XMVector3Rotate(up, currentRotation);
     right = XMVector3Rotate(right, currentRotation);
-
+    
     // Mettre � jour la cible de la cam�ra en fonction de la direction
     m_target.x = m_position.x + XMVectorGetX(forward);
     m_target.y = m_position.y + XMVectorGetY(forward);

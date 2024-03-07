@@ -44,7 +44,9 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
     m_pRenderer->InitializeDirectX12Instances();
     m_pRenderer->m_pCommandList->Close();
 
-    m_pInput = new Input();
+    m_pInput = new Input(m_pWindow->getWndProps());
+    m_pInput->ResetMousePosition();
+
 
     m_pCamera = new Camera(); // #TODO Shared ptr camera to each object
 
@@ -91,6 +93,9 @@ void Engine::Run() {
 
     float speed = 15.f;
 
+    ShowCursor(FALSE);
+
+    m_pCamera->UpdateTarget(XMFLOAT3(0.0f, 0.0f, 0.0f));
     //Cubes.push_back(*m_pCube1);
     //Cubes.push_back(*m_pCube2);
     // Ajoutez d'autres Cubes au besoin
@@ -99,19 +104,11 @@ void Engine::Run() {
 
         time.UpdateTime();
 
-        //CAMERA DEBUG
-        //m_pCamera->UpdatePosition(0.02f, 0.0f, 0.f);
-        //m_pCamera->Rotate(0.0f, 0.0f, 0.25f);
-        //m_pCamera->RotateAroundTarget(0.f, .0f, 0.2f);
-        //m_pCamera->UpdateTarget(XMFLOAT3(0.0f, 0.0f, 0.0f));
-        //m_pCamera->Rotate(m_pInput->GetMousePosition().x, m_pInput->GetMousePosition().y, 0.f);
-
         m_pCamera->Update(time.GetDeltaTime());
 
         m_pWindow->UpdateTitleWithFPS(time.GetFramePerSecond());
 
         //------ TEST INPUT
-        m_pInput->Update();
 
         //// Affichez la liste des touches et leur �tat
         //std::cout << "Touches pressees : " << std::endl;
@@ -134,9 +131,11 @@ void Engine::Run() {
         //    }
         //    std::cout << std::endl;
         //}
+
+
         m_pInput->Update();
 
-        // Affichez la liste des touches et leur �tat
+        //------ Camera Movement
         for (const auto& pair : m_pInput->GetKeyStates()) {
             switch (pair.first) {
                 case 'Z':
@@ -163,10 +162,27 @@ void Engine::Run() {
                     if (pair.second == KeyState::Pressed || pair.second == KeyState::Held)
                         m_pCamera->UpdatePosition(0.0f, 0.0f, speed * time.GetDeltaTime());
                     break;
-
+                /*case VK_LBUTTON:
+                    if (pair.second == KeyState::Pressed || pair.second == KeyState::Held)
+                    {
+                        
+                    }*/
             }
-
         }
+        m_pCamera->Rotate(m_pInput->GetMousePosition().y * 0.2f, 0.0f, - m_pInput->GetMousePosition().x * 0.2f);
+        std::cout << "mouse x : "
+            << m_pInput->GetMousePosition().x
+            << "   mouse y : "
+            << m_pInput->GetMousePosition().y
+            << std::endl;
+
+        m_pInput->ResetMousePosition();
+
+        
+        //------ Camera Movement
+        
+
+
 
         if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
             if (msg.message == WM_QUIT)

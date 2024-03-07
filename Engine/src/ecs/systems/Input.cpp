@@ -2,7 +2,7 @@
 #include "State.h"
 
 
-Input::Input() {
+Input::Input(WindowProperties _m_wndProps) : m_wndProps(&_m_wndProps){
     keyStates.clear();
     // Initialisation de l'�tat des touches clavier 
     // G�re les touches Z, Q, S, D
@@ -107,8 +107,33 @@ const std::unordered_map<char, KeyState>& Input::GetKeyStates() const {
     return keyStates;
 }
 
+RECT GetWindowPosition(HWND hwnd) {
+    RECT windowRect;
+    GetWindowRect(hwnd, &windowRect);
+    return windowRect;
+}
+
 POINT Input::GetMousePosition() const {
     POINT cursorPos;
     GetCursorPos(&cursorPos); // Obtient la position actuelle du curseur
+    ScreenToClient(m_wndProps->hwnd, &cursorPos);
+
+    cursorPos.x -= (*m_wndProps).width / 2;
+    cursorPos.y -= (*m_wndProps).height / 2;
+
     return cursorPos; // Retourne les coordonn�es actuelles de la souris
+}
+
+void Input::ResetMousePosition() {
+    POINT center;
+    RECT windowRect = GetWindowPosition(m_wndProps->hwnd);
+    
+    ClientToScreen(m_wndProps->hwnd, &center); // Convertit les coordonnées de la fenêtre aux coordonnées de l'écran
+    
+    center.x = (*m_wndProps).width / 2 + windowRect.left + 8;
+    center.y = (*m_wndProps).height / 2 + windowRect.top + 31;
+
+    std::cout << "barre " << GetSystemMetrics(SM_CYCAPTION) << std::endl;
+
+    SetCursorPos(center.x, center.y); // Réinitialise la position de la souris au centre de la fenêtre
 }
