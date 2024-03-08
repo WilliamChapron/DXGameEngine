@@ -8,7 +8,8 @@ enum class ComponentType {
     Shader,
     MeshRenderer,
     Texture,
-    Transform
+    Transform,
+    Collider
 };
 
 class Component {

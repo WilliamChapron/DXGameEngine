@@ -157,8 +157,8 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
 
 
     m_pGameObjectManager->AddObject("Cube", m_pCube);
-    m_pGameObjectManager->AddObject("Cube2", m_pCube2);
-    m_pGameObjectManager->AddObject("Cube3", m_pCube3);
+    //m_pGameObjectManager->AddObject("Cube2", m_pCube2);
+    //m_pGameObjectManager->AddObject("Cube3", m_pCube3);
     m_pGameObjectManager->AddObject("Cube4", m_pCube4);
 
 
@@ -204,6 +204,10 @@ void Engine::Run() {
     // Ajoutez d'autres Cubes au besoin
 
     while (true) {
+
+        Transform* transformComponent = m_pCube->GetComponent<Transform>(ComponentType::Transform);
+        float translationOffset = transformComponent->GetPosition().y + 0.1f;
+        transformComponent->SetPosition(0, translationOffset, 0);
 
         time.UpdateTime();
 
@@ -305,7 +309,7 @@ void Engine::Run() {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
-        PRINT(m_isRenderable);
+        //PRINT(m_isRenderable);
             // Appelez la fonction Render de la classe Renderer et passez-lui la liste de Cubes
         m_pGameObjectManager->Update(m_pRenderer);
     }
