@@ -66,7 +66,14 @@ void GameObjectManager::RemoveObject(const std::string& name) {
 //    return normalizedDistance.x <= 0 && normalizedDistance.y <= 0 && normalizedDistance.x <= 0;
 //}
 //
+struct TestedPair {
+    std::string first;
+    std::string second;
 
+    bool operator == (const TestedPair& other) const {
+        return (first == other.second);
+    }
+};
 
 
 void GameObjectManager::Update(Renderer* renderer) {
@@ -79,45 +86,31 @@ void GameObjectManager::Update(Renderer* renderer) {
 
 
     PRINT("Frame");
-    std::vector<std::pair<std::string, std::string>> testedPairs;
-
-        //m_pCommandList->SetGraphicsRootSignature(m_pRootSignature.Get());
-    //m_pCommandList->SetPipelineState(m_pPipelineState.Get());
+    std::vector<TestedPair> testedPairs;
 
     for (auto& pair : objectMap) {
         GameObject* gameObject = pair.second;
 
         gameObject->Update(renderer, m_pCamera);
 
-        //PRINT("Update all");
-
-        // try collide = object on which we test collide
+        // tryCollide = object on which we test collision
         for (auto& tryCollide : objectMap) {
             if (tryCollide.first == pair.first) {
                 continue;
             }
 
+            TestedPair objectPair{ pair.first, tryCollide.first };
 
-
-            std::pair<std::string, std::string> objectPair(pair.first, tryCollide.first);
             auto it = std::find(testedPairs.begin(), testedPairs.end(), objectPair);
-
-            // not in the array
-
-            //XMFLOAT3 componentInputPosition = gameObject->GetComponent<Transform>(ComponentType::Transform)->GetPosition();
-            //XMFLOAT3 componentOutputPosition = tryCollide.second->GetComponent<Transform>(ComponentType::Transform)->GetPosition();
+            if (it != testedPairs.end()) {
+                continue;
+            }
 
             ColliderComponent* colliderComponent = gameObject->GetComponent<ColliderComponent>(ComponentType::ColliderComponent);
 
-            //PRINT("PAS TESTE");
-            //PRINT("Object1");
-            //PRINT(tryCollide.first);
-            //PRINT("Object2");
-            //PRINT(pair.first);
 
+            std::cout << "Check Collide Object : " << pair.first << " With : " << tryCollide.first << std::endl;
             PRINT(colliderComponent->CheckCollision(tryCollide.second));
-
-            // Ajoutez la paire testée au vecteur
 
             testedPairs.push_back(objectPair);
         }
@@ -142,4 +135,4 @@ void GameObjectManager::Update(Renderer* renderer) {
     renderer->WaitForPreviousFrame();
 
     //PRINT("Rendering complete");
-}
+};

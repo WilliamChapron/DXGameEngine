@@ -47,6 +47,9 @@ void ColliderComponent::InitializeBoundingBox(GameObject* gameObject, Vertex* ve
         m_localAxisAlignedBoundingBox.max.z = (m_localAxisAlignedBoundingBox.max.z > vertexPos.z) ? m_localAxisAlignedBoundingBox.max.z : vertexPos.z;
     }
 
+
+
+    //PRINT("Min");
     //PRINT_VECTOR3(m_localAxisAlignedBoundingBox.min);
     //PRINT("Max");
     //PRINT_VECTOR3(m_localAxisAlignedBoundingBox.max);
@@ -61,12 +64,12 @@ void ColliderComponent::Update(Renderer* renderer) {
 }
 
 
-AABB ColliderComponent::TransformBoundingBoxLocalToGlobal(AABB& localBoundingBox) 
+AABB ColliderComponent::TransformBoundingBoxLocalToGlobal(AABB localBoundingBox, GameObject* gameObject) 
 {
-    Transform* transformComponent = m_pGameObject->GetComponent<Transform>(ComponentType::Transform);
+    Transform* transformComponent = gameObject->GetComponent<Transform>(ComponentType::Transform);
 
-    XMVECTOR localMin = XMLoadFloat3(&m_localAxisAlignedBoundingBox.min);
-    XMVECTOR localMax = XMLoadFloat3(&m_localAxisAlignedBoundingBox.max);
+    XMVECTOR localMin = XMLoadFloat3(&localBoundingBox.min);
+    XMVECTOR localMax = XMLoadFloat3(&localBoundingBox.max);
 
     XMFLOAT4X4 transformMatrixFloat4x4 = transformComponent->GetTransformMatrix();
     XMMATRIX transformMatrix = XMLoadFloat4x4(&transformMatrixFloat4x4);
@@ -74,20 +77,30 @@ AABB ColliderComponent::TransformBoundingBoxLocalToGlobal(AABB& localBoundingBox
     AABB globalBoundingBox;
 
     XMVECTOR globalMin = XMVector3TransformCoord(localMin, transformMatrix);
-    XMVECTOR globalMax = XMVector3TransformCoord(localMin, transformMatrix);
+    XMVECTOR globalMax = XMVector3TransformCoord(localMax, transformMatrix);
 
-
+    XMStoreFloat3(&globalBoundingBox.min, globalMin);
+    XMStoreFloat3(&globalBoundingBox.max, globalMax);
 
     return globalBoundingBox;
-
 }
 
 
-bool ColliderComponent::CheckCollision(GameObject* gameObject) {
+bool ColliderComponent::CheckCollision(GameObject* collideObject) {
 
-    AABB box1 = TransformBoundingBoxLocalToGlobal(m_localAxisAlignedBoundingBox);
+    AABB box1 = m_localAxisAlignedBoundingBox;
+    AABB box2 = collideObject->GetComponent<ColliderComponent>(ComponentType::ColliderComponent)->m_localAxisAlignedBoundingBox;
 
-    AABB box2 = TransformBoundingBoxLocalToGlobal(gameObject->GetComponent<ColliderComponent>(ComponentType::ColliderComponent)->m_localAxisAlignedBoundingBox);
+    AABB transformedBox1 = TransformBoundingBoxLocalToGlobal(box1, m_pGameObject);
+    AABB transformedBox2 = TransformBoundingBoxLocalToGlobal(box2, collideObject);
+
+    std::cout << "Box 1 (Global):" << std::endl;
+    std::cout << "  Min: (" << transformedBox1.min.x << ", " << transformedBox1.min.y << ", " << transformedBox1.min.z << ")" << std::endl;
+    std::cout << "  Max: (" << transformedBox1.max.x << ", " << transformedBox1.max.y << ", " << transformedBox1.max.z << ")" << std::endl;
+
+    std::cout << "Box 2 (Global):" << std::endl;
+    std::cout << "  Min: (" << transformedBox2.min.x << ", " << transformedBox2.min.y << ", " << transformedBox2.min.z << ")" << std::endl;
+    std::cout << "  Max: (" << transformedBox2.max.x << ", " << transformedBox2.max.y << ", " << transformedBox2.max.z << ")" << std::endl;
 
 
     if (box1.max.x < box2.min.x || box1.min.x > box2.max.x) return false;

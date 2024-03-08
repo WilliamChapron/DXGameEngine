@@ -28,7 +28,7 @@ public:
 
 
     void InitializeBoundingBox(GameObject* gameObject, Vertex* vertices, int numVertices);
-    AABB TransformBoundingBoxLocalToGlobal(AABB& localBoundingBox);
+    AABB TransformBoundingBoxLocalToGlobal(AABB localBoundingBox, GameObject* gameObject);
 
     bool CheckCollision(GameObject* gameObject);
       
