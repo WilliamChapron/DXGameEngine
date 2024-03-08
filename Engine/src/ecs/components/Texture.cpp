@@ -73,9 +73,9 @@ void TextureComponent::Initialize(Renderer* renderer, int offset)
 }
 
 void TextureComponent::Update(Renderer* renderer) {
-    PRINT("Update Texture");
-    PRINT("OFFSET");
-    PRINT(m_offset);
+    //PRINT("Update Texture");
+    //PRINT("OFFSET");
+    //PRINT(m_offset);
     //CD3DX12_GPU_DESCRIPTOR_HANDLE cbvSrvHandle(renderer->m_pCbvSrvHeap.Get()->GetGPUDescriptorHandleForHeapStart());
     //cbvSrvHandle.Offset(m_offset, renderer->m_cbvSrvDescriptorSize); // Utilisation du bon increment size
     renderer->m_pCommandList->SetGraphicsRootDescriptorTable(0, m_textureAdress);

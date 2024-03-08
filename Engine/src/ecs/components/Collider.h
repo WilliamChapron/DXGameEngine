@@ -28,15 +28,12 @@ public:
 
 
     void InitializeBoundingBox(GameObject* gameObject, Vertex* vertices, int numVertices);
+    AABB TransformBoundingBoxLocalToGlobal(AABB& localBoundingBox);
 
-    AABB TransformBoundingBoxLocalToGlobal()
-
-    bool CheckCollision(const AABB & box2);
+    bool CheckCollision(GameObject* gameObject);
       
 
 private:
     GameObject* m_pGameObject;
-
     AABB m_localAxisAlignedBoundingBox;
-
 };

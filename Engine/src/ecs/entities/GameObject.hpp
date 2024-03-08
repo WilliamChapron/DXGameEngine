@@ -55,3 +55,8 @@ private:
     ComponentManager* m_pComponentManager;
 };
 
+template <typename T>
+T* GameObject::GetComponent(ComponentType type) {
+    Component* component = m_pComponentManager->GetGameObjectComponentByType(*this, type);
+    return dynamic_cast<T*>(component);
+}

@@ -115,7 +115,7 @@ void ShaderComponent::InitializePSO() {
 
 void ShaderComponent::Update(Renderer* pRenderer)
 {
-    PRINT("Update Shader");
+    //PRINT("Update Shader");
     UpdatePSO();
     UpdateRootSignature();
 }

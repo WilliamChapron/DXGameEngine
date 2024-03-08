@@ -13,7 +13,7 @@ MeshRenderer::MeshRenderer(std::string name, ConstantBufferData* cbData, Mesh* m
 }
 
 void MeshRenderer::Initialize(Renderer* renderer, ConstantBufferData* cbData) {
-    PRINT("INITIALIZE CONSTANT BUFFER");
+    //PRINT("INITIALIZE CONSTANT BUFFER");
     // Création du tampon de constantes
     HRESULT hr;
     CD3DX12_HEAP_PROPERTIES cbHeapProps(D3D12_HEAP_TYPE_UPLOAD);
@@ -29,8 +29,8 @@ void MeshRenderer::Initialize(Renderer* renderer, ConstantBufferData* cbData) {
     );
     ASSERT_FAILED(hr);
 
-    std::cout << "Model Matrix during initialization:" << std::endl;
-    PrintMatrix(cbData->model);
+    //std::cout << "Model Matrix during initialization:" << std::endl;
+    //PrintMatrix(cbData->model);
 
 
     // #TODO FAIRE UNE FOIS PAR OBJET
@@ -46,7 +46,7 @@ void MeshRenderer::Initialize(Renderer* renderer, ConstantBufferData* cbData) {
 void MeshRenderer::UpdateConstantBuffer(ConstantBufferData* cbData)
 {
     m_cbData = cbData;
-    PRINT("Update Constant buffer");
+    //PRINT("Update Constant buffer");
     // Affichage de la matrice modèle
     //std::cout << "Model Matrix of" << GetName() << std::endl;
     //PrintMatrix(m_cbData->model);
@@ -55,7 +55,7 @@ void MeshRenderer::UpdateConstantBuffer(ConstantBufferData* cbData)
 
 void MeshRenderer::Update(Renderer* renderer) {
     
-    PRINT("Update Mesh renderer");
+    //PRINT("Update Mesh renderer");
     HRESULT hr;
 
     //std::cout << "Model Matrix of" << GetName() << std::endl;
@@ -79,5 +79,5 @@ void MeshRenderer::Update(Renderer* renderer) {
 
     renderer->m_pCommandList->DrawIndexedInstanced(m_pMesh->GetNumIndices(), 1, 0, 0, 0);
 
-    PRINT("Update Mesh OK");
+    //PRINT("Update Mesh OK");
 }

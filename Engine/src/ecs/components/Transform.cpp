@@ -15,7 +15,7 @@ Transform::Transform(const XMFLOAT3& pos, const XMFLOAT3& rot, const XMFLOAT3& s
 }
 
 void Transform::Update() {
-    PRINT("Update Texture");
+    //PRINT("Update Texture");
 }
 
 void Transform::Init() {

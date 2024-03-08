@@ -1,8 +1,12 @@
 ﻿#include "GameObjectManager.h"
 #include "../../renderer/Graphics.h" // renderer
 #include "../components/Component.h" // renderer
+#include "../components/Collider.h" // renderer
 
-// Constructeur par d�faut
+#include "../entities/GameObject.hpp"
+
+
+
 GameObjectManager::GameObjectManager(Camera* camera) : m_pCamera(camera) {}
 
 // Ajouter un objet au gestionnaire
@@ -85,41 +89,43 @@ void GameObjectManager::Update(Renderer* renderer) {
 
         gameObject->Update(renderer, m_pCamera);
 
-        PRINT("Update all");
+        //PRINT("Update all");
 
-        //// try collide = object on which we test collide
-        //for (auto& tryCollide : objectMap) {
-        //    if (tryCollide.first == pair.first) {
-        //        continue;
-        //    }
+        // try collide = object on which we test collide
+        for (auto& tryCollide : objectMap) {
+            if (tryCollide.first == pair.first) {
+                continue;
+            }
 
 
 
-        //    std::pair<std::string, std::string> objectPair(pair.first, tryCollide.first);
-        //    auto it = std::find(testedPairs.begin(), testedPairs.end(), objectPair);
+            std::pair<std::string, std::string> objectPair(pair.first, tryCollide.first);
+            auto it = std::find(testedPairs.begin(), testedPairs.end(), objectPair);
 
-        //    // not in the array
+            // not in the array
 
-        //    XMFLOAT3 componentInputPosition = gameObject->GetComponent<Transform>(ComponentType::Transform)->GetPosition();
-        //    XMFLOAT3 componentOutputPosition = tryCollide.second->GetComponent<Transform>(ComponentType::Transform)->GetPosition();
+            //XMFLOAT3 componentInputPosition = gameObject->GetComponent<Transform>(ComponentType::Transform)->GetPosition();
+            //XMFLOAT3 componentOutputPosition = tryCollide.second->GetComponent<Transform>(ComponentType::Transform)->GetPosition();
 
-        //    //PRINT("PAS TESTE");
-        //    //PRINT("Object1");
-        //    //PRINT(tryCollide.first);
-        //    //PRINT("Object2");
-        //    //PRINT(pair.first);
+            ColliderComponent* colliderComponent = gameObject->GetComponent<ColliderComponent>(ComponentType::ColliderComponent);
 
-        //    //PRINT(IsColliding(componentInputPosition, componentOutputPosition));
+            //PRINT("PAS TESTE");
+            //PRINT("Object1");
+            //PRINT(tryCollide.first);
+            //PRINT("Object2");
+            //PRINT(pair.first);
 
-        //    // Ajoutez la paire testée au vecteur
+            PRINT(colliderComponent->CheckCollision(tryCollide.second));
 
-        //    testedPairs.push_back(objectPair);
-        //}
+            // Ajoutez la paire testée au vecteur
+
+            testedPairs.push_back(objectPair);
+        }
     }
 
-    for (const auto& pair : testedPairs) {
-        std::cout << "Tested Pair: (" << pair.first << ", " << pair.second << ")\n";
-    }
+    //for (const auto& pair : testedPairs) {
+    //    std::cout << "Tested Pair: (" << pair.first << ", " << pair.second << ")\n";
+    //}
 
     // CHECK COLLIDING
 

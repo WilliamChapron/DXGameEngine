@@ -9,7 +9,7 @@ enum class ComponentType {
     Shader = 1,
     Texture = 2,
     MeshRenderer = 3,
-    Collider = 4
+    ColliderComponent = 4
 };
 
 class Component {

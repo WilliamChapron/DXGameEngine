@@ -5,6 +5,7 @@
 
 using namespace DirectX;
 
+
 class Transform : public Component
 {
 public:

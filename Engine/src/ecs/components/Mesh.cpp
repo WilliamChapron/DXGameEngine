@@ -15,7 +15,7 @@ Mesh::Mesh(std::string name) : m_name(name)
 
 void Mesh::Initialize(ConstantBufferData* cbData, Renderer* renderer, Vertex* vertices, int numVertices, UINT* indices, int numIndices)
 {
-    PRINT("INITIALIZE MESH");
+    //PRINT("INITIALIZE MESH");
     // Calcul des tailles des tampons de sommets et d'indices
     const UINT vertexBufferSize = sizeof(Vertex) * numVertices;
     const UINT indexBufferSize = sizeof(UINT) * numIndices;

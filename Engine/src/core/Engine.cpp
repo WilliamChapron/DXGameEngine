@@ -252,11 +252,11 @@ void Engine::Run() {
             }
         }
         m_pCamera->Rotate(m_pInput->GetMousePosition().y * 0.2f, 0.0f, - m_pInput->GetMousePosition().x * 0.2f);
-        std::cout << "mouse x : "
-            << m_pInput->GetMousePosition().x
-            << "   mouse y : "
-            << m_pInput->GetMousePosition().y
-            << std::endl;
+        //std::cout << "mouse x : "
+        //    << m_pInput->GetMousePosition().x
+        //    << "   mouse y : "
+        //    << m_pInput->GetMousePosition().y
+        //    << std::endl;
 
         m_pInput->ResetMousePosition();
 

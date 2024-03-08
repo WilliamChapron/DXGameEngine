@@ -133,7 +133,7 @@ void Input::ResetMousePosition() {
     center.x = (*m_wndProps).width / 2 + windowRect.left + 8;
     center.y = (*m_wndProps).height / 2 + windowRect.top + 31;
 
-    std::cout << "barre " << GetSystemMetrics(SM_CYCAPTION) << std::endl;
+    //std::cout << "barre " << GetSystemMetrics(SM_CYCAPTION) << std::endl;
 
     SetCursorPos(center.x, center.y); // Réinitialise la position de la souris au centre de la fenêtre
 }

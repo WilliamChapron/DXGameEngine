@@ -4,6 +4,8 @@
 
 #include "../entities/GameObject.hpp"
 
+#include "Component.h"
+
 #include "Transform.h"
 
 #include "../../core/Defines.h"
@@ -16,7 +18,7 @@ using namespace DirectX;
 
 
 
-ColliderComponent::ColliderComponent(std::string name) : Component(name, ComponentType::Collider) {
+ColliderComponent::ColliderComponent(std::string name) : Component(name, ComponentType::ColliderComponent) {
 
 }
 
@@ -54,22 +56,20 @@ void ColliderComponent::InitializeBoundingBox(GameObject* gameObject, Vertex* ve
 }
 
 void ColliderComponent::Update(Renderer* renderer) {
-    PRINT("Updat Collider");
-    AABB  box1AABBB = TransformBoundingBoxLocalToGlobal()
+    //PRINT("Update Collider");
+
 }
 
 
-AABB ColliderComponent::TransformBoundingBoxLocalToGlobal()
+AABB ColliderComponent::TransformBoundingBoxLocalToGlobal(AABB& localBoundingBox) 
 {
     Transform* transformComponent = m_pGameObject->GetComponent<Transform>(ComponentType::Transform);
-
-
-
 
     XMVECTOR localMin = XMLoadFloat3(&m_localAxisAlignedBoundingBox.min);
     XMVECTOR localMax = XMLoadFloat3(&m_localAxisAlignedBoundingBox.max);
 
-    XMMATRIX transformMatrix = XMLoadFloat4x4(&transformComponent->GetTransformMatrix());
+    XMFLOAT4X4 transformMatrixFloat4x4 = transformComponent->GetTransformMatrix();
+    XMMATRIX transformMatrix = XMLoadFloat4x4(&transformMatrixFloat4x4);
 
     AABB globalBoundingBox;
 
@@ -81,5 +81,21 @@ AABB ColliderComponent::TransformBoundingBoxLocalToGlobal()
     return globalBoundingBox;
 
 }
+
+
+bool ColliderComponent::CheckCollision(GameObject* gameObject) {
+
+    AABB box1 = TransformBoundingBoxLocalToGlobal(m_localAxisAlignedBoundingBox);
+
+    AABB box2 = TransformBoundingBoxLocalToGlobal(gameObject->GetComponent<ColliderComponent>(ComponentType::ColliderComponent)->m_localAxisAlignedBoundingBox);
+
+
+    if (box1.max.x < box2.min.x || box1.min.x > box2.max.x) return false;
+    if (box1.max.y < box2.min.y || box1.min.y > box2.max.y) return false;
+    if (box1.max.z < box2.min.z || box1.min.z > box2.max.z) return false;
+
+    return true;
+}
+
 
 

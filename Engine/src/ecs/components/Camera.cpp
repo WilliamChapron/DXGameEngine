@@ -33,7 +33,7 @@ void Camera::Update(float deltaTime) {
     m_viewMatrix = XMMatrixLookAtLH(XMLoadFloat3(&m_position), XMLoadFloat3(&m_target), XMLoadFloat3(&m_up));
     m_projectionMatrix = XMMatrixTranspose(m_viewMatrix);
     XMStoreFloat4x4(&f_viewMatrix, m_projectionMatrix);
-    std::cout << m_position.z << std::endl;
+    //std::cout << m_position.z << std::endl;
 }
 
 void Camera::UpdatePosition(XMFLOAT3 m_newPosition)
