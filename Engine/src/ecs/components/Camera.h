@@ -6,11 +6,11 @@ using namespace DirectX;
 class Camera
 {
 public:
-    Camera(float fov = XM_PIDIV4, float aspectRatio = 16.0f / 9.0f, float nearPlane = 0.1f, float farPlane = 100.0f);
+    Camera(float _fov = XM_PIDIV4, float _aspectRatio = 16.0f / 9.0f, float _nearPlane = 0.1f, float _farPlane = 100.0f);
     ~Camera() {};
 
     void Update(float deltaTime);
-    void UpdatePosition(XMFLOAT3 m_newPosition);
+    void UpdatePosition(XMFLOAT3 displacement);
     void UpdatePosition(float x, float y, float z);
 
 
@@ -24,6 +24,8 @@ public:
 
 
 private:
+    float fov, aspectRatio, nearPlane, farPlane;
+
     XMVECTOR currentRotation;
 
     // Rotate data

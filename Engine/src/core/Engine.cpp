@@ -157,16 +157,8 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
 
 
     m_pGameObjectManager->AddObject("Cube", m_pCube);
-    //m_pGameObjectManager->AddObject("Cube2", m_pCube2);
-    //m_pGameObjectManager->AddObject("Cube3", m_pCube3);
     m_pGameObjectManager->AddObject("Cube4", m_pCube4);
 
-
-    //std::map<int, TextureComponent*> theArray = m_pComponentManager->GetTextureComponents();
-    //for (const auto& pair : theArray) {
-    //    std::cout << "Component ID: " << pair.first << std::endl;
-    //    std::cout << "Texture: " << pair.second->GetName() << std::endl;
-    //}
 
 
     // Drawing
@@ -176,7 +168,8 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
 
 
 
-void Engine::Cleanup() {
+void Engine::Cleanup() 
+{
     if (m_pConsole) {
         fclose(m_pConsole);
         FreeConsole();
@@ -199,10 +192,6 @@ void Engine::Run() {
     ShowCursor(FALSE);
 
     m_pCamera->UpdateTarget(XMFLOAT3(0.0f, 0.0f, 0.0f));
-    //Cubes.push_back(*m_pCube1);
-    //Cubes.push_back(*m_pCube2);
-    // Ajoutez d'autres Cubes au besoin
-
     while (true) {
 
         Transform* transformComponent = m_pCube->GetComponent<Transform>(ComponentType::Transform);
@@ -210,13 +199,6 @@ void Engine::Run() {
         transformComponent->SetPosition(0, translationOffset, 0);
 
         time.UpdateTime();
-
-        //CAMERA DEBUG
-        //m_pCamera->UpdatePosition(0.0f, 0.0f, 0.2f);
-        //m_pCamera->Rotate(0.0f, 0.0f, 0.25f);
-        /*m_pCamera->RotateAroundTarget(0.f, .0f, 0.2f);
-        m_pCamera->UpdateTarget(XMFLOAT3(0.0f, 0.0f, 0.0f));*/
-        //m_pCamera->Rotate(m_pInput->GetMousePosition().x, m_pInput->GetMousePosition().y, 0.f);
 
         m_pCamera->Update(time.GetDeltaTime());
 
@@ -254,11 +236,11 @@ void Engine::Run() {
             switch (pair.first) {
                 case 'Z':
                     if (pair.second == KeyState::Pressed || pair.second == KeyState::Held)
-                        m_pCamera->UpdatePosition(0.0f, speed * time.GetDeltaTime(), 0.0f);
+                        m_pCamera->UpdatePosition(0.0f, 0.0f, speed * time.GetDeltaTime());
                     break;
                 case 'S':
                     if (pair.second == KeyState::Pressed || pair.second == KeyState::Held)
-                        m_pCamera->UpdatePosition(0.0f, -speed * time.GetDeltaTime(), 0.0f);
+                        m_pCamera->UpdatePosition(0.0f, 0.0f, - speed * time.GetDeltaTime());
                     break;
                 case 'Q':
                     if (pair.second == KeyState::Pressed || pair.second == KeyState::Held)
@@ -270,20 +252,16 @@ void Engine::Run() {
                     break;
                 case VK_SPACE:
                     if (pair.second == KeyState::Pressed || pair.second == KeyState::Held)
-                        m_pCamera->UpdatePosition(0.0f, 0.0f, -speed * time.GetDeltaTime());
+                        m_pCamera->UpdatePosition(0.0f, speed * time.GetDeltaTime(), 0.0f);
                     break;
                 case VK_SHIFT:
                     if (pair.second == KeyState::Pressed || pair.second == KeyState::Held)
-                        m_pCamera->UpdatePosition(0.0f, 0.0f, speed * time.GetDeltaTime());
+                        m_pCamera->UpdatePosition(0.0f, -speed * time.GetDeltaTime(), 0.0f);
                     break;
-                /*case VK_LBUTTON:
-                    if (pair.second == KeyState::Pressed || pair.second == KeyState::Held)
-                    {
-                        
-                    }*/
             }
         }
-        m_pCamera->Rotate(m_pInput->GetMousePosition().y * 0.2f, 0.0f, - m_pInput->GetMousePosition().x * 0.2f);
+
+        m_pCamera->Rotate(m_pInput->GetMousePosition().y * 0.2f, 0.0f, m_pInput->GetMousePosition().x * 0.2f);
         std::cout << "mouse x : "
             << m_pInput->GetMousePosition().x
             << "   mouse y : "

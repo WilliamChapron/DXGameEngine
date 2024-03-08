@@ -118,8 +118,8 @@ POINT Input::GetMousePosition() const {
     GetCursorPos(&cursorPos); // Obtient la position actuelle du curseur
     ScreenToClient(m_wndProps->hwnd, &cursorPos);
 
-    cursorPos.x -= (*m_wndProps).width / 2;
-    cursorPos.y -= (*m_wndProps).height / 2;
+    cursorPos.x -= (*m_wndProps).width * 0.5f;
+    cursorPos.y -= (*m_wndProps).height * 0.5f;
 
     return cursorPos; // Retourne les coordonn�es actuelles de la souris
 }
