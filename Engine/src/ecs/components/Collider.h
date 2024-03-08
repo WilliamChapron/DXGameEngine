@@ -5,6 +5,8 @@
 
 #include "../components/Component.h"
 
+#include <vector>
+
 using namespace DirectX;
 
 struct AABB {
@@ -28,12 +30,13 @@ public:
 
 
     void InitializeBoundingBox(GameObject* gameObject, Vertex* vertices, int numVertices);
-    AABB TransformBoundingBoxLocalToGlobal(AABB localBoundingBox, GameObject* gameObject);
+    //AABB TransformBoundingBoxLocalToGlobal(AABB localBoundingBox, GameObject* gameObject);
 
     bool CheckCollision(GameObject* gameObject);
       
 
 private:
     GameObject* m_pGameObject;
-    AABB m_localAxisAlignedBoundingBox;
+    //AABB m_localAxisAlignedBoundingBox;
+    std::vector<XMFLOAT3> m_localPoints;
 };

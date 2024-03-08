@@ -115,9 +115,9 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
 
 
 
-    m_pCube->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(-1.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), m_pResourceManager->FindMeshComponentByName("mesh1").component, cbData, cubeMesh.cubeVertices, cubeMesh.numElementsV);
+    m_pCube->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(-1.1f, 0.6f, 0.3f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), m_pResourceManager->FindMeshComponentByName("mesh1").component, cbData, cubeMesh.cubeVertices, cubeMesh.numElementsV);
     /*m_pCube2->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), m_pResourceManager->FindMeshComponentByName("mesh2").component, cbData, cubeMesh2.cubeVertices, cubeMesh2.numElementsV);*/
-    m_pCube3->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(1.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), m_pResourceManager->FindMeshComponentByName("mesh1").component, cbData, cubeMesh.cubeVertices, cubeMesh.numElementsV);
+    m_pCube3->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(1.5f, -1.6f, -0.4f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), m_pResourceManager->FindMeshComponentByName("mesh1").component, cbData, cubeMesh.cubeVertices, cubeMesh.numElementsV);
     /*m_pCube4->Initialize(m_pRenderer, m_pCamera, XMFLOAT3(3.5f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f), m_pResourceManager->FindMeshComponentByName("mesh2").component, cbData, cubeMesh2.cubeVertices, cubeMesh2.numElementsV);*/
 
     m_pComponentManager->AddComponent(*m_pCube, m_pResourceManager->FindTextureComponentByName("texture").component);
@@ -173,9 +173,9 @@ void Engine::Run() {
 
     while (true) {
 
-        Transform* transformComponent = m_pCube->GetComponent<Transform>(ComponentType::Transform);
-        float translationOffset = transformComponent->GetPosition().x + 0.008f;
-        transformComponent->SetPosition(translationOffset, 0, 0);
+        //Transform* transformComponent = m_pCube->GetComponent<Transform>(ComponentType::Transform);
+        //float translationOffset = transformComponent->GetPosition().x + 0.008f;
+        //transformComponent->SetPosition(translationOffset, 0, 0);
 
         time.UpdateTime();
 

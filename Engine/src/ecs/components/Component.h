@@ -26,10 +26,14 @@ public:
     }
 
     // Return if component need update
-    inline bool ShouldUpdate() const {
+
+    inline bool HasHeChanged() const {
         return m_hasChanged;
     }
 
+    inline void SetHasChanged(bool value) {
+        m_hasChanged = value; 
+    }
 
     //virtual void Initialize(Renderer* renderer);
     virtual void Update(Renderer* renderer);

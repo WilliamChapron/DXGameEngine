@@ -7,6 +7,10 @@ public:
     int numElementsV;
     int numElementsI;
 
+    float aabbSizeX;
+    float aabbSizeY;
+    float aabbSizeZ;
+
     CubeMesh() {
         // Initialisation des pointeurs
         cubeVertices = new Vertex[8]{

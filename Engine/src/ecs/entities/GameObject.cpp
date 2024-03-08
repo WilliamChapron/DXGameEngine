@@ -125,10 +125,10 @@ void GameObject::Update(Renderer* renderer, Camera* camera)
     sendToMeshCbData->projection = camera->GetProjectionMatrix();
 
 
-    float rotationAngle = 0.03;
-    float rotationOffset = 0.01;
-    float translationOffset = transformComponent->GetPosition().z + 0.01f;
-    float fScale = transformComponent->GetScale().z - 0.001f;
+    //float rotationAngle = 0.03;
+    //float rotationOffset = 0.01;
+    //float translationOffset = transformComponent->GetPosition().z + 0.01f;
+    //float fScale = transformComponent->GetScale().z - 0.001f;
 
 
     sendToMeshCbData->model = transformComponent->GetTransformMatrix();
