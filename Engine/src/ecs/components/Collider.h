@@ -37,6 +37,6 @@ public:
 
 private:
     GameObject* m_pGameObject;
-    //AABB m_localAxisAlignedBoundingBox;
-    std::vector<XMFLOAT3> m_localPoints;
+    AABB m_localAxisAlignedBoundingBox;
+    XMFLOAT3 m_size;
 };

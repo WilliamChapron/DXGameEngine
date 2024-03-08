@@ -14,6 +14,8 @@
 
 #include <iostream>
 
+#include "../../Utils.h"
+
 using namespace DirectX;
 
 
@@ -25,58 +27,32 @@ ColliderComponent::ColliderComponent(std::string name) : Component(name, Compone
 
 #define PRINT_VECTOR3(vec) std::cout << #vec << ": (" << (vec).x << ", " << (vec).y << ", " << (vec).z << ")" << std::endl;
 
-//void ColliderComponent::InitializeBoundingBox(GameObject* gameObject, Vertex* vertices, int numVertices) {
-//    m_pGameObject = gameObject;
-//
-//	m_localAxisAlignedBoundingBox.min = { FLT_MAX, FLT_MAX, FLT_MAX };
-//    m_localAxisAlignedBoundingBox.max = { -FLT_MAX, -FLT_MAX, -FLT_MAX };
-//
-//
-//    for (int i = 0; i < numVertices; ++i) {
-//        XMFLOAT3 vertexPos = vertices[i].Pos;
-//
-//        m_localAxisAlignedBoundingBox.min.x = (m_localAxisAlignedBoundingBox.min.x < vertexPos.x) ? m_localAxisAlignedBoundingBox.min.x : vertexPos.x;
-//        m_localAxisAlignedBoundingBox.min.y = (m_localAxisAlignedBoundingBox.min.y < vertexPos.y) ? m_localAxisAlignedBoundingBox.min.y : vertexPos.y;
-//        m_localAxisAlignedBoundingBox.min.z = (m_localAxisAlignedBoundingBox.min.z < vertexPos.z) ? m_localAxisAlignedBoundingBox.min.z : vertexPos.z;
-//
-//        m_localAxisAlignedBoundingBox.max.x = (m_localAxisAlignedBoundingBox.max.x > vertexPos.x) ? m_localAxisAlignedBoundingBox.max.x : vertexPos.x;
-//        m_localAxisAlignedBoundingBox.max.y = (m_localAxisAlignedBoundingBox.max.y > vertexPos.y) ? m_localAxisAlignedBoundingBox.max.y : vertexPos.y;
-//        m_localAxisAlignedBoundingBox.max.z = (m_localAxisAlignedBoundingBox.max.z > vertexPos.z) ? m_localAxisAlignedBoundingBox.max.z : vertexPos.z;
-//    }
-//
-//
-//
-//    //PRINT("Min");
-//    //PRINT_VECTOR3(m_localAxisAlignedBoundingBox.min);
-//    //PRINT("Max");
-//    //PRINT_VECTOR3(m_localAxisAlignedBoundingBox.max);
-//
-//
-//
-//}
 
 void ColliderComponent::InitializeBoundingBox(GameObject* gameObject, Vertex* vertices, int numVertices) {
     m_pGameObject = gameObject;
 
-    m_localPoints.resize(numVertices);
-
-
-    /*Transform* transformComponent = gameObject->GetComponent<Transform>(ComponentType::Transform);
-    XMFLOAT4X4 transformMatrixFloat4x4 = transformComponent->GetTransformMatrix();
-    XMMATRIX transformMatrix = XMLoadFloat4x4(&transformMatrixFloat4x4);
+    float minX = FLT_MAX;
+    float minY = FLT_MAX;
+    float minZ = FLT_MAX;
+    float maxX = -FLT_MAX;
+    float maxY = -FLT_MAX;
+    float maxZ = -FLT_MAX;
 
     for (int i = 0; i < numVertices; ++i) {
         XMFLOAT3 vertexPos = vertices[i].Pos;
-        XMVECTOR localVertex = XMLoadFloat3(&vertexPos);
-        XMVECTOR globalVertex = XMVector3TransformCoord(localVertex, transformMatrix);
-        XMStoreFloat3(&m_localPoints[i], globalVertex);
-    }*/
 
+        minX = (minX < vertexPos.x) ? minX : vertexPos.x;
+        minY = (minY < vertexPos.y) ? minY : vertexPos.y;
+        minZ = (minZ < vertexPos.z) ? minZ : vertexPos.z;
 
-    //PRINT("Max");
-    //PRINT_VECTOR3(m_localPoints[0]);
+        maxX = (maxX > vertexPos.x) ? maxX : vertexPos.x;
+        maxY = (maxY > vertexPos.y) ? maxY : vertexPos.y;
+        maxZ = (maxZ > vertexPos.z) ? maxZ : vertexPos.z;
+    }
 
-
+    m_size.x = abs(maxX - minX);
+    m_size.y = abs(maxY - minY);
+    m_size.z = abs(maxZ - minZ);
 }
 
 
@@ -85,54 +61,125 @@ void ColliderComponent::Update(Renderer* renderer) {
 
 }
 
-// j'ai 8 points donc utilise les 8 points, passe les en global stocke les,, et au moment de l'update retrouve le min et le max des points global et compare les
 
 
-//AABB ColliderComponent::TransformBoundingBoxLocalToGlobal(AABB localBoundingBox, GameObject* gameObject) 
-//{
-//    Transform* transformComponent = gameObject->GetComponent<Transform>(ComponentType::Transform);
-//
-//    XMVECTOR localMin = XMLoadFloat3(&localBoundingBox.min);
-//    XMVECTOR localMax = XMLoadFloat3(&localBoundingBox.max);
-//
-//    XMFLOAT4X4 transformMatrixFloat4x4 = transformComponent->GetTransformMatrix();
-//    XMMATRIX transformMatrix = XMLoadFloat4x4(&transformMatrixFloat4x4);
-//
-//    AABB globalBoundingBox;
-//
-//    XMVECTOR globalMin = XMVector3TransformCoord(localMin, transformMatrix);
-//    XMVECTOR globalMax = XMVector3TransformCoord(localMax, transformMatrix);
-//
-//    XMStoreFloat3(&globalBoundingBox.min, globalMin);
-//    XMStoreFloat3(&globalBoundingBox.max, globalMax);
-//
-//    return globalBoundingBox;
-//}
+
+
 
 
 bool ColliderComponent::CheckCollision(GameObject* collideObject) {
+    XMFLOAT3 gPosBox1 = m_pGameObject->GetComponent<Transform>(ComponentType::Transform)->GetPosition();
+    XMFLOAT3 gPosBox2 = collideObject->GetComponent<Transform>(ComponentType::Transform)->GetPosition();
 
-    //AABB box1 = m_localAxisAlignedBoundingBox;
-    //AABB box2 = collideObject->GetComponent<ColliderComponent>(ComponentType::ColliderComponent)->m_localAxisAlignedBoundingBox;
+    XMFLOAT3 sizeBox1 = m_size;
+    XMFLOAT3 sizeBox2 = collideObject->GetComponent<ColliderComponent>(ComponentType::ColliderComponent)->m_size;
 
-    //AABB transformedBox1 = TransformBoundingBoxLocalToGlobal(box1, m_pGameObject);
-    //AABB transformedBox2 = TransformBoundingBoxLocalToGlobal(box2, collideObject);
+    float halfSizeX1 = sizeBox1.x * 0.5f;
+    float halfSizeY1 = sizeBox1.y * 0.5f;
+    float halfSizeZ1 = sizeBox1.z * 0.5f;
 
-    ////std::cout << "Box 1 (Global):" << std::endl;
-    ////std::cout << "  Min: (" << transformedBox1.min.x << ", " << transformedBox1.min.y << ", " << transformedBox1.min.z << ")" << std::endl;
-    ////std::cout << "  Max: (" << transformedBox1.max.x << ", " << transformedBox1.max.y << ", " << transformedBox1.max.z << ")" << std::endl;
+    float halfSizeX2 = sizeBox2.x * 0.5f;
+    float halfSizeY2 = sizeBox2.y * 0.5f;
+    float halfSizeZ2 = sizeBox2.z * 0.5f;
 
-    ////std::cout << "Box 2 (Global):" << std::endl;
-    ////std::cout << "  Min: (" << transformedBox2.min.x << ", " << transformedBox2.min.y << ", " << transformedBox2.min.z << ")" << std::endl;
-    ////std::cout << "  Max: (" << transformedBox2.max.x << ", " << transformedBox2.max.y << ", " << transformedBox2.max.z << ")" << std::endl;
+    XMFLOAT3 cornersBox1[8] = {
+        { gPosBox1.x - halfSizeX1, gPosBox1.y - halfSizeY1, gPosBox1.z - halfSizeZ1 },
+        { gPosBox1.x + halfSizeX1, gPosBox1.y - halfSizeY1, gPosBox1.z - halfSizeZ1 },
+        { gPosBox1.x - halfSizeX1, gPosBox1.y + halfSizeY1, gPosBox1.z - halfSizeZ1 },
+        { gPosBox1.x + halfSizeX1, gPosBox1.y + halfSizeY1, gPosBox1.z - halfSizeZ1 },
+        { gPosBox1.x - halfSizeX1, gPosBox1.y - halfSizeY1, gPosBox1.z + halfSizeZ1 },
+        { gPosBox1.x + halfSizeX1, gPosBox1.y - halfSizeY1, gPosBox1.z + halfSizeZ1 },
+        { gPosBox1.x - halfSizeX1, gPosBox1.y + halfSizeY1, gPosBox1.z + halfSizeZ1 },
+        { gPosBox1.x + halfSizeX1, gPosBox1.y + halfSizeY1, gPosBox1.z + halfSizeZ1 }
+    };
 
 
-    //if (box1.max.x < box2.min.x || box1.min.x > box2.max.x) return false;
-    //if (box1.max.y < box2.min.y || box1.min.y > box2.max.y) return false;
-    //if (box1.max.z < box2.min.z || box1.min.z > box2.max.z) return false;
+    XMFLOAT3 cornersBox2[8] = {
+        { gPosBox2.x - halfSizeX2, gPosBox2.y - halfSizeY2, gPosBox2.z - halfSizeZ2 },
+        { gPosBox2.x + halfSizeX2, gPosBox2.y - halfSizeY2, gPosBox2.z - halfSizeZ2 },
+        { gPosBox2.x - halfSizeX2, gPosBox2.y + halfSizeY2, gPosBox2.z - halfSizeZ2 },
+        { gPosBox2.x + halfSizeX2, gPosBox2.y + halfSizeY2, gPosBox2.z - halfSizeZ2 },
+        { gPosBox2.x - halfSizeX2, gPosBox2.y - halfSizeY2, gPosBox2.z + halfSizeZ2 },
+        { gPosBox2.x + halfSizeX2, gPosBox2.y - halfSizeY2, gPosBox2.z + halfSizeZ2 },
+        { gPosBox2.x - halfSizeX2, gPosBox2.y + halfSizeY2, gPosBox2.z + halfSizeZ2 },
+        { gPosBox2.x + halfSizeX2, gPosBox2.y + halfSizeY2, gPosBox2.z + halfSizeZ2 }
+    };
 
-    return true;
+    // Imprimer les coins de la première boîte
+    //std::cout << "Corners of Box 1:" << std::endl;
+    //for (int i = 0; i < 8; ++i) {
+    //    std::cout << "Corner " << i + 1 << ": ";
+    //    printFloatWithPrecision(cornersBox1[i].x, 2);
+    //    printFloatWithPrecision(cornersBox1[i].y, 2);
+    //    printFloatWithPrecision(cornersBox1[i].z, 2);
+    //    std::cout << std::endl;
+    //}
+
+    //// Imprimer les coins de la deuxième boîte
+    //std::cout << "Corners of Box 2:" << std::endl;
+    //for (int i = 0; i < 8; ++i) {
+    //    std::cout << "Corner " << i + 1 << ": ";
+    //    printFloatWithPrecision(cornersBox2[i].x, 2);
+    //    printFloatWithPrecision(cornersBox2[i].y, 2);
+    //    printFloatWithPrecision(cornersBox2[i].z, 2);
+    //    std::cout << std::endl;
+    //}
+
+    XMFLOAT3 minBox1(FLT_MAX, FLT_MAX, FLT_MAX);
+    XMFLOAT3 maxBox1(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+
+    for (int i = 0; i < 8; ++i) {
+        minBox1.x = (cornersBox1[i].x < minBox1.x) ? cornersBox1[i].x : minBox1.x;
+        minBox1.y = (cornersBox1[i].y < minBox1.y) ? cornersBox1[i].y : minBox1.y;
+        minBox1.z = (cornersBox1[i].z < minBox1.z) ? cornersBox1[i].z : minBox1.z;
+
+        maxBox1.x = (cornersBox1[i].x > maxBox1.x) ? cornersBox1[i].x : maxBox1.x;
+        maxBox1.y = (cornersBox1[i].y > maxBox1.y) ? cornersBox1[i].y : maxBox1.y;
+        maxBox1.z = (cornersBox1[i].z > maxBox1.z) ? cornersBox1[i].z : maxBox1.z;
+    }
+
+    XMFLOAT3 minBox2(FLT_MAX, FLT_MAX, FLT_MAX);
+    XMFLOAT3 maxBox2(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+
+    for (int i = 0; i < 8; ++i) {
+        minBox2.x = (cornersBox2[i].x < minBox2.x) ? cornersBox2[i].x : minBox2.x;
+        minBox2.y = (cornersBox2[i].y < minBox2.y) ? cornersBox2[i].y : minBox2.y;
+        minBox2.z = (cornersBox2[i].z < minBox2.z) ? cornersBox2[i].z : minBox2.z;
+
+        maxBox2.x = (cornersBox2[i].x > maxBox2.x) ? cornersBox2[i].x : maxBox2.x;
+        maxBox2.y = (cornersBox2[i].y > maxBox2.y) ? cornersBox2[i].y : maxBox2.y;
+        maxBox2.z = (cornersBox2[i].z > maxBox2.z) ? cornersBox2[i].z : maxBox2.z;
+    }
+
+
+
+    //std::cout << "Box 1:" << std::endl;
+    //std::cout << "  Min: ";
+    //printFloatWithPrecision(minBox1.x, 2);
+    //printFloatWithPrecision(minBox1.y, 2);
+    //printFloatWithPrecision(minBox1.z, 2);
+    //std::cout << "  Max: ";
+    //printFloatWithPrecision(maxBox1.x, 2);
+    //printFloatWithPrecision(maxBox1.y, 2);
+    //printFloatWithPrecision(maxBox1.z, 2);
+
+    //std::cout << "Box 2:" << std::endl;
+    //std::cout << "  Min: ";
+    //printFloatWithPrecision(minBox2.x, 2);
+    //printFloatWithPrecision(minBox2.y, 2);
+    //printFloatWithPrecision(minBox2.z, 2);
+    //std::cout << "  Max: ";
+    //printFloatWithPrecision(maxBox2.x, 2);
+    //printFloatWithPrecision(maxBox2.y, 2);
+    //printFloatWithPrecision(maxBox2.z, 2);
+
+
+
+    bool collisionX = maxBox1.x >= minBox2.x && minBox1.x <= maxBox2.x;
+    bool collisionY = maxBox1.y >= minBox2.y && minBox1.y <= maxBox2.y;
+    bool collisionZ = maxBox1.z >= minBox2.z && minBox1.z <= maxBox2.z;
+
+    return collisionX && collisionY && collisionZ;
 }
-
 
 
