@@ -41,6 +41,12 @@ void Camera::UpdatePosition(XMFLOAT3 m_newPosition)
     m_position.x += m_newPosition.x;
     m_position.y += m_newPosition.y;
     m_position.z += m_newPosition.z;
+
+    XMFLOAT3 camMovementVector((m_newPosition.x - m_position.x), (m_newPosition.y - m_position.y), (m_newPosition.z - m_position.z));
+
+    m_target.x += camMovementVector.x;
+    m_target.y += camMovementVector.y;
+    m_target.z += camMovementVector.z;
 }
 
 void Camera::UpdatePosition(float x, float y, float z)
@@ -49,6 +55,11 @@ void Camera::UpdatePosition(float x, float y, float z)
     m_position.x += x;
     m_position.y += y;
     m_position.z += z;
+    XMFLOAT3 camMovementVector((x - m_position.x), (y - m_position.y), (z - m_position.z));
+
+    m_target.x += x;
+    m_target.y += y;
+    m_target.z += z;
 }
 
 void Camera::UpdateTarget(XMFLOAT3 m_newTarget)
@@ -90,7 +101,7 @@ void Camera::Rotate(float pitch, float yaw, float roll)
     forward = XMVector3Rotate(forward, currentRotation);
     up = XMVector3Rotate(up, currentRotation);
     right = XMVector3Rotate(right, currentRotation);
-
+    
     // Mettre � jour la cible de la cam�ra en fonction de la direction
     m_target.x = m_position.x + XMVectorGetX(forward);
     m_target.y = m_position.y + XMVectorGetY(forward);

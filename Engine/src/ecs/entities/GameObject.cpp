@@ -137,8 +137,8 @@ void GameObject::Update(Renderer* renderer, Camera* camera)
 
     sendToMeshCbData->model = transformComponent->GetTransformMatrix();
 
-    //// Imprimer la matrice modèle mise à jour
-    //PRINT("Après");
+    //// Imprimer la matrice modï¿½le mise ï¿½ jour
+    //PRINT("Aprï¿½s");
     //PRINT(meshComponent->GetName());
     //std::cout << "Model Matrix during update:" << std::endl;
     //PrintMatrix(sendToMeshCbData->model);

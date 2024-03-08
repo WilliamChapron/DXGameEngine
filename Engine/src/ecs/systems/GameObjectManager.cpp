@@ -61,6 +61,10 @@ bool IsColliding(XMFLOAT3& vectorPositionInput, XMFLOAT3& vectorPositionOutput) 
 
     return normalizedDistance.x <= 0 && normalizedDistance.y <= 0 && normalizedDistance.x <= 0;
 }
+
+
+
+
 void GameObjectManager::Update(Renderer* renderer) {
     HRESULT hr;
 
@@ -73,8 +77,12 @@ void GameObjectManager::Update(Renderer* renderer) {
     PRINT("Frame");
     std::vector<std::pair<std::string, std::string>> testedPairs;
 
+        //m_pCommandList->SetGraphicsRootSignature(m_pRootSignature.Get());
+    //m_pCommandList->SetPipelineState(m_pPipelineState.Get());
+
     for (auto& pair : objectMap) {
         GameObject* gameObject = pair.second;
+
         gameObject->Update(renderer, m_pCamera);
 
         PRINT("Update all");
