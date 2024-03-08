@@ -88,8 +88,8 @@ void Renderer::InitializeDirectX12Instances() {
     CreateFence();
 
 
-    CreateRootSignature();
-    CreatePipelineState();
+    //CreateRootSignature();
+    //CreatePipelineState();
 
 }
 
@@ -365,7 +365,7 @@ void Renderer::WaitForPreviousFrame()
 
 
 
-
+// # TODO | SEPARER LES TACHES DE LA COMMAND LIST POUR POUVOIR UPDATE LE COMPONENT SHADER DE CHAQUE GAME OBJECT AU BON MOMENT DANS LE GAME OBJECT MANAGER
 void Renderer::Precommandlist() {
 
     HRESULT hr;
