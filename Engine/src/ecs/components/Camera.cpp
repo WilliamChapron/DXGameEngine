@@ -99,11 +99,10 @@ void Camera::Rotate(float pitch, float yaw, float roll)
 
     // Mettre à jour la rotation actuelle
     currentRotation = rotationQuaternion;
-    XMVECTOR forwardVector = XMVector3Normalize(XMLoadFloat3(&m_target) - XMLoadFloat3(&m_position));
 
     // Mettre à jour la direction de la caméra en fonction de la nouvelle rotation
-    forward = XMVector3Rotate(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), rotationQuaternion);
-    
+    XMVECTOR forwardVector = XMVector3Rotate(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), rotationQuaternion);
+
     // Calculer le vecteur de droite (rightVector) en croisant forwardVector avec le vecteur up de la caméra
     XMVECTOR upVector = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
     XMVECTOR rightVector = XMVector3Cross(forwardVector, upVector);
@@ -119,10 +118,53 @@ void Camera::Rotate(float pitch, float yaw, float roll)
     // Mettre à jour la direction vers le haut de la caméra en fonction de la nouvelle rotation
     up = XMVector3Rotate(upVector, rotationQuaternion);
 
+    // Mettre à jour m_target en fonction de la nouvelle direction avant
+    XMFLOAT3 fForwardVector;
+    XMStoreFloat3(&fForwardVector ,forwardVector);
+    m_target.x = m_position.x + fForwardVector.x;
+    m_target.y = m_position.y + fForwardVector.y;
+    m_target.z = m_position.z + fForwardVector.z;
 
-    m_target.x = m_position.x + XMVectorGetX(forward);
-    m_target.y = m_position.y + XMVectorGetY(forward);
-    m_target.z = m_position.z + XMVectorGetZ(forward);
+
+
+
+    //// Convertir les angles en radians
+    //pitch = XMConvertToRadians(pitch);
+    //yaw = XMConvertToRadians(yaw);
+    //roll = XMConvertToRadians(roll);
+
+    //// Créer le quaternion de rotation à partir des angles d'Euler
+    //XMVECTOR rotationQuaternion = XMQuaternionRotationRollPitchYaw(pitch, yaw, roll);
+
+    //// Appliquer la rotation actuelle au quaternion de rotation
+    //rotationQuaternion = XMQuaternionMultiply(currentRotation, rotationQuaternion);
+
+    //// Mettre à jour la rotation actuelle
+    //currentRotation = rotationQuaternion;
+    //XMVECTOR forwardVector = XMVector3Normalize(XMLoadFloat3(&m_target) - XMLoadFloat3(&m_position));
+
+    //// Mettre à jour la direction de la caméra en fonction de la nouvelle rotation
+    //forward = XMVector3Rotate(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), rotationQuaternion);
+    //
+    //// Calculer le vecteur de droite (rightVector) en croisant forwardVector avec le vecteur up de la caméra
+    //XMVECTOR upVector = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+    //XMVECTOR rightVector = XMVector3Cross(forwardVector, upVector);
+    //rightVector = XMVector3Normalize(rightVector);
+
+    //// Mettre à jour la direction de droite de la caméra en fonction de la nouvelle rotation
+    //right = XMVector3Rotate(rightVector, rotationQuaternion);
+
+    //// Calculer le vecteur vers le haut (upVector) en croisant forwardVector avec rightVector
+    //upVector = XMVector3Cross(rightVector, forwardVector);
+    //upVector = XMVector3Normalize(upVector);
+
+    //// Mettre à jour la direction vers le haut de la caméra en fonction de la nouvelle rotation
+    //up = XMVector3Rotate(upVector, rotationQuaternion);
+
+
+    //m_target.x = m_position.x + XMVectorGetX(forward);
+    //m_target.y = m_position.y + XMVectorGetY(forward);
+    //m_target.z = m_position.z + XMVectorGetZ(forward);
 
     //// Convertir les angles en radians
     //pitch = XMConvertToRadians(pitch);
