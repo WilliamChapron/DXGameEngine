@@ -18,6 +18,7 @@
 #include "../ecs/components/Texture.h"
 #include "../ecs/components/Camera.h"
 #include "../ecs/components/Mesh.h"
+#include "../ecs/components/Shader.h"
 
 #include "../ecs/components/MeshRenderer.h"
 
@@ -83,11 +84,14 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
     Mesh* baseMesh = new Mesh("mesh1");
     Mesh* baseMesh2 = new Mesh("mesh2");
 
+    ShaderComponent* baseShader = new ShaderComponent("shader1", m_pRenderer);
+
     m_pResourceManager->AddTextureToResources(texture);
     m_pResourceManager->AddTextureToResources(texture2);
     m_pResourceManager->AddMeshToResources(baseMesh);
     m_pResourceManager->AddMeshToResources(baseMesh2);
 
+    m_pResourceManager->AddShaderToResources(baseShader);
 
 
     // Any order
@@ -97,8 +101,8 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
     texture->Initialize(m_pRenderer, m_pResourceManager->FindTextureComponentByName("texture").key);
     texture2->Initialize(m_pRenderer, m_pResourceManager->FindTextureComponentByName("texture2").key);
 
-
-
+    baseShader->InitializeRootSignature();
+    baseShader->InitializePSO();
 
 
     // #TODO CREATE FONCTION | CREATE OBJECT | CREATE TEXTURE | CREATE MESH | CREATE SHADER
@@ -118,6 +122,16 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
     m_pComponentManager->AddComponent(*m_pCube2, m_pResourceManager->FindTextureComponentByName("texture2").component);
     m_pComponentManager->AddComponent(*m_pCube3, m_pResourceManager->FindTextureComponentByName("texture").component);
     m_pComponentManager->AddComponent(*m_pCube4, m_pResourceManager->FindTextureComponentByName("texture2").component);
+
+    m_pComponentManager->AddComponent(*m_pCube, m_pResourceManager->FindTextureComponentByName("texture").component);
+    m_pComponentManager->AddComponent(*m_pCube2, m_pResourceManager->FindTextureComponentByName("texture2").component);
+    m_pComponentManager->AddComponent(*m_pCube3, m_pResourceManager->FindTextureComponentByName("texture").component);
+    m_pComponentManager->AddComponent(*m_pCube4, m_pResourceManager->FindTextureComponentByName("texture2").component);
+
+    m_pComponentManager->AddComponent(*m_pCube, m_pResourceManager->FindShaderComponentByName("shader1").component);
+    m_pComponentManager->AddComponent(*m_pCube2, m_pResourceManager->FindShaderComponentByName("shader1").component);
+    m_pComponentManager->AddComponent(*m_pCube3, m_pResourceManager->FindShaderComponentByName("shader1").component);
+    m_pComponentManager->AddComponent(*m_pCube4, m_pResourceManager->FindShaderComponentByName("shader1").component);
 
     m_pGameObjectManager->AddObject("Cube", m_pCube);
     m_pGameObjectManager->AddObject("Cube2", m_pCube2);

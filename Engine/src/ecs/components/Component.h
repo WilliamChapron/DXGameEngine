@@ -6,9 +6,9 @@ class Renderer;
 
 enum class ComponentType {
     Transform = 0,
-    Texture = 1,
-    MeshRenderer = 2,
-    Shader = 3,
+    Shader = 1,
+    Texture = 2,
+    MeshRenderer = 3,
 };
 class Component {
 public:

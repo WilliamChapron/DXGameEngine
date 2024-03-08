@@ -7,7 +7,17 @@ ShaderComponent::ShaderComponent(std::string name, Renderer* pRenderer) : Compon
 {
 }
 
+ShaderComponent::~ShaderComponent() {
+    m_pPipelineState.Reset();
+    m_pRootSignature.Reset();
+
+    m_vertexShaderBlob.Reset();
+    m_pixelShaderBlob.Reset();
+}
+
 void ShaderComponent::InitializeRootSignature() {
+
+
 
     CD3DX12_DESCRIPTOR_RANGE range;
     range.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
@@ -56,6 +66,8 @@ void ShaderComponent::InitializeRootSignature() {
 
 void ShaderComponent::InitializePSO() {
 
+
+
     #if defined(_DEBUG)
         // Enable better shader debugging with the graphics debugging tools.
         UINT compileFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
@@ -103,6 +115,7 @@ void ShaderComponent::InitializePSO() {
 
 void ShaderComponent::Update(Renderer* pRenderer)
 {
+    PRINT("Update Shader");
     UpdatePSO();
     UpdateRootSignature();
 }

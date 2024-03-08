@@ -53,12 +53,6 @@ public:
     D3D12_VIEWPORT* m_pViewport;
     D3D12_RECT* m_pScissorRect;
 
-    ComPtr<ID3DBlob> m_vertexShaderBlob;
-    ComPtr<ID3DBlob> m_pixelShaderBlob;
-
-    ComPtr<ID3D12PipelineState> m_pPipelineState;
-    ComPtr<ID3D12RootSignature> m_pRootSignature;
-
     ComPtr<ID3D12Debug> m_debugController;
     UINT m_dxgiFactoryFlags = 0;
 

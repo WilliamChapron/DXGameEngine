@@ -15,6 +15,7 @@ class ShaderComponent : public Component
 {
 public:
 	ShaderComponent(std::string name, Renderer* pRenderer);
+	~ShaderComponent();
 
 	void InitializePSO();
 	void InitializeRootSignature();

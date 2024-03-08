@@ -24,6 +24,8 @@
     <ClInclude Include="src\ecs\components\MeshRenderer.h" />
     <ClInclude Include="src\Utils.h" />
     <ClInclude Include="src\ecs\systems\ResourceManager.h" />
+    <ClInclude Include="src\CommonsMesh.h" />
+    <ClInclude Include="src\ecs\components\Shader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\Engine.cpp" />
@@ -39,8 +41,6 @@
     <ClCompile Include="src\ecs\systems\Time.cpp" />
     <ClCompile Include="src\ecs\systems\GameObjectManager.cpp" />
     <ClCompile Include="src\ecs\systems\Input.cpp" />
-    <ClCompile Include="src\ecs\components\Shader.cpp" />
-    <ClCompile Include="src\ecs\components\Shader.h.cpp" />
     <ClCompile Include="src\DDSTextureLoader.cpp" />
     <ClCompile Include="src\ecs\components\Texture.cpp" />
     <ClCompile Include="src\ecs\components\Component.cpp" />
@@ -48,6 +48,7 @@
     <ClCompile Include="src\ecs\components\Mesh.cpp" />
     <ClCompile Include="src\ecs\components\MeshRenderer.cpp" />
     <ClCompile Include="src\ecs\systems\ResourceManager.cpp" />
+    <ClCompile Include="src\ecs\components\Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="res\shader\ShaderTriangle.hlsl" />
