@@ -21,6 +21,14 @@ public:
     XMFLOAT3 GetScale() const;
     XMFLOAT3 GetRotation() const;
 
+    inline XMFLOAT4X4 GetRotationMatrix() {
+        return mRotation;
+    }
+
+    inline XMFLOAT4 GetRotationQuaternion() {
+        return qRotation;
+    }
+
     //XMFLOAT3 QuaternionToEulerAngles(const XMFLOAT4& quaternion);
 
     // Update them between each other

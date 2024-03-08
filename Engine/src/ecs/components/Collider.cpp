@@ -50,9 +50,9 @@ void ColliderComponent::InitializeBoundingBox(GameObject* gameObject, Vertex* ve
         maxZ = (maxZ > vertexPos.z) ? maxZ : vertexPos.z;
     }
 
-    m_size.x = abs(maxX - minX);
-    m_size.y = abs(maxY - minY);
-    m_size.z = abs(maxZ - minZ);
+    m_halfSize.x = abs(maxX - minX) / 2;
+    m_halfSize.y = abs(maxY - minY) / 2;
+    m_halfSize.z = abs(maxZ - minZ) / 2;
 }
 
 
@@ -68,19 +68,27 @@ void ColliderComponent::Update(Renderer* renderer) {
 
 
 bool ColliderComponent::CheckCollision(GameObject* collideObject) {
-    XMFLOAT3 gPosBox1 = m_pGameObject->GetComponent<Transform>(ComponentType::Transform)->GetPosition();
-    XMFLOAT3 gPosBox2 = collideObject->GetComponent<Transform>(ComponentType::Transform)->GetPosition();
 
-    XMFLOAT3 sizeBox1 = m_size;
-    XMFLOAT3 sizeBox2 = collideObject->GetComponent<ColliderComponent>(ComponentType::ColliderComponent)->m_size;
+    Transform* transformBox1 = m_pGameObject->GetComponent<Transform>(ComponentType::Transform);
+    Transform* transformBox2 = collideObject->GetComponent<Transform>(ComponentType::Transform);
 
-    float halfSizeX1 = sizeBox1.x * 0.5f;
-    float halfSizeY1 = sizeBox1.y * 0.5f;
-    float halfSizeZ1 = sizeBox1.z * 0.5f;
+    XMFLOAT3 gPosBox1 = transformBox1->GetPosition();
+    XMFLOAT3 gPosBox2 = transformBox2->GetPosition();
 
-    float halfSizeX2 = sizeBox2.x * 0.5f;
-    float halfSizeY2 = sizeBox2.y * 0.5f;
-    float halfSizeZ2 = sizeBox2.z * 0.5f;
+    XMFLOAT4 rotQBox1 = transformBox1->GetRotationQuaternion();
+    XMFLOAT4 rotQBox2 = transformBox2->GetRotationQuaternion();
+
+
+    XMFLOAT3 halfSizeBox1 = m_halfSize;
+    XMFLOAT3 halfSizeBox2 = collideObject->GetComponent<ColliderComponent>(ComponentType::ColliderComponent)->m_halfSize;
+
+    float halfSizeX1 = halfSizeBox1.x;
+    float halfSizeY1 = halfSizeBox1.y;
+    float halfSizeZ1 = halfSizeBox1.z;
+
+    float halfSizeX2 = halfSizeBox2.x;
+    float halfSizeY2 = halfSizeBox2.y;
+    float halfSizeZ2 = halfSizeBox2.z;
 
     XMFLOAT3 cornersBox1[8] = {
         { gPosBox1.x - halfSizeX1, gPosBox1.y - halfSizeY1, gPosBox1.z - halfSizeZ1 },
@@ -105,25 +113,22 @@ bool ColliderComponent::CheckCollision(GameObject* collideObject) {
         { gPosBox2.x + halfSizeX2, gPosBox2.y + halfSizeY2, gPosBox2.z + halfSizeZ2 }
     };
 
-    // Imprimer les coins de la première boîte
-    //std::cout << "Corners of Box 1:" << std::endl;
+
+    // #TODO la meilleure facon de gerer la rotation est d'obtenir a partir du point local un point global qui marche 
+    
     //for (int i = 0; i < 8; ++i) {
-    //    std::cout << "Corner " << i + 1 << ": ";
-    //    printFloatWithPrecision(cornersBox1[i].x, 2);
-    //    printFloatWithPrecision(cornersBox1[i].y, 2);
-    //    printFloatWithPrecision(cornersBox1[i].z, 2);
-    //    std::cout << std::endl;
+    //    XMVECTOR corner = XMLoadFloat3(&cornersBox1[i]);
+    //    corner = XMVector3Rotate(corner, XMLoadFloat4(&rotQBox1));
+    //    XMStoreFloat3(&cornersBox1[i], corner);
     //}
 
-    //// Imprimer les coins de la deuxième boîte
-    //std::cout << "Corners of Box 2:" << std::endl;
+
     //for (int i = 0; i < 8; ++i) {
-    //    std::cout << "Corner " << i + 1 << ": ";
-    //    printFloatWithPrecision(cornersBox2[i].x, 2);
-    //    printFloatWithPrecision(cornersBox2[i].y, 2);
-    //    printFloatWithPrecision(cornersBox2[i].z, 2);
-    //    std::cout << std::endl;
+    //    XMVECTOR corner = XMLoadFloat3(&cornersBox2[i]);
+    //    corner = XMVector3Rotate(corner, XMLoadFloat4(&rotQBox2));
+    //    XMStoreFloat3(&cornersBox2[i], corner);
     //}
+
 
     XMFLOAT3 minBox1(FLT_MAX, FLT_MAX, FLT_MAX);
     XMFLOAT3 maxBox1(-FLT_MAX, -FLT_MAX, -FLT_MAX);
@@ -150,29 +155,6 @@ bool ColliderComponent::CheckCollision(GameObject* collideObject) {
         maxBox2.y = (cornersBox2[i].y > maxBox2.y) ? cornersBox2[i].y : maxBox2.y;
         maxBox2.z = (cornersBox2[i].z > maxBox2.z) ? cornersBox2[i].z : maxBox2.z;
     }
-
-
-
-    //std::cout << "Box 1:" << std::endl;
-    //std::cout << "  Min: ";
-    //printFloatWithPrecision(minBox1.x, 2);
-    //printFloatWithPrecision(minBox1.y, 2);
-    //printFloatWithPrecision(minBox1.z, 2);
-    //std::cout << "  Max: ";
-    //printFloatWithPrecision(maxBox1.x, 2);
-    //printFloatWithPrecision(maxBox1.y, 2);
-    //printFloatWithPrecision(maxBox1.z, 2);
-
-    //std::cout << "Box 2:" << std::endl;
-    //std::cout << "  Min: ";
-    //printFloatWithPrecision(minBox2.x, 2);
-    //printFloatWithPrecision(minBox2.y, 2);
-    //printFloatWithPrecision(minBox2.z, 2);
-    //std::cout << "  Max: ";
-    //printFloatWithPrecision(maxBox2.x, 2);
-    //printFloatWithPrecision(maxBox2.y, 2);
-    //printFloatWithPrecision(maxBox2.z, 2);
-
 
 
     bool collisionX = maxBox1.x >= minBox2.x && minBox1.x <= maxBox2.x;

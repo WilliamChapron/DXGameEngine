@@ -6,10 +6,9 @@ Input::Input(WindowProperties _m_wndProps) : m_wndProps(&_m_wndProps){
     keyStates.clear();
     // Initialisation de l'�tat des touches clavier 
     // G�re les touches Z, Q, S, D
-    keyStates['Z'] = KeyState::Inactive;
-    keyStates['Q'] = KeyState::Inactive;
-    keyStates['S'] = KeyState::Inactive;
-    keyStates['D'] = KeyState::Inactive;
+    for (char key = 'A'; key <= 'Z'; ++key) {
+        keyStates[key] = KeyState::Inactive;
+    }
     // G�re les touches Espace et Shift
     keyStates[VK_SPACE] = KeyState::Inactive;
     keyStates[VK_SHIFT] = KeyState::Inactive;
@@ -36,10 +35,9 @@ void Input::Update() {
 void Input::HandleKeyboardInput() {
     // Stocke l'�tat de chaque touche dans keyStates
     // G�re les touches Z, Q, S, D
-    keyStates['Z'] = GetKeyStateHelper('Z');
-    keyStates['Q'] = GetKeyStateHelper('Q');
-    keyStates['S'] = GetKeyStateHelper('S');
-    keyStates['D'] = GetKeyStateHelper('D');
+    for (char key = 'A'; key <= 'Z'; ++key) {
+        keyStates[key] = GetKeyStateHelper(key);
+    }
     // G�re les touches Espace et Shift
     keyStates[VK_SPACE] = GetKeyStateHelper(VK_SPACE);
     keyStates[VK_SHIFT] = GetKeyStateHelper(VK_SHIFT);

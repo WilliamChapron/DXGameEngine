@@ -38,5 +38,5 @@ public:
 private:
     GameObject* m_pGameObject;
     AABB m_localAxisAlignedBoundingBox;
-    XMFLOAT3 m_size;
+    XMFLOAT3 m_halfSize;
 };
