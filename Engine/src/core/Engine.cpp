@@ -137,8 +137,8 @@ void Engine::Init(HINSTANCE hInstance, int nShowCmd) {
 
     m_pGameObjectManager->AddObject("Cube", m_pCube);
     //m_pGameObjectManager->AddObject("Cube2", m_pCube2);
-    //m_pGameObjectManager->AddObject("Cube3", m_pCube3);
-    m_pGameObjectManager->AddObject("Cube4", m_pCube4);
+    m_pGameObjectManager->AddObject("Cube3", m_pCube3);
+    //m_pGameObjectManager->AddObject("Cube4", m_pCube4);
 
 
 
@@ -179,8 +179,8 @@ void Engine::Run() {
     while (true) {
 
         Transform* transformComponent = m_pCube->GetComponent<Transform>(ComponentType::Transform);
-        float translationOffset = transformComponent->GetPosition().y + 0.1f;
-        transformComponent->SetPosition(0, translationOffset, 0);
+        float translationOffset = transformComponent->GetPosition().x + 0.008f;
+        transformComponent->SetPosition(translationOffset, 0, 0);
 
         time.UpdateTime();
 

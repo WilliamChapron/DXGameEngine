@@ -22,46 +22,46 @@ void GameObjectManager::RemoveObject(const std::string& name) {
 
 }
 
-#define PRINT_VECTOR3(vec) std::cout << #vec << ": (" << XMVectorGetX(vec) << ", " << XMVectorGetY(vec) << ", " << XMVectorGetZ(vec) << ")" << std::endl;
-
-bool IsColliding(XMFLOAT3& vectorPositionInput, XMFLOAT3& vectorPositionOutput) {
-
-
-    XMVECTOR inputVector = XMLoadFloat3(&vectorPositionInput);
-    XMVECTOR outputVector = XMLoadFloat3(&vectorPositionOutput);
-
-    float length = XMVector3Length(inputVector - outputVector).m128_f32[0];
-
-    XMFLOAT3 normalizedDistance;
-    normalizedDistance.x = (vectorPositionInput.x - vectorPositionOutput.x);
-    normalizedDistance.y = (vectorPositionInput.y - vectorPositionOutput.y);
-    normalizedDistance.z = (vectorPositionInput.z - vectorPositionOutput.z);
-
-    //PRINT(normalizedDistance.x);
-
-
-    normalizedDistance.x = abs(normalizedDistance.x);
-    normalizedDistance.y = abs(normalizedDistance.y);
-    normalizedDistance.z = abs(normalizedDistance.z);
-
-    PRINT("Normalize");
-    PRINT(normalizedDistance.x);
-    PRINT(normalizedDistance.y);
-    PRINT(normalizedDistance.z);
-    PRINT("Normalize end");
-
-    if (normalizedDistance.x == 0 && normalizedDistance.y == 0 && normalizedDistance.x == 0) {
-        PRINT("EEEEEEEEEEEEEEEEEEEEEEEEEEE");
-        PRINT("EEEEEEEEEEEEEEEEEEEEEEEEEEE");
-        PRINT("EEEEEEEEEEEEEEEEEEEEEEEEEEE");
-        PRINT("EEEEEEEEEEEEEEEEEEEEEEEEEEE");
-        PRINT("EEEEEEEEEEEEEEEEEEEEEEEEEEE");
-    }
-
-
-    return normalizedDistance.x <= 0 && normalizedDistance.y <= 0 && normalizedDistance.x <= 0;
-}
-
+//#define PRINT_VECTOR3(vec) std::cout << #vec << ": (" << XMVectorGetX(vec) << ", " << XMVectorGetY(vec) << ", " << XMVectorGetZ(vec) << ")" << std::endl;
+//
+//bool IsColliding(XMFLOAT3& vectorPositionInput, XMFLOAT3& vectorPositionOutput) {
+//
+//
+//    XMVECTOR inputVector = XMLoadFloat3(&vectorPositionInput);
+//    XMVECTOR outputVector = XMLoadFloat3(&vectorPositionOutput);
+//
+//    float length = XMVector3Length(inputVector - outputVector).m128_f32[0];
+//
+//    XMFLOAT3 normalizedDistance;
+//    normalizedDistance.x = (vectorPositionInput.x - vectorPositionOutput.x);
+//    normalizedDistance.y = (vectorPositionInput.y - vectorPositionOutput.y);
+//    normalizedDistance.z = (vectorPositionInput.z - vectorPositionOutput.z);
+//
+//    //PRINT(normalizedDistance.x);
+//
+//
+//    normalizedDistance.x = abs(normalizedDistance.x);
+//    normalizedDistance.y = abs(normalizedDistance.y);
+//    normalizedDistance.z = abs(normalizedDistance.z);
+//
+//    PRINT("Normalize");
+//    PRINT(normalizedDistance.x);
+//    PRINT(normalizedDistance.y);
+//    PRINT(normalizedDistance.z);
+//    PRINT("Normalize end");
+//
+//    if (normalizedDistance.x == 0 && normalizedDistance.y == 0 && normalizedDistance.x == 0) {
+//        PRINT("EEEEEEEEEEEEEEEEEEEEEEEEEEE");
+//        PRINT("EEEEEEEEEEEEEEEEEEEEEEEEEEE");
+//        PRINT("EEEEEEEEEEEEEEEEEEEEEEEEEEE");
+//        PRINT("EEEEEEEEEEEEEEEEEEEEEEEEEEE");
+//        PRINT("EEEEEEEEEEEEEEEEEEEEEEEEEEE");
+//    }
+//
+//
+//    return normalizedDistance.x <= 0 && normalizedDistance.y <= 0 && normalizedDistance.x <= 0;
+//}
+//
 
 
 

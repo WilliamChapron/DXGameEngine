@@ -138,6 +138,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\CommonsMesh.h" />
+    <ClInclude Include="src\ecs\components\ColliderComponent.h" />
     <ClInclude Include="src\ecs\components\Shader.h" />
     <ClInclude Include="src\ecs\systems\ResourceManager.h" />
     <ClInclude Include="src\ecs\components\MeshRenderer.h" />
@@ -163,6 +164,7 @@
     <ClInclude Include="src\ecs\components\Texture.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\ecs\components\ColliderComponent.cpp" />
     <ClCompile Include="src\ecs\components\Shader.cpp" />
     <ClCompile Include="src\ecs\systems\ResourceManager.cpp" />
     <ClCompile Include="src\ecs\components\MeshRenderer.cpp" />
