@@ -1,0 +1,42 @@
+#pragma once
+
+#include "../../include.h"
+
+
+#include "../components/Component.h"
+
+using namespace DirectX;
+
+struct AABB {
+    XMFLOAT3 min;
+    XMFLOAT3 max;
+};
+
+struct Vertex;
+class GameObject;
+struct Vertex;
+
+class ColliderComponent : public Component
+{
+public:
+    ColliderComponent(std::string name);
+    void Update(Renderer* renderer) override;
+
+    void OnEnter();
+    void OnStay();
+    void OnExit();
+
+
+    void InitializeBoundingBox(GameObject* gameObject, Vertex* vertices, int numVertices);
+
+    AABB TransformBoundingBoxLocalToGlobal()
+
+    bool CheckCollision(const AABB & box2);
+      
+
+private:
+    GameObject* m_pGameObject;
+
+    AABB m_localAxisAlignedBoundingBox;
+
+};
